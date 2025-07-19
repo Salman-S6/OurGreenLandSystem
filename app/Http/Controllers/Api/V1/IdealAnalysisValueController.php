@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreIdealAnalysisValueRequest;
-use App\Http\Requests\UpdateIdealAnalysisValueRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\IdealAnalysisValue\StoreIdealAnalysisValueRequest;
+use App\Http\Requests\IdealAnalysisValue\UpdateIdealAnalysisValueRequest;
 use App\Models\IdealAnalysisValue;
 
 class IdealAnalysisValueController extends Controller

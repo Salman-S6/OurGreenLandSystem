@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreAgriculturalInfrastructureRequest;
-use App\Http\Requests\UpdateAgriculturalInfrastructureRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\AgriculturalInfrastructure\StoreAgriculturalInfrastructureRequest;
+use App\Http\Requests\AgriculturalInfrastructure\UpdateAgriculturalInfrastructureRequest;
 use App\Models\AgriculturalInfrastructure;
 
 class AgriculturalInfrastructureController extends Controller

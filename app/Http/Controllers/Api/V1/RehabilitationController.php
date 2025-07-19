@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreRehabilitationRequest;
-use App\Http\Requests\UpdateRehabilitationRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Rehabilitations\StoreRehabilitationRequest;
+use App\Http\Requests\Rehabilitations\UpdateRehabilitationRequest;
 use App\Models\Rehabilitation;
 
 class RehabilitationController extends Controller

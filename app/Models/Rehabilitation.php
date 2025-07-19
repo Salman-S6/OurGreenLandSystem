@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Rehabilitation extends Model
 {
@@ -16,11 +17,8 @@ class Rehabilitation extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'land_id',
         'event',
         'description',
-        'performed_by',
-        'performed_at',
         'notes',
     ];
 
@@ -36,16 +34,16 @@ class Rehabilitation extends Model
     /**
      * Get the land that this rehabilitation activity belongs to.
      */
-    public function land(): BelongsTo
+    public function lands(): BelongsToMany
     {
-        return $this->belongsTo(Land::class);
+        return $this->belongsToMany(Land::class, 'rehabilitation_land', 'rehabilitation_id', 'land_id');
     }
 
     /**
      * Get the user who performed the rehabilitation activity.
      */
-    public function performer(): BelongsTo
+    public function performers(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'performed_by');
+        return $this->belongsToMany(User::class, 'rehabilitation_land', 'rehabilitation_id', 'performed_by');
     }
 }

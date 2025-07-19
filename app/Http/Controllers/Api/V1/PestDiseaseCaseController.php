@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StorePestDiseaseCaseRequest;
-use App\Http\Requests\UpdatePestDiseaseCaseRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PestDiseaseCase\StorePestDiseaseCaseRequest;
+use App\Http\Requests\PestDiseaseCase\UpdatePestDiseaseCaseRequest;
 use App\Models\PestDiseaseCase;
 
 class PestDiseaseCaseController extends Controller

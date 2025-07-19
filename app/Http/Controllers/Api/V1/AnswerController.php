@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreAttachmentRequest;
-use App\Http\Requests\UpdateAttachmentRequest;
-use App\Models\Attachment;
+use App\Http\Controllers\Controller;
 
-class AttachmentController extends Controller
+use App\Http\Requests\Answer\StoreAnswerRequest;
+use App\Http\Requests\Answer\UpdateAnswerRequest;
+use App\Models\Answer;
+
+class AnswerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +21,7 @@ class AttachmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAttachmentRequest $request)
+    public function store(StoreAnswerRequest $request)
     {
         //
     }
@@ -27,7 +29,7 @@ class AttachmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Attachment $attachment)
+    public function show(Answer $answer)
     {
         //
     }
@@ -35,7 +37,7 @@ class AttachmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAttachmentRequest $request, Attachment $attachment)
+    public function update(UpdateAnswerRequest $request, Answer $answer)
     {
         //
     }
@@ -43,7 +45,7 @@ class AttachmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Attachment $attachment)
+    public function destroy(Answer $answer)
     {
         //
     }

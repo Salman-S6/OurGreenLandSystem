@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreSoilAnalysisRequest;
-use App\Http\Requests\UpdateSoilAnalysisRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest;
+use App\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest;
 use App\Models\SoilAnalysis;
 
 class SoilAnalysisController extends Controller

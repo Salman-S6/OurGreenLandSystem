@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\PestDiseaseCase;
 
 use Illuminate\Foundation\Http\FormRequest;
 

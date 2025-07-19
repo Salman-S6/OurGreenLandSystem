@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('rehabilitations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('land_id')->constrained('lands')->cascadeOnDelete();
             $table->string('event');
             $table->text('description');
-            $table->foreignId('performed_by')->constrained('users')->cascadeOnDelete();
-            $table->date('performed_at');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

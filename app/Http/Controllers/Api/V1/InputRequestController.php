@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreInputRequestRequest;
-use App\Http\Requests\UpdateInputRequestRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\InputRequest\StoreInputRequestRequest;
+use App\Http\Requests\InputRequest\UpdateInputRequestRequest;
 use App\Models\InputRequest;
 
 class InputRequestController extends Controller

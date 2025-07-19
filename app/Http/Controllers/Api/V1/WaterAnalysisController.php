@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreWaterAnalysisRequest;
-use App\Http\Requests\UpdateWaterAnalysisRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest;
+use App\Http\Requests\WaterAnalysis\UpdateWaterAnalysisRequest;
 use App\Models\WaterAnalysis;
 
 class WaterAnalysisController extends Controller

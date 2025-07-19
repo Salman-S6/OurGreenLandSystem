@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreInputDeliveryStatusRequest;
-use App\Http\Requests\UpdateInputDeliveryStatusRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\InputDeliveryStatus\StoreInputDeliveryStatusRequest;
+use App\Http\Requests\InputDeliveryStatus\UpdateInputDeliveryStatusRequest;
 use App\Models\InputDeliveryStatus;
 
 class InputDeliveryStatusController extends Controller

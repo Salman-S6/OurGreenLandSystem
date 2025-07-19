@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreLandRequest;
-use App\Http\Requests\UpdateLandRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Land\StoreLandRequest;
+use App\Http\Requests\Land\UpdateLandRequest;
 use App\Models\Land;
 
 class LandController extends Controller

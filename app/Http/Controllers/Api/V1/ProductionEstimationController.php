@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreProductionEstimationRequest;
-use App\Http\Requests\UpdateProductionEstimationRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductionEstimation\StoreProductionEstimationRequest;
+use App\Http\Requests\ProductionEstimation\UpdateProductionEstimationRequest;
 use App\Models\ProductionEstimation;
 
 class ProductionEstimationController extends Controller

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreSupplierRatingRequest;
-use App\Http\Requests\UpdateSupplierRatingRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SupplierRating\StoreSupplierRatingRequest;
+use App\Http\Requests\SupplierRating\UpdateSupplierRatingRequest;
 use App\Models\SupplierRating;
 
 class SupplierRatingController extends Controller

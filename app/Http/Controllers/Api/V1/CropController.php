@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreSoilRequest;
-use App\Http\Requests\UpdateSoilRequest;
-use App\Models\Soil;
+use App\Http\Controllers\Controller;
 
-class SoilController extends Controller
+use App\Http\Requests\Crop\StoreCropRequest;
+use App\Http\Requests\Crop\UpdateCropRequest;
+use App\Models\Crop;
+
+class CropController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +21,7 @@ class SoilController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSoilRequest $request)
+    public function store(StoreCropRequest $request)
     {
         //
     }
@@ -27,7 +29,7 @@ class SoilController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Soil $soil)
+    public function show(Crop $crop)
     {
         //
     }
@@ -35,7 +37,7 @@ class SoilController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSoilRequest $request, Soil $soil)
+    public function update(UpdateCropRequest $request, Crop $crop)
     {
         //
     }
@@ -43,7 +45,7 @@ class SoilController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Soil $soil)
+    public function destroy(Crop $crop)
     {
         //
     }

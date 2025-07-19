@@ -54,9 +54,9 @@ class Land extends Model
         return $this->hasMany(SoilAnalysis::class, 'land_id');
     }
 
-    public function rehabilitations(): HasMany
+    public function rehabilitations(): BelongsToMany
     {
-        return $this->hasMany(Rehabilitation::class, 'land_id');
+        return $this->belongsToMany(Rehabilitation::class, 'rehablilitation_land', 'land_id', 'rehabilitation_id');
     }
 
     public function cropPlans(): HasMany

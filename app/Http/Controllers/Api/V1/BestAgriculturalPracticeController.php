@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreBestAgriculturalPracticeRequest;
-use App\Http\Requests\UpdateBestAgriculturalPracticeRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\BestAgriculturalPractice\StoreBestAgriculturalPracticeRequest;
+use App\Http\Requests\BestAgriculturalPractice\UpdateBestAgriculturalPracticeRequest;
 use App\Models\BestAgriculturalPractice;
 
 class BestAgriculturalPracticeController extends Controller

@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreAgriculturalAlertRequest;
-use App\Http\Requests\UpdateAgriculturalAlertRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\AgriculturalAlert\StoreAgriculturalAlertRequest;
+use App\Http\Requests\AgriculturalAlert\UpdateAgriculturalAlertRequest;
 use App\Models\AgriculturalAlert;
 
 class AgriculturalAlertController extends Controller

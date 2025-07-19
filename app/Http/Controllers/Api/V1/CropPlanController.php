@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\StoreCropPlanRequest;
-use App\Http\Requests\UpdateCropPlanRequest;
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\CropPlan\StoreCropPlanRequest;
+use App\Http\Requests\CropPlan\UpdateCropPlanRequest;
 use App\Models\CropPlan;
 
 class CropPlanController extends Controller
