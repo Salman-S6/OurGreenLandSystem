@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\CropManagement;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Question\StoreQuestionRequest;
-use App\Http\Requests\Question\UpdateQuestionRequest;
-use App\Models\Question;
 
-class QuestionController extends Controller
+use App\Http\Requests\Crop\StoreCropRequest;
+use App\Http\Requests\Crop\UpdateCropRequest;
+use App\Models\Crop;
+
+class CropController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +21,7 @@ class QuestionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreQuestionRequest $request)
+    public function store(StoreCropRequest $request)
     {
         //
     }
@@ -28,7 +29,7 @@ class QuestionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Question $question)
+    public function show(Crop $crop)
     {
         //
     }
@@ -36,7 +37,7 @@ class QuestionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateQuestionRequest $request, Question $question)
+    public function update(UpdateCropRequest $request, Crop $crop)
     {
         //
     }
@@ -44,7 +45,7 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Question $question)
+    public function destroy(Crop $crop)
     {
         //
     }

@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\FarmLand;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Land\StoreLandRequest;
+use App\Http\Requests\Land\UpdateLandRequest;
+use App\Models\Land;
 
-use App\Http\Requests\Crop\StoreCropRequest;
-use App\Http\Requests\Crop\UpdateCropRequest;
-use App\Models\Crop;
-
-class CropController extends Controller
+class LandController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +20,7 @@ class CropController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCropRequest $request)
+    public function store(StoreLandRequest $request)
     {
         //
     }
@@ -29,7 +28,7 @@ class CropController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Crop $crop)
+    public function show(Land $land)
     {
         //
     }
@@ -37,7 +36,7 @@ class CropController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCropRequest $request, Crop $crop)
+    public function update(UpdateLandRequest $request, Land $land)
     {
         //
     }
@@ -45,7 +44,7 @@ class CropController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Crop $crop)
+    public function destroy(Land $land)
     {
         //
     }

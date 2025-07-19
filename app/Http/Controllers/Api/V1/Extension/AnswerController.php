@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Extension;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Supplier\StoreSupplierRequest;
-use App\Http\Requests\Supplier\UpdateSupplierRequest;
-use App\Models\Supplier;
+use App\Http\Requests\Answer\StoreAnswerRequest;
+use App\Http\Requests\Answer\UpdateAnswerRequest;
+use App\Models\Answer;
 
-class SupplierController extends Controller
+class AnswerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +21,7 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSupplierRequest $request)
+    public function store(StoreAnswerRequest $request)
     {
         //
     }
@@ -29,7 +29,7 @@ class SupplierController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(Answer $answer)
     {
         //
     }
@@ -37,7 +37,7 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(UpdateAnswerRequest $request, Answer $answer)
     {
         //
     }
@@ -45,7 +45,7 @@ class SupplierController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Supplier $supplier)
+    public function destroy(Answer $answer)
     {
         //
     }
