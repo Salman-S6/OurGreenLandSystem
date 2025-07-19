@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('best_agricultural_practices', function (Blueprint $table) {
              $table->id();
              $table->foreignId('growth_stage_id')->constrained('crop_growth_stages')->cascadeOnDelete();
+             $table->foreignId('expert_id')->constrained('users')->cascadeOnDelete();
              $table->enum('practice_type', ['irrigation', 'fertilization', 'pest-control']);
              $table->string('material');
              $table->decimal('quantity', 10, 2);

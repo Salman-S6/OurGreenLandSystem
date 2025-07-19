@@ -17,6 +17,7 @@ class BestAgriculturalPractice extends Model
      */
     protected $fillable = [
         'growth_stage_id',
+        'expert_id',
         'practice_type',
         'material',
         'quantity',
@@ -40,5 +41,14 @@ class BestAgriculturalPractice extends Model
     public function growthStage(): BelongsTo
     {
         return $this->belongsTo(CropGrowthStage::class, 'growth_stage_id');
+    }
+
+    /**
+     * Get the expert adding the best agricultral practice.
+     * @return BelongsTo<User, BestAgriculturalPractice>
+     */
+    public function expert(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'expert_id');
     }
 }
