@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Attachment;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreAttachmentRequest extends FormRequest
 {
@@ -24,5 +26,28 @@ class StoreAttachmentRequest extends FormRequest
         return [
             //
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            ApiResponse::error(
+                'data validation failed',
+                422,
+                [
+                    "errors" => $validator->errors()
+                ]
+            )
+        );
+    }
+
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(
+            ApiResponse::error(
+                'Unauthorized Action.',
+                401,
+            )
+        );
     }
 }

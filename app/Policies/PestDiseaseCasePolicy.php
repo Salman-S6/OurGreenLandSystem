@@ -48,19 +48,4 @@ class PestDiseaseCasePolicy
         return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, PestDiseaseCase $pestDiseaseCase): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, PestDiseaseCase $pestDiseaseCase): bool
-    {
-        return false;
-    }
 }

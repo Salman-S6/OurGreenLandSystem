@@ -47,20 +47,4 @@ class SupplierPolicy
     {
         return false;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Supplier $supplier): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Supplier $supplier): bool
-    {
-        return false;
-    }
 }

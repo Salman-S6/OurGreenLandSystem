@@ -48,19 +48,4 @@ class QuestionPolicy
         return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Question $question): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Question $question): bool
-    {
-        return false;
-    }
 }
