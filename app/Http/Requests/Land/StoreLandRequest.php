@@ -14,7 +14,7 @@ class StoreLandRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +25,16 @@ class StoreLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|exists:users,id',
+            'farmer_id' => 'required|exists:users,id',
+            'area' => 'nullable|numeric|min:0',
+            'soil_type_id' => 'required|exists:soils,id',
+            'damage_level' => 'nullable|in:low,medium,high',
+            'gps_coordinates' => 'nullable|array',
+            'gps_coordinates.*' => 'numeric',
+            'boundary_coordinates' => 'nullable|array',
+            'boundary_coordinates.*' => 'array', // [[lat,lng],[lat,lng]]
+            'rehabilitation_date' => 'required|date|before_or_equal:today',
         ];
     }
 
