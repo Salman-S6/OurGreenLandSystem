@@ -1,10 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\CropManagement\Database\Factories;
 
-use App\Models\BestAgriculturalPractice;
-use App\Models\CropGrowthStage;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\BestAgriculturalPractice;
+use Modules\CropManagement\Models\CropGrowthStage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BestAgriculturalPractice>
@@ -17,6 +18,7 @@ class BestAgriculturalPracticeFactory extends Factory
      * @var string
      */
     protected $model = BestAgriculturalPractice::class;
+
 
     /**
      * Define the model's default state.

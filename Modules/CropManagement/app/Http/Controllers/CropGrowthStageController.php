@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\CropGrowthStage\StoreCropGrowthStageRequest;
-use App\Http\Requests\CropGrowthStage\UpdateCropGrowthStageRequest;
-use App\Models\CropGrowthStage;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\CropGrowthStage\StoreCropGrowthStageRequest;
+use Modules\CropManagement\Http\Requests\CropGrowthStage\UpdateCropGrowthStageRequest;
+use Modules\CropManagement\Models\CropGrowthStage;
 
 class CropGrowthStageController extends Controller
 {

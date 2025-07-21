@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductionEstimation\StoreProductionEstimationRequest;
-use App\Http\Requests\ProductionEstimation\UpdateProductionEstimationRequest;
-use App\Models\ProductionEstimation;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\ProductionEstimation\StoreProductionEstimationRequest;
+use Modules\CropManagement\Http\Requests\ProductionEstimation\UpdateProductionEstimationRequest;
+use Modules\CropManagement\Models\ProductionEstimation;
 
 class ProductionEstimationController extends Controller
 {

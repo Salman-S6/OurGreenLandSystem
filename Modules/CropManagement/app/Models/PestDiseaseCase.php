@@ -1,22 +1,28 @@
 <?php
 
-namespace App\Models;
+namespace Modules\CropManagement\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Modules\CropManagement\Database\Factories\PestDiseaseCaseFactory;
 
 class PestDiseaseCase extends Model
 {
     use HasFactory;
 
+    protected static function newFactory(): PestDiseaseCaseFactory
+    {
+        return PestDiseaseCaseFactory::new();
+    }
+
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
-    protected $fillable = [
+     protected $fillable = [
         'crop_plan_id',
         'reported_by',
         'case_type',
@@ -59,4 +65,5 @@ class PestDiseaseCase extends Model
     {
         return $this->hasMany(PestDiseaseRecommendation::class, 'pest_disease_case_id');
     }
+
 }

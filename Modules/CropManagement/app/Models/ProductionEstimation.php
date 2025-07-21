@@ -1,19 +1,25 @@
 <?php
 
-namespace App\Models;
+namespace Modules\CropManagement\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Modules\CropManagement\Database\Factories\ProductionEstimationFactory;
 
 class ProductionEstimation extends Model
 {
     use HasFactory;
 
+    protected static function newFactory(): ProductionEstimationFactory
+    {
+        return ProductionEstimationFactory::new();
+    }
+
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'crop_plan_id',

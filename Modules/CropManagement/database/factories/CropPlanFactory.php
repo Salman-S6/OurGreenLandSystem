@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\CropManagement\Database\Factories;
 
-use App\Models\Crop;
-use App\Models\CropPlan;
-use App\Models\Land;
+use Modules\FarmLand\Models\Land;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\Crop;
+use Modules\CropManagement\Models\CropPlan;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CropPlan>

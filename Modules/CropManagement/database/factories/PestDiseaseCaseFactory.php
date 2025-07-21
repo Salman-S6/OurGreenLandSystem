@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\CropManagement\Database\Factories;
 
-use App\Models\CropPlan;
-use App\Models\PestDiseaseCase;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\CropPlan;
+use Modules\CropManagement\Models\PestDiseaseCase;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PestDiseaseCase>
@@ -18,6 +18,7 @@ class PestDiseaseCaseFactory extends Factory
      * @var string
      */
     protected $model = PestDiseaseCase::class;
+
 
     /**
      * Define the model's default state.

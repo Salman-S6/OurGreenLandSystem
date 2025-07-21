@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PestDiseaseCase\StorePestDiseaseCaseRequest;
-use App\Http\Requests\PestDiseaseCase\UpdatePestDiseaseCaseRequest;
-use App\Models\PestDiseaseCase;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\PestDiseaseCase\StorePestDiseaseCaseRequest;
+use Modules\CropManagement\Http\Requests\PestDiseaseCase\UpdatePestDiseaseCaseRequest;
+use Modules\CropManagement\Models\PestDiseaseCase;
 
 class PestDiseaseCaseController extends Controller
 {

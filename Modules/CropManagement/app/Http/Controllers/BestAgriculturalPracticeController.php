@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\BestAgriculturalPractice\StoreBestAgriculturalPracticeRequest;
-use App\Http\Requests\BestAgriculturalPractice\UpdateBestAgriculturalPracticeRequest;
-use App\Models\BestAgriculturalPractice;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\BestAgriculturalPractice\StoreBestAgriculturalPracticeRequest;
+use Modules\CropManagement\Http\Requests\BestAgriculturalPractice\UpdateBestAgriculturalPracticeRequest;
+use Modules\CropManagement\Models\BestAgriculturalPractice;
 
 class BestAgriculturalPracticeController extends Controller
 {

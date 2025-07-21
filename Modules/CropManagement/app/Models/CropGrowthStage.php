@@ -1,22 +1,28 @@
 <?php
 
-namespace App\Models;
+namespace Modules\CropManagement\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Modules\CropManagement\Database\Factories\CropGrowthStageFactory;
 
 class CropGrowthStage extends Model
 {
     use HasFactory;
 
+    protected static function newFactory(): CropGrowthStageFactory
+    {
+        return CropGrowthStageFactory::new();
+    }
+
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
-    protected $fillable = [
+      protected $fillable = [
         'crop_plan_id',
         'start_date',
         'end_date',
@@ -55,4 +61,5 @@ class CropGrowthStage extends Model
     {
         return $this->hasMany(BestAgriculturalPractice::class, "growth_stage_id");
     }
+
 }

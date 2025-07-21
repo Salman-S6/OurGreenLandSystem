@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\CropManagement\Database\Factories;
 
-use App\Models\CropPlan;
-use App\Models\ProductionEstimation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\CropPlan;
+use Modules\CropManagement\Models\ProductionEstimation;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductionEstimation>

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\CropPlan\StoreCropPlanRequest;
-use App\Http\Requests\CropPlan\UpdateCropPlanRequest;
-use App\Models\CropPlan;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\CropPlan\StoreCropPlanRequest;
+use Modules\CropManagement\Http\Requests\CropPlan\UpdateCropPlanRequest;
+use Modules\CropManagement\Models\CropPlan;
 
 class CropPlanController extends Controller
 {
@@ -22,6 +22,7 @@ class CropPlanController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreCropPlanRequest $request)
+
     {
         //
     }

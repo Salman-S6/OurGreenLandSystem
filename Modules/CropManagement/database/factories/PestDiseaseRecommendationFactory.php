@@ -1,11 +1,12 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\CropManagement\Database\Factories;
 
-use App\Models\PestDiseaseCase;
-use App\Models\PestDiseaseRecommendation;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\PestDiseaseCase;
+use Modules\CropManagement\Models\PestDiseaseRecommendation;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PestDiseaseRecommendation>

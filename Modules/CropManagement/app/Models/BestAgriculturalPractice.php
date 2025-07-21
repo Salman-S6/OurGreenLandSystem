@@ -1,19 +1,24 @@
 <?php
 
-namespace App\Models;
+namespace Modules\CropManagement\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Modules\CropManagement\Database\Factories\BestAgriculturalPracticeFactory;
 
 class BestAgriculturalPractice extends Model
 {
     use HasFactory;
 
+    protected static function newFactory(): BestAgriculturalPracticeFactory
+    {
+        return BestAgriculturalPracticeFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'growth_stage_id',
@@ -51,4 +56,5 @@ class BestAgriculturalPractice extends Model
     {
         return $this->belongsTo(User::class,'expert_id');
     }
+
 }

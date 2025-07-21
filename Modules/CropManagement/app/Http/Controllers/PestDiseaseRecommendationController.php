@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CropManagement;
+namespace Modules\CropManagement\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PestDiseaseRecommendation\StorePestDiseaseRecommendationRequest;
-use App\Http\Requests\PestDiseaseRecommendation\UpdatePestDiseaseRecommendationRequest;
-use App\Models\PestDiseaseRecommendation;
+use Illuminate\Http\Request;
+use Modules\CropManagement\Http\Requests\PestDiseaseRecommendation\StorePestDiseaseRecommendationRequest;
+use Modules\CropManagement\Http\Requests\PestDiseaseRecommendation\UpdatePestDiseaseRecommendationRequest;
+use Modules\CropManagement\Models\PestDiseaseRecommendation;
 
 class PestDiseaseRecommendationController extends Controller
 {
