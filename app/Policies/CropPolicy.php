@@ -9,11 +9,28 @@ use Illuminate\Auth\Access\Response;
 class CropPolicy
 {
     /**
+     * Summary of before
+     * @param \App\Models\User $user
+     *
+     */
+    public function before(User $user)
+    {
+        if ($user->hasRole('SuperAdmin')) {
+            return true;
+        }
+    }
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('ProgramManager') ||
+            $user->hasRole('AgriculturalEngineer') ||
+            $user->hasRole('Farmer') ||
+            $user->hasRole('SoilWaterSpecialist') ||
+            $user->hasRole('Supplier') ||
+            $user->hasRole('FundingAgency') ||
+            $user->hasRole('DataAnalyst');
     }
 
     /**
@@ -21,7 +38,13 @@ class CropPolicy
      */
     public function view(User $user, Crop $crop): bool
     {
-        return false;
+        return $user->hasRole('ProgramManager') ||
+            $user->hasRole('AgriculturalEngineer') ||
+            $user->hasRole('Farmer') ||
+            $user->hasRole('SoilWaterSpecialist') ||
+            $user->hasRole('Supplier') ||
+            $user->hasRole('FundingAgency') ||
+            $user->hasRole('DataAnalyst');
     }
 
     /**
@@ -29,15 +52,22 @@ class CropPolicy
      */
     public function create(User $user): bool
     {
+        if ($user->hasRole('Farmer')) {
+            return true;
+        }
         return false;
     }
 
+
     /**
-     * Determine whether the user can update the model.
+     * Summary of update
+     * @param \App\Models\User $user
+     * @param \App\Models\Crop $crop
+     * @return bool
      */
     public function update(User $user, Crop $crop): bool
     {
-        return false;
+        return $user->hasRole('Farmer') && $crop->farmer_id == $user->id;
     }
 
     /**
@@ -48,5 +78,19 @@ class CropPolicy
         return false;
     }
 
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Crop $crop): bool
+    {
+        return false;
+    }
 
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Crop $crop): bool
+    {
+        return false;
+    }
 }

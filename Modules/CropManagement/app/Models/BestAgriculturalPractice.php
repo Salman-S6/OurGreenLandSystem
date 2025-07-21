@@ -11,7 +11,7 @@ use Modules\CropManagement\Database\Factories\BestAgriculturalPracticeFactory;
 
 class BestAgriculturalPractice extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): BestAgriculturalPracticeFactory
     {
@@ -29,6 +29,7 @@ class BestAgriculturalPractice extends Model
         'application_date',
         'notes',
     ];
+    public array $translatable = ['notes', 'practice_type','material'];
 
     /**
      * The attributes that should be cast.

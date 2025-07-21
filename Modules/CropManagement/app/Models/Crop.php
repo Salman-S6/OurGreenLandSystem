@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropFactory;
+use Spatie\Translatable\HasTranslations;
 
 class Crop extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): CropFactory
     {
@@ -23,6 +24,8 @@ class Crop extends Model
         "name",
         "description",
     ];
+
+    public array $translatable = ['name', 'description'];
 
     public function cropPlans(): HasMany
     {

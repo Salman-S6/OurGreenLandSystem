@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\PestDiseaseCaseFactory;
+use Spatie\Translatable\HasTranslations;
 
 class PestDiseaseCase extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): PestDiseaseCaseFactory
     {
@@ -32,6 +33,7 @@ class PestDiseaseCase extends Model
         'discovery_date',
         'location_details',
     ];
+    public array $translatable = ['case_type', 'case_name', 'description', 'location_details'];
 
     /**
      * The attributes that should be cast.

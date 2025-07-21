@@ -20,11 +20,11 @@ return new class extends Migration
             $table->date('actual_planting_date')->nullable();
             $table->date('planned_harvest_date');
             $table->date('actual_harvest_date')->nullable();
-            $table->string('seed_type', 50)->nullable();
+            $table->json('seed_type')->nullable();
             $table->decimal('seed_quantity', 10, 2);
             $table->date('seed_expiry_date')->nullable();
             $table->decimal('area_size', 10, 2);
-            $table->enum('status', ['active', 'in-progress', 'completed', 'cancelled'])->default('active');
+            $table->json('status')->default(json_encode(['en' => 'active']));
             $table->timestamps();
         });
     }

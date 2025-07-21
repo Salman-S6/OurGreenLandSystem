@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use Modules\CropManagement\Database\Factories\PestDiseaseRecommendationFactory;
-
+use Spatie\Translatable\HasTranslations;
 class PestDiseaseRecommendation extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
     protected static function newFactory(): PestDiseaseRecommendationFactory
     {
         return PestDiseaseRecommendationFactory::new();
@@ -29,6 +29,8 @@ class PestDiseaseRecommendation extends Model
         'safety_notes',
         'recommended_by',
     ];
+
+    public array $translatable = ['safety_notes','recommendation_name','application_method'];
 
     /**
      * Get the pest/disease case for the recommendation.

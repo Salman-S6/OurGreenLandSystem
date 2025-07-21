@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropGrowthStageFactory;
+use Spatie\Translatable\HasTranslations;
 
 class CropGrowthStage extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): CropGrowthStageFactory
     {
@@ -30,6 +31,8 @@ class CropGrowthStage extends Model
         'notes',
         'recorded_by',
     ];
+
+    public array $translatable = ['name', 'notes'];
 
     /**
      * The attributes that should be cast.

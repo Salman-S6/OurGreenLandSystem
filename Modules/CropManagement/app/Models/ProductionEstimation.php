@@ -6,12 +6,12 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Spatie\Translatable\HasTranslations;
 use Modules\CropManagement\Database\Factories\ProductionEstimationFactory;
 
 class ProductionEstimation extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): ProductionEstimationFactory
     {
@@ -31,6 +31,7 @@ class ProductionEstimation extends Model
         'notes',
     ];
 
+    public array $translatable = ['notes','crop_quality','estimation_method'];
     /**
      * The attributes that should be cast.
      *

@@ -15,11 +15,11 @@ return new class extends Migration
              $table->id();
              $table->foreignId('growth_stage_id')->constrained('crop_growth_stages')->cascadeOnDelete();
              $table->foreignId('expert_id')->constrained('users')->cascadeOnDelete();
-             $table->enum('practice_type', ['irrigation', 'fertilization', 'pest-control']);
-             $table->string('material');
+             $table->json('practice_type');
+             $table->json('material');
              $table->decimal('quantity', 10, 2);
              $table->date('application_date');
-             $table->text('notes')->nullable();
+             $table->json('notes')->nullable();
              $table->timestamps();
         });
     }

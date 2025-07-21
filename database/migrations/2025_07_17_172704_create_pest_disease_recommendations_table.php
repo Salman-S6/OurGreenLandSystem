@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('pest_disease_recommendations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pest_disease_case_id')->constrained('pest_disease_cases')->cascadeOnDelete();
-            $table->string('recommendation_name');
+            $table->json('recommendation_name');
             $table->string('recommended_dose');
-            $table->text('application_method');
-            $table->text('safety_notes')->nullable();
+            $table->json('application_method');
+            $table->json('safety_notes')->nullable();
             $table->foreignId('recommended_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });

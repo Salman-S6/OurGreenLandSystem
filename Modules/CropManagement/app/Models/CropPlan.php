@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
+use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected static function newFactory(): CropPlanFactory
     {
@@ -37,6 +38,7 @@ class CropPlan extends Model
         'area_size',
         'status',
     ];
+    public array $translatable = ['seed_type', 'status'];
 
     /**
      * The attributes that should be cast.
