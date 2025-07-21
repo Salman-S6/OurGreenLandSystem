@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\AgriculturalAlert;
 
-use App\Helpers\ApiResponse;
-use Illuminate\Contracts\Validation\Validator;
+use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreAgriculturalAlertRequest extends FormRequest
 {
+    use RequestTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -27,28 +27,5 @@ class StoreAgriculturalAlertRequest extends FormRequest
         return [
             //
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            ApiResponse::error(
-                'data validation failed',
-                422,
-                [
-                    "errors" => $validator->errors()
-                ]
-            )
-        );
-    }
-
-    protected function failedAuthorization()
-    {
-        throw new HttpResponseException(
-            ApiResponse::error(
-                'Unauthorized Action.',
-                401,
-            )
-        );
     }
 }
