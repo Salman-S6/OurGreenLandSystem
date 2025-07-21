@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/farmland",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Farmland\\": "app/",
+            "Modules\\Farmland\\Database\\Factories\\": "database/factories/",
+            "Modules\\Farmland\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Farmland\\Tests\\": "tests/"
+        }
+    }
+}

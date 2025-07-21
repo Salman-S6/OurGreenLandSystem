@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Translatable\HasTranslations;
 
 class Rehabilitation extends Model
 {
     use HasFactory;
+
+    use HasTranslations;
+
+    public $translatable = ['description', 'notes'];
 
     /**
      * The attributes that are mass assignable.

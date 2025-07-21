@@ -14,7 +14,7 @@ class UpdateRehabilitationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +25,9 @@ class UpdateRehabilitationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'event' => 'sometimes|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'notes' => 'sometimes|nullable|string',
         ];
     }
 

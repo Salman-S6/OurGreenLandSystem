@@ -14,7 +14,7 @@ class StoreRehabilitationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +25,9 @@ class StoreRehabilitationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'event' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'notes' => 'nullable|string',
         ];
     }
 

@@ -1,0 +1,11 @@
+{
+    "name": "Farmland",
+    "alias": "farmland",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Farmland\\Providers\\FarmlandServiceProvider"
+    ],
+    "files": []
+}

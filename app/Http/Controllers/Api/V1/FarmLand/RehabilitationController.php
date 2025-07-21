@@ -2,19 +2,36 @@
 
 namespace App\Http\Controllers\Api\V1\FarmLand;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Rehabilitations\StoreRehabilitationRequest;
 use App\Http\Requests\Rehabilitations\UpdateRehabilitationRequest;
 use App\Models\Rehabilitation;
+use App\Services\LandServices\RehabilitationService;
 
 class RehabilitationController extends Controller
 {
+
+    protected $rehabilitationService;
+
+    public function __construct(RehabilitationService $rehabilitationService)
+    {
+        $this->rehabilitationService = $rehabilitationService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $data = $this->rehabilitationService->getAll();
+
+        return ApiResponse::success(
+            [
+                "message" => 'Rehabilitation events retrieved successfully.',
+                200,
+                $data
+            ]
+        );
     }
 
     /**
@@ -22,7 +39,15 @@ class RehabilitationController extends Controller
      */
     public function store(StoreRehabilitationRequest $request)
     {
-        //
+        $rehabilitation = $this->rehabilitationService->store($request->validated());
+
+        return ApiResponse::success(
+            [
+                "message" => 'Rehabilitation event created successfully.',
+                201,
+                $rehabilitation
+            ]
+        );
     }
 
     /**
@@ -30,7 +55,12 @@ class RehabilitationController extends Controller
      */
     public function show(Rehabilitation $rehabilitation)
     {
-        //
+        return ApiResponse::success(
+            [
+                200,
+                $rehabilitation
+            ]
+        );
     }
 
     /**
@@ -38,7 +68,15 @@ class RehabilitationController extends Controller
      */
     public function update(UpdateRehabilitationRequest $request, Rehabilitation $rehabilitation)
     {
-        //
+        $updated = $this->rehabilitationService->update($rehabilitation, $request->validated());
+
+        return ApiResponse::success(
+            [
+                "message" =>  'Rehabilitation event updated successfully.',
+                200,
+                $updated
+            ]
+        );
     }
 
     /**
@@ -46,6 +84,13 @@ class RehabilitationController extends Controller
      */
     public function destroy(Rehabilitation $rehabilitation)
     {
-        //
+        $this->rehabilitationService->delete($rehabilitation);
+
+        return ApiResponse::success(
+            [
+                'Rehabilitation event deleted successfully.',
+                200
+            ]
+        );
     }
 }
