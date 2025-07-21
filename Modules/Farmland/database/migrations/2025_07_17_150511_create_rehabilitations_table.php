@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('rehabilitations', function (Blueprint $table) {
             $table->id();
             $table->string('event');
-            $table->text('description');
-            $table->text('notes')->nullable();
+            $table->json('description')->nullable();
+            $table->json('notes')->nullable();
+
             $table->timestamps();
         });
     }

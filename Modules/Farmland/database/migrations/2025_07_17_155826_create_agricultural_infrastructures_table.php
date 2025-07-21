@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rehabilitations', function (Blueprint $table) {
+        Schema::create('agricultural_infrastructures', function (Blueprint $table) {
             $table->id();
-            $table->string('event');
-            $table->text('description');
-            $table->text('notes')->nullable();
+            $table->enum('type', ['irrigationSystem', 'greenhouse', 'storage']);
+            $table->enum('status', ['functional', 'damaged']);
+            $table->text('description')->nullable();
+            $table->date('installation_date')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rehabilitations');
+        Schema::dropIfExists('agricultural_infrastructures');
     }
 };
