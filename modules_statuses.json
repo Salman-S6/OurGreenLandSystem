@@ -1,3 +1,6 @@
 {
-    "Farmland": true
+    "CropManagement": false,
+    "FarmLand": true,
+    "Extension": false,
+    "Resources": false
 }

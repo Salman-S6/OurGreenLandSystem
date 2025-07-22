@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Land;
-use App\Models\SoilAnalysis;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\FarmLand\Models\Land;
+use Modules\FarmLand\Models\SoilAnalysis;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SoilAnalysis>
@@ -17,7 +17,7 @@ class SoilAnalysisFactory extends Factory
      *
      * @var string
      */
-    protected $model = SoilAnalysis::class;
+    protected $model =  SoilAnalysis::class;
 
     /**
      * Define the model's default state.
@@ -27,7 +27,7 @@ class SoilAnalysisFactory extends Factory
     public function definition(): array
     {
         return [
-            'land_id' => Land::inRandomOrder('id')->first('id')->id,
+            'land_id' =>  Land::inRandomOrder('id')->first('id')->id,
             'performed_by' => User::inRandomOrder('id')->first('id')->id,
             'sample_date' => $this->faker->date(),
             'ph_level' => $this->faker->randomFloat(2, 5.5, 8.5),

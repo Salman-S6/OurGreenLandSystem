@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Crop;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +19,7 @@ class IdealAnalysisValueFactory extends Factory
     {
         return [
             "type" => $this->faker->randomElement(['soil', 'water']),
-            "crop_id" => Crop::inRandomOrder()->first('id')->id,
+            // "crop_id" => Crop::inRandomOrder()->first('id')->id,
             "ph_min" => $this->faker->randomFloat(2, 5.5, 8.5),
             "ph_max" => $this->faker->randomFloat(2, 5.5, 8.5),
             "salinity_min" => $this->faker->randomFloat(2, 0.1, 5),

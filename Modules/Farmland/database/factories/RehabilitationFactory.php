@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Land;
-use App\Models\Rehabilitation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\FarmLand\Models\Land as ModelsLand;
+use Modules\FarmLand\Models\Rehabilitation as ModelsRehabilitation;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Rehabilitation>
@@ -17,7 +17,7 @@ class RehabilitationFactory extends Factory
      *
      * @var string
      */
-    protected $model = Rehabilitation::class;
+    protected $model = ModelsRehabilitation::class;
 
     /**
      * Define the model's default state.
@@ -36,7 +36,7 @@ class RehabilitationFactory extends Factory
         ];
 
         return [
-            'land_id' => Land::inRandomOrder()->first('id')->id,
+            'land_id' => ModelsLand::inRandomOrder()->first('id')->id,
             'event' => $this->faker->randomElement($rehabilitationEvents),
             'description' => $this->faker->paragraph,
             'performed_by' => User::inRandomOrder()->first('id')->id,

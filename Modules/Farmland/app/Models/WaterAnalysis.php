@@ -1,15 +1,22 @@
 <?php
 
-namespace App\Models;
+namespace Modules\FarmLand\Models;
 
+use App\Models\User;
+use Database\Factories\WaterAnalysisFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 class WaterAnalysis extends Model
 {
-    use HasFactory;
+     use HasFactory, HasTranslations;
 
+    protected static function newFactory(): WaterAnalysisFactory
+    {
+        return WaterAnalysisFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
      *

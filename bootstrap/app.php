@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Responses\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,5 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+
+        $exceptions->render(function (NotFoundHttpException $e) {
+            return ApiResponse::error(
+                "Data Not Found!",
+                404
+            );
+        });
+        
     })->create();

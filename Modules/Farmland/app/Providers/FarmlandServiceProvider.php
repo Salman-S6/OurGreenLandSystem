@@ -1,18 +1,19 @@
 <?php
 
-namespace Modules\Farmland\Providers;
+namespace Modules\FarmLand\Providers;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class FarmlandServiceProvider extends ServiceProvider
+class FarmLandServiceProvider extends ServiceProvider
 {
     use PathNamespace;
 
-    protected string $name = 'Farmland';
+    protected string $name = 'FarmLand';
 
     protected string $nameLower = 'farmland';
 
@@ -27,6 +28,9 @@ class FarmlandServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        Factory::guessFactoryNamesUsing(function (string $modelName) {
+        return 'Modules\\Farmland\\Database\\Factories\\' . class_basename($modelName) . 'Factory';
+    });
     }
 
     /**
