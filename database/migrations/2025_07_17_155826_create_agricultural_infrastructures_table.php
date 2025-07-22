@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['irrigationSystem', 'greenhouse', 'storage']);
             $table->enum('status', ['functional', 'damaged']);
-            $table->text('description')->nullable();
+            $table->json('description')->nullable();
             $table->date('installation_date')->nullable();
             $table->timestamps();
         });

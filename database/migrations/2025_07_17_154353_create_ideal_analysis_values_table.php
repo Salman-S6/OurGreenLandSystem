@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,8 +21,8 @@ return new class extends Migration
             $table->decimal('salinity_max', 5, 2);
             $table->enum('fertility_level', ['low', 'medium', 'high'])->nullable();
             $table->string('water_quality', 50)->nullable();
-            $table->text('notes')->nullable();
-            
+            $table->json('notes')->nullable();
+
             $table->timestamps();
         });
     }
