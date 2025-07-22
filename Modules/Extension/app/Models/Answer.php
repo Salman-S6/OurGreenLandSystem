@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Extension\Database\Factories\AnswerFactory;
+use Spatie\Translatable\HasTranslations;
 
 class Answer extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +20,10 @@ class Answer extends Model
         'expert_id',
         'question_id',
         'answer_text',
+    ];
+
+    protected array $translatable = [
+        'answer_text'
     ];
 
     protected static function newFactory(): AnswerFactory

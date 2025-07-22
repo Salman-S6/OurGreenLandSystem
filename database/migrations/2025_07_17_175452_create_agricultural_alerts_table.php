@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('agricultural_alerts', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
-            $table->text('message');
+            $table->json('title');
+            $table->json('message')->nullable();
             $table->foreignId('crop_plan_id')->constrained("crop_plans")->cascadeOnDelete();
             $table->enum('alert_level', ['info', 'warning']);
             $table->enum('alert_type', ['weather', 'general', 'fertilization', 'pest', 'irrigation']);

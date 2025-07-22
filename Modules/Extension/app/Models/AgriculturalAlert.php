@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
+use Spatie\Translatable\HasTranslations;
 // use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
 
 class AgriculturalAlert extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,12 @@ class AgriculturalAlert extends Model
         'send_time',
         'created_by',
     ];
+
+    protected array $translatable = [
+        'title',
+        'message',
+    ];
+
 
     /**
      * The attributes that should be cast.

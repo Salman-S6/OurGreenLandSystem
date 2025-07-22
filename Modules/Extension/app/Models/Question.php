@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Extension\Database\Factories\QuestionFactory;
+use Spatie\Translatable\HasTranslations;
 
 class Question extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,10 @@ class Question extends Model
         'status',
     ];
 
+    protected array $translatable = [
+        'title',
+        'description',
+    ];
 
     protected static function newFactory(): QuestionFactory
     {

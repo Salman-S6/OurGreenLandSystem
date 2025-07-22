@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('expert_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
-            $table->text('answer_text');
+            $table->json('answer_text');
             $table->timestamps();
         });
     }
