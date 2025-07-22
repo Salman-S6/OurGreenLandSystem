@@ -8,6 +8,8 @@ use App\Http\Requests\Rehabilitations\StoreRehabilitationRequest;
 use App\Http\Requests\Rehabilitations\UpdateRehabilitationRequest;
 
 use Modules\FarmLand\Models\Rehabilitation;
+use Modules\FarmLand\Services\RehabilitationService;
+
 class RehabilitationController extends Controller
 {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\LandServices;
+namespace Modules\FarmLand\Services;
 
-use App\Models\Rehabilitation;
+use Modules\FarmLand\Models\Rehabilitation;
 
 class RehabilitationService
 {
