@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Interfaces\Crops;
+ namespace Modules\CropManagement\Interfaces\Crops;
 
 
 interface CropInterface

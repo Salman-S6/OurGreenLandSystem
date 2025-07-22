@@ -6,6 +6,8 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -17,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-<<<<<<< HEAD
+
 
         $exceptions->render(function (NotFoundHttpException $e) {
             return ApiResponse::error(
@@ -26,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             );
         });
         
-=======
+
           $exceptions->render(function (AuthorizationException $e, $request) {
             if ($request->expectsJson()) {
                 return response()->json([
@@ -38,5 +40,5 @@ return Application::configure(basePath: dirname(__DIR__))
             return response('Unauthorized action.', Response::HTTP_FORBIDDEN);
         });
 
->>>>>>> crop-management
+
     })->create();

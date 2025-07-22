@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\Crops;
 
-use App\Models\Crop;
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Modules\CropManagement\Models\Crop;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -15,6 +16,10 @@ class CropTest extends TestCase
 
     protected User $farmer;
 
+    /**
+     * Summary of setUp
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();

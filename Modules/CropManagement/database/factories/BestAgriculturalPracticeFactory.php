@@ -12,6 +12,8 @@ use Modules\CropManagement\Models\CropGrowthStage;
  */
 class BestAgriculturalPracticeFactory extends Factory
 {
+
+   
     /**
      * The name of the factory's corresponding model.
      *

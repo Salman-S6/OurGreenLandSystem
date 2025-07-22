@@ -4,6 +4,8 @@ namespace Modules\CropManagement\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\CropManagement\Interfaces\Crops\CropInterface;
+use Modules\CropManagement\Services\Crops\CropService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +29,7 @@ class CropManagementServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+       
     }
 
     /**
@@ -36,6 +39,7 @@ class CropManagementServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+         $this->app->bind(CropInterface::class,CropService::class);
     }
 
     /**

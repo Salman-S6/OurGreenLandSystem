@@ -74,10 +74,10 @@ class CropPlan extends Model
     /**
      * Get the land for the plan.
      */
-    public function land(): BelongsTo
-    {
-        return $this->belongsTo(Land::class);
-    }
+    // public function land(): BelongsTo
+    // {
+    //     return $this->belongsTo(Land::class);
+    // }
 
     /**
      * Get the production estimations for the crop plan.
@@ -98,10 +98,10 @@ class CropPlan extends Model
     /**
      * Get the agricultural alerts for the crop plan.
      */
-    public function agriculturalAlerts(): HasMany
-    {
-        return $this->hasMany(AgriculturalAlert::class);
-    }
+    // public function agriculturalAlerts(): HasMany
+    // {
+    //     return $this->hasMany(AgriculturalAlert::class);
+    // }
 
     public function cropGrowthStages(): HasMany
     {

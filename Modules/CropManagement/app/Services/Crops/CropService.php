@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Services\Crops;
+namespace Modules\CropManagement\Services\Crops;
 
-use App\Interfaces\Crops\CropInterface;
-use App\Models\Crop;
+
+
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Modules\CropManagement\Interfaces\Crops\CropInterface;
+use Modules\CropManagement\Models\Crop;
 
 class CropService implements CropInterface
 {
