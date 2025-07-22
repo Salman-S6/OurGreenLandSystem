@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('agricultural_guidances', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
-            $table->text('summary');
-            $table->string('category', 50);
-            $table->enum('language', ['arabic', 'english']);
+            $table->json('title')->nullable();
+            $table->json('summary')->nullable();
+            $table->json('category')->nullable();
             $table->foreignId('added_by_id')->constrained('users')->cascadeOnDelete();
             $table->string('tags')->nullable();
             $table->timestamps();

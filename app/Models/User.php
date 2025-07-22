@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Extension\Models\AgriculturalAlert;
+use Modules\Extension\Models\AgriculturalGuidance;
+use Modules\Extension\Models\Answer;
+use Modules\Extension\Models\Question;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
