@@ -1,17 +1,16 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\FarmLand\Database\Factories;
 
-use App\Models\Land;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalInfrastructure>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\FarmLand\Models\AgriculturalInfrastructure>
  */
 class AgriculturalInfrastructureFactory extends Factory
 {
-    
+
     /**
      * The name of the factory's corresponding model.
      *

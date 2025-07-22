@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\WaterAnalysis;
+namespace Modules\FarmLand\Http\Requests\WaterAnalysis;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

@@ -3,7 +3,7 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
-use Database\Factories\LandFactory;
+use Modules\FarmLand\Database\Factories\LandFactory;
 use Modules\FarmLand\Models\Soil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +16,10 @@ use Spatie\Translatable\HasTranslations;
 class Land extends Model
 {
     /** @use HasFactory<\Database\Factories\LandFactory> */
-    use HasFactory,HasTranslations;
+    use HasFactory, HasTranslations;
 
 
-protected static function newFactory(): LandFactory
+    protected static function newFactory(): LandFactory
     {
         return LandFactory::new();
     }

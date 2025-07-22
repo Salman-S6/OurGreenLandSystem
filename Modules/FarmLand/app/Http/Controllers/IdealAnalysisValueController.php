@@ -4,8 +4,8 @@ namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\IdealAnalysisValue\StoreIdealAnalysisValueRequest;
-use App\Http\Requests\IdealAnalysisValue\UpdateIdealAnalysisValueRequest;
+use Modules\FarmLand\Http\Requests\IdealAnalysisValue\StoreIdealAnalysisValueRequest;
+use Modules\FarmLand\Http\Requests\IdealAnalysisValue\UpdateIdealAnalysisValueRequest;
 use Modules\FarmLand\Models\IdealAnalysisValue;
 
 class IdealAnalysisValueController extends Controller

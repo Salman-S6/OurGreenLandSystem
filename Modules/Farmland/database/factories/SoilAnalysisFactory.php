@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\FarmLand\Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -8,7 +8,7 @@ use Modules\FarmLand\Models\Land;
 use Modules\FarmLand\Models\SoilAnalysis;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SoilAnalysis>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\FarmLand\Models\SoilAnalysis>
  */
 class SoilAnalysisFactory extends Factory
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies;
+namespace Modules\FarmLand\Http\Policies;
 
-use App\Models\IdealAnalysisValue;
+use Modules\FarmLand\Models\IdealAnalysisValue;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 

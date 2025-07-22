@@ -1,19 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\FarmLand\Database\Factories;
 
-use App\Models\Soil;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\FarmLand\Models\Land;
-use Modules\FarmLand\Models\Soil as ModelsSoil;
+use Modules\FarmLand\Models\Soil;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Land>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\FarmLand\Models\Land>
  */
 class LandFactory extends Factory
 {
-       protected $model = Land::class;
+    protected $model = Land::class;
     /**
      * Define the model's default state.
      *
@@ -28,7 +27,7 @@ class LandFactory extends Factory
             'user_id' => User::inRandomOrder()->first('id')->id,
             'farmer_id' => User::inRandomOrder()->first('id')->id,
             'area' => $this->faker->randomFloat(2, 1, 500),
-            'soil_type_id' => ModelsSoil::inRandomOrder()->first('id')->id,
+            'soil_type_id' => Soil::inRandomOrder()->first('id')->id,
             'damage_level' => $this->faker->randomElement(['low', 'medium', 'high']),
             'gps_coordinates' => [
                 'latitude' => $centerLat,

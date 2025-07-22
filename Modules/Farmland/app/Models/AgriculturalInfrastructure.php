@@ -2,7 +2,7 @@
 
 namespace Modules\FarmLand\Models;
 
-use Database\Factories\AgriculturalInfrastructureFactory;
+use Modules\FarmLand\Database\Factories\AgriculturalInfrastructureFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +15,7 @@ class AgriculturalInfrastructure extends Model
 
     protected static function newFactory(): AgriculturalInfrastructureFactory
     {
-     return AgriculturalInfrastructureFactory::new();
+        return AgriculturalInfrastructureFactory::new();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Modules\FarmLand\Models;
 
-use Database\Factories\IdealAnalysisValueFactory;
+use Modules\FarmLand\Database\Factories\IdealAnalysisValueFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +15,7 @@ class IdealAnalysisValue extends Model
 
     protected static function newFactory(): IdealAnalysisValueFactory
     {
-     return IdealAnalysisValueFactory::new();
+        return IdealAnalysisValueFactory::new();
     }
 
     /**

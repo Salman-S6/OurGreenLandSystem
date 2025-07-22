@@ -2,7 +2,6 @@
 
 namespace Modules\FarmLand\Providers;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Nwidart\Modules\Traits\PathNamespace;
@@ -28,9 +27,6 @@ class FarmLandServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
-        Factory::guessFactoryNamesUsing(function (string $modelName) {
-        return 'Modules\\Farmland\\Database\\Factories\\' . class_basename($modelName) . 'Factory';
-    });
     }
 
     /**

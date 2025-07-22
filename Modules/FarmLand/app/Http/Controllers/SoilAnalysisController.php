@@ -3,8 +3,8 @@
 namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest;
-use App\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest;
+use Modules\FarmLand\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest;
+use Modules\FarmLand\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest;
 use Modules\FarmLand\Models\SoilAnalysis;
 
 class SoilAnalysisController extends Controller
