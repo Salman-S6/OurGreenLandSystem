@@ -1,16 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace Modules\FarmLand\Models;
 
+use App\Models\User;
+use Database\Factories\RehabilitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Translatable\HasTranslations;
 
 class Rehabilitation extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
+    protected static function newFactory(): RehabilitationFactory
+    {
+        return RehabilitationFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
      *

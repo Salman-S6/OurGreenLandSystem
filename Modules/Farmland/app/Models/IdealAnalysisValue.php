@@ -1,15 +1,22 @@
 <?php
 
-namespace App\Models;
+namespace Modules\FarmLand\Models;
 
+use Database\Factories\IdealAnalysisValueFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 class IdealAnalysisValue extends Model
 {
     /** @use HasFactory<\Database\Factories\IdealAnalysisValueFactory> */
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    protected static function newFactory(): IdealAnalysisValueFactory
+    {
+     return IdealAnalysisValueFactory::new();
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -43,9 +50,9 @@ class IdealAnalysisValue extends Model
     /**
      * Get the crop that this ideal analysis value belongs to.
      */
-    public function crop(): BelongsTo
-    {
-        return $this->belongsTo(Crop::class, 'crop_id');
-    }
+    // public function crop(): BelongsTo
+    // {
+    //     return $this->belongsTo(Crop::class, 'crop_id');
+    // }
 
 }

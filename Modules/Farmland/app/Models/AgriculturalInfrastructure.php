@@ -1,15 +1,22 @@
 <?php
 
-namespace App\Models;
+namespace Modules\FarmLand\Models;
 
+use Database\Factories\AgriculturalInfrastructureFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Translatable\HasTranslations;
 
 class AgriculturalInfrastructure extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    protected static function newFactory(): AgriculturalInfrastructureFactory
+    {
+     return AgriculturalInfrastructureFactory::new();
+    }
 
     /**
      * The attributes that are mass assignable.

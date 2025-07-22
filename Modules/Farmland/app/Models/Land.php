@@ -1,17 +1,28 @@
 <?php
 
-namespace App\Models;
+namespace Modules\FarmLand\Models;
 
+use App\Models\User;
+use Database\Factories\LandFactory;
+use Modules\FarmLand\Models\Soil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
 
+// use Modules\FarmLand\Database\Factories\PostFactory;
 class Land extends Model
 {
     /** @use HasFactory<\Database\Factories\LandFactory> */
-    use HasFactory;
+    use HasFactory,HasTranslations;
+
+
+protected static function newFactory(): LandFactory
+    {
+        return LandFactory::new();
+    }
 
     protected $fillable = [
         "user_id",
@@ -56,7 +67,7 @@ class Land extends Model
 
     public function rehabilitations(): BelongsToMany
     {
-        return $this->belongsToMany(Rehabilitation::class, 'rehablilitation_land', 'land_id', 'rehabilitation_id');
+        return $this->belongsToMany(Rehabilitation::class, 'rehabilitation_land', 'land_id', 'rehabilitation_id');
     }
 
     // public function cropPlans(): HasMany

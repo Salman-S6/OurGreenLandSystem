@@ -2,15 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\AgriculturalInfrastructure;
 use App\Models\Land;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalInfrastructure>
  */
 class AgriculturalInfrastructureFactory extends Factory
 {
+    
     /**
      * The name of the factory's corresponding model.
      *
