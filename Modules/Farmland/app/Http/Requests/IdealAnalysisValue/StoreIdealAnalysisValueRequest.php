@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\IdealAnalysisValue;
+namespace Modules\FarmLand\Http\Requests\IdealAnalysisValue;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

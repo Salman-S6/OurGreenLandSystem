@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\SoilAnalysis;
+namespace Modules\FarmLand\Http\Requests\SoilAnalysis;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

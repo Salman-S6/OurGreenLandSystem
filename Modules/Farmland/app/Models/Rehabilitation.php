@@ -3,7 +3,7 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
-use Database\Factories\RehabilitationFactory;
+use Modules\FarmLand\Database\Factories\RehabilitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

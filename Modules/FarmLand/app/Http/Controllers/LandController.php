@@ -3,8 +3,8 @@
 namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Land\StoreLandRequest;
-use App\Http\Requests\Land\UpdateLandRequest;
+use Modules\FarmLand\Http\Requests\Land\StoreLandRequest;
+use Modules\FarmLand\Http\Requests\Land\UpdateLandRequest;
 use Modules\FarmLand\Models\Land;
 
 class LandController extends Controller

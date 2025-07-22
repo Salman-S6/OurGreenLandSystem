@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies;
+namespace Modules\FarmLand\Http\Policies;
 
-use App\Models\AgriculturalInfrastructure;
+use Modules\FarmLand\Models\AgriculturalInfrastructure;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 

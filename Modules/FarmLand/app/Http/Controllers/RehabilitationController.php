@@ -3,8 +3,8 @@
 namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Rehabilitations\StoreRehabilitationRequest;
-use App\Http\Requests\Rehabilitations\UpdateRehabilitationRequest;
+use Modules\FarmLand\Http\Requests\Rehabilitations\StoreRehabilitationRequest;
+use Modules\FarmLand\Http\Requests\Rehabilitations\UpdateRehabilitationRequest;
 use Modules\FarmLand\Models\Rehabilitation;
 
 class RehabilitationController extends Controller

@@ -4,8 +4,8 @@ namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\AgriculturalInfrastructure\StoreAgriculturalInfrastructureRequest;
-use App\Http\Requests\AgriculturalInfrastructure\UpdateAgriculturalInfrastructureRequest;
+use Modules\FarmLand\Http\Requests\AgriculturalInfrastructure\StoreAgriculturalInfrastructureRequest;
+use Modules\FarmLand\Http\Requests\AgriculturalInfrastructure\UpdateAgriculturalInfrastructureRequest;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
 class AgriculturalInfrastructureController extends Controller

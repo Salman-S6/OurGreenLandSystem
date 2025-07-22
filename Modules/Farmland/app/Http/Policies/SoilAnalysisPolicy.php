@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies;
+namespace Modules\FarmLand\Http\Policies;
 
-use App\Models\SoilAnalysis;
+use Modules\FarmLand\Models\SoilAnalysis;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 

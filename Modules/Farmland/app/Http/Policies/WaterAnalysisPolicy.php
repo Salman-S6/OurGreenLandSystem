@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Policies;
+namespace Modules\FarmLand\Http\Policies;
 
 use App\Models\User;
-use App\Models\WaterAnalysis;
+use Modules\FarmLand\Models\WaterAnalysis;
 use Illuminate\Auth\Access\Response;
 
 class WaterAnalysisPolicy

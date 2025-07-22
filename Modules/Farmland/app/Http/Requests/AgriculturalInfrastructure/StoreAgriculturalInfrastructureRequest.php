@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\AgriculturalInfrastructure;
+namespace Modules\FarmLand\Http\Requests\AgriculturalInfrastructure;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

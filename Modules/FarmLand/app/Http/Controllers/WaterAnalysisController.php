@@ -3,8 +3,8 @@
 namespace Modules\FarmLand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest;
-use App\Http\Requests\WaterAnalysis\UpdateWaterAnalysisRequest;
+use Modules\FarmLand\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest;
+use Modules\FarmLand\Http\Requests\WaterAnalysis\UpdateWaterAnalysisRequest;
 use Modules\FarmLand\Models\WaterAnalysis;
 
 class WaterAnalysisController extends Controller
