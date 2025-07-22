@@ -186,5 +186,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(WaterAnalysis::class, 'performed_by');
     }
+    /**
+     * Get all of the Crops for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function crops(): HasMany
+    {
+        return $this->hasMany(Crop::class, 'farmer_id', 'id');
+    }
 
 }

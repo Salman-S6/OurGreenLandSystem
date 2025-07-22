@@ -6,16 +6,28 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Crop\StoreCropRequest;
 use App\Http\Requests\Crop\UpdateCropRequest;
+use App\Interfaces\Crops\CropInterface;
 use App\Models\Crop;
 
 class CropController extends Controller
 {
+    protected $crop;
+
+
+    /**
+     * Summary of __construct
+     * @param \App\Interfaces\Crops\CropInterface $crop
+     */
+    public  function __construct(CropInterface $crop){
+       $this->crop=$crop;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $data=$this->crop->getAll();
+        return response()->json($data,200);
     }
 
     /**
@@ -23,7 +35,8 @@ class CropController extends Controller
      */
     public function store(StoreCropRequest $request)
     {
-        //
+        $data=$this->crop->store($request);
+        return response()->json($data,201);
     }
 
     /**
@@ -31,7 +44,7 @@ class CropController extends Controller
      */
     public function show(Crop $crop)
     {
-        //
+        return response()->json($this->crop->getCrop($crop),200);
     }
 
     /**
@@ -39,7 +52,8 @@ class CropController extends Controller
      */
     public function update(UpdateCropRequest $request, Crop $crop)
     {
-        //
+        $data=$this->crop->update($request,$crop);
+        return response()->json($data,200);
     }
 
     /**
@@ -47,6 +61,6 @@ class CropController extends Controller
      */
     public function destroy(Crop $crop)
     {
-        //
+        return response()->json($this->crop->destroy($crop));
     }
 }

@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('crop_plan_id')->constrained("crop_plans")->cascadeOnDelete();
             $table->decimal('expected_quantity', 10, 2);
-            $table->text('estimation_method');
+            $table->json('estimation_method');
             $table->decimal('actual_quantity', 10, 2)->nullable();
-            $table->enum('crop_quality', ['excellent', 'average', 'poor'])->nullable();
+            $table->json('crop_quality')->nullable();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamps();
         });
     }
