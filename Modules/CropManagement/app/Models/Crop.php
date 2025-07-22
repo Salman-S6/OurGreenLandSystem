@@ -31,6 +31,8 @@ class Crop extends Model
         "description",
     ];
 
+     public $translatable = ['name', 'description'];
+
     protected $guarded = ['farmer_id'];
 
     public function cropPlans(): HasMany
@@ -50,26 +52,6 @@ class Crop extends Model
     public function farmer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'farmer_id', 'id');
-    }
-
-    /**
-     * Summary of getNameAttribute
-     * @param mixed $value
-     * @return string
-     */
-    public function getNameAttribute($value)
-    {
-        return ucfirst($value);
-    }
-
-    /**
-     * Summary of setNameAttribute
-     * @param mixed $value
-     * @return void
-     */
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = strtolower($value);
     }
     /**
      * Summary of getCreatedAtAttribute

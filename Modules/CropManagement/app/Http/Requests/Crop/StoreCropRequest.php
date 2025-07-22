@@ -5,6 +5,7 @@ namespace Modules\CropManagement\Http\Requests\Crop;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Modules\CropManagement\Models\Crop;
 
 class StoreCropRequest extends FormRequest
 {
@@ -26,10 +27,37 @@ class StoreCropRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'unique:crops,name', 'string', 'max:255', 'min:5', 'regex:/^[\p{L}\s]+$/u'],
-            'description' => ['required', 'string', 'max:255', 'min:30'],
+            'name' => ['required', 'array'],
+            'name.en' => ['required', 'string', 'min:3', 'max:255'],
+            'name.ar' => ['required', 'string', 'min:3', 'max:255'],
+
+            'description' => ['required', 'array'],
+            'description.en' => ['required', 'string', 'min:10', 'max:255'],
+            'description.ar' => ['required', 'string', 'min:10', 'max:255'],
         ];
     }
+
+    /**
+     * Summary of withValidator
+     * @param mixed $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $enName = $this->input('name.en');
+            $arName = $this->input('name.ar');
+
+            if ($enName && Crop::where('name->en', $enName)->exists()) {
+                $validator->errors()->add('name.en', 'The English crop name has already been taken.');
+            }
+
+            if ($arName && Crop::where('name->ar', $arName)->exists()) {
+                $validator->errors()->add('name.ar', 'The Arabic crop name has already been taken.');
+            }
+        });
+    }
+
 
 
 
@@ -40,17 +68,31 @@ class StoreCropRequest extends FormRequest
     {
         return [
 
-            'name.unique' => ' The crop name must be unique.',
-            'name.required' => 'The crop name is required.',
-            'name.string' => 'The crop name must be a string.',
-            'name.min' => 'The crop name must be at least :min characters.',
-            'name.max' => 'The crop name must not exceed :max characters.',
-            'name.regex' => 'The crop name may only contain letters and spaces. No numbers or symbols are allowed.',
+            'name.required' => 'The name field is required.',
+            'name.array' => 'The name must be a translatable array.',
 
-            'description.required' => 'The crop description is required.',
-            'description.string' => 'The crop description must be a string.',
-            'description.min' => 'The crop description must be at least :min characters.',
-            'description.max' => 'The crop description must not exceed :max characters.',
+            'name.en.required' => 'The English name is required.',
+            'name.en.string' => 'The English name must be a string.',
+            'name.en.min' => 'The English name must be at least :min characters.',
+            'name.en.max' => 'The English name may not be greater than :max characters.',
+
+            'name.ar.required' => 'The Arabic name is required.',
+            'name.ar.string' => 'The Arabic name must be a string.',
+            'name.ar.min' => 'The Arabic name must be at least :min characters.',
+            'name.ar.max' => 'The Arabic name may not be greater than :max characters.',
+
+            'description.required' => 'The description field is required.',
+            'description.array' => 'The description must be a translatable array.',
+
+            'description.en.required' => 'The English description is required.',
+            'description.en.string' => 'The English description must be a string.',
+            'description.en.min' => 'The English description must be at least :min characters.',
+            'description.en.max' => 'The English description may not be greater than :max characters.',
+
+            'description.ar.required' => 'The Arabic description is required.',
+            'description.ar.string' => 'The Arabic description must be a string.',
+            'description.ar.min' => 'The Arabic description must be at least :min characters.',
+            'description.ar.max' => 'The Arabic description may not be greater than :max characters.',
         ];
     }
 
@@ -60,8 +102,10 @@ class StoreCropRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'crop name',
-            'description' => 'crop description',
+            'name.en' => 'English crop name',
+            'name.ar' => 'Arabic crop name',
+            'description.en' => 'English crop description',
+            'description.ar' => 'Arabic crop description',
         ];
     }
 }

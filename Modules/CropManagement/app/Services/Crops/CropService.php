@@ -59,25 +59,24 @@ class CropService implements CropInterface
     public function store($request)
     {
         try {
-            $validate = $request->validated();
+            $validated = $request->validated();
             $this->authorize('create', Crop::class);
             $crop = new Crop();
-            $crop->name = $validate['name'];
-            $crop->description = $validate['description'];
-            $crop->farmer_id = Auth::user()->id;
+            $crop->setTranslations('name', $validated['name']);
+            $crop->setTranslations('description', $validated['description'] ?? []);
+            $crop->farmer_id = Auth::id();
             $crop->save();
             Cache::forget('allCrops');
-            $message = "Successfully add new Crop";
-            $data = [
-                'message' => $message,
+            return [
+                'message' => 'Successfully added new crop',
                 'crop' => $crop
             ];
-            return $data;
         } catch (Exception $e) {
             Log::error('Failed to add crop: ' . $e->getMessage());
             throw $e;
         }
     }
+
 
     /**
      * Summary of update
@@ -88,21 +87,28 @@ class CropService implements CropInterface
     public function update($request, $crop)
     {
         try {
-            $validate = $request->validated();
+            $validated = $request->validated();
             $this->authorize('update', $crop);
-            $crop->update($validate);
+            if (isset($validated['name'])) {
+                $crop->setTranslations('name', $validated['name']);
+            }
+            if (isset($validated['description'])) {
+                $crop->setTranslations('description', $validated['description']);
+            }
+            $crop->save();
+
             Cache::forget('allCrops');
-            $message = "successfully Update Crop";
-            $data = [
-                'message' => $message,
+
+            return [
+                'message' => 'Successfully updated crop',
                 'data' => $crop
             ];
-            return $data;
         } catch (Exception $e) {
             Log::error('Failed to update crop: ' . $e->getMessage());
             throw $e;
         }
     }
+
 
     /**
      * Summary of destroy

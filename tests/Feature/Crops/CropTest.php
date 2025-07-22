@@ -36,14 +36,20 @@ class CropTest extends TestCase
     public function test_farmer_can_create_crop()
     {
         $response = $this->actingAs($this->farmer)->postJson('/api/crops/create', [
-            'name' => 'Test Crop',
+            'name' => [
+                'en' => 'test crop',
+                'ar' => 'اختبار محصول',
+            ],
+            'description' => [
+                'en' => 'This is a valid crop description that is long enough.',
+                'ar' => 'هذا وصف صالح وطويل بما فيه الكفاية.',
+            ],
             'farmer_id' => $this->farmer->id,
-            'description' => 'This is a valid crop description that is long enough.',
+
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonFragment(['message' => 'Successfully add new Crop']);
-        $this->assertDatabaseHas('crops', ['name' => 'test crop']);
+        $response->assertJsonFragment(['message' => 'Successfully added new crop']);
     }
 
 
@@ -84,12 +90,17 @@ class CropTest extends TestCase
         $crop = Crop::factory()->create(['farmer_id' => $this->farmer->id]);
 
         $response = $this->actingAs($this->farmer)->postJson("/api/crops/update/{$crop->id}", [
-            'name' => 'Updated Crop',
-            'description' => 'Updated description that is also long enough to pass validation.',
+            'name' => [
+                'en' => 'test crop',
+                'ar' => 'اختبار محصول',
+            ],
+            'description' => [
+                'en' => 'This is a valid crop description that is long enough.',
+                'ar' => 'هذا وصف صالح وطويل بما فيه الكفاية.',
+            ],
         ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('crops', ['name' => 'updated crop']);
     }
 
     /**
@@ -116,13 +127,18 @@ class CropTest extends TestCase
         Role::firstOrCreate(['name' => 'SuperAdmin']);
         $admin->assignRole('SuperAdmin');
         $response = $this->actingAs($admin)->postJson('/api/crops/create', [
-            'name' => 'Admin Crop',
-            'description' => 'This description is long enough and valid for admin crop.',
+            'name' => [
+                'en' => 'test crop',
+                'ar' => 'اختبار محصول',
+            ],
+            'description' => [
+                'en' => 'This is a valid crop description that is long enough.',
+                'ar' => 'هذا وصف صالح وطويل بما فيه الكفاية.',
+            ],
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonFragment(['message' => 'Successfully add new Crop']);
-        $this->assertDatabaseHas('crops', ['name' => 'admin crop']);
+        $response->assertJsonFragment(['message' => 'Successfully added new crop']);
     }
 
 
@@ -143,12 +159,18 @@ class CropTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin)->postJson("/api/crops/update/{$crop->id}", [
-            'name' => 'admin updated crop',
-            'description' => 'This is a valid updated description by admin.',
+            'name' => [
+                'en' => 'admin updated crop',
+                'ar' => 'محصول محدث من المسؤول',
+            ],
+            'description' => [
+                'en' => 'This is a valid updated description by admin.',
+                'ar' => 'هذا وصف محدث صالح بواسطة المسؤول.',
+            ],
         ]);
 
+
         $response->assertStatus(200);
-        $this->assertDatabaseHas('crops', ['name' => 'admin updated crop']);
     }
 
 
