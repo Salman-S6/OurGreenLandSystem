@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Extension\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Extension\Database\Factories\AnswerFactory;
 
 class Answer extends Model
 {
@@ -12,14 +14,17 @@ class Answer extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'expert_id',
         'question_id',
         'answer_text',
     ];
+
+    protected static function newFactory(): AnswerFactory
+    {
+        return AnswerFactory::new();
+    }
 
     /**
      * Get the expert who provided the answer.

@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Extension\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
+// use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
 
 class AgriculturalAlert extends Model
 {
@@ -12,8 +15,6 @@ class AgriculturalAlert extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'title',
@@ -34,13 +35,18 @@ class AgriculturalAlert extends Model
         'send_time' => 'datetime',
     ];
 
+    protected static function newFactory(): AgriculturalAlertFactory
+    {
+        return AgriculturalAlertFactory::new();
+    }
+
     /**
      * Get the crop plan associated with the alert.
      */
-    public function cropPlan(): BelongsTo
-    {
-        return $this->belongsTo(CropPlan::class);
-    }
+    // public function cropPlan(): BelongsTo
+    // {
+    //     return $this->belongsTo(CropPlan::class);
+    // }
 
     /**
      * Get the user who created the alert.
@@ -49,4 +55,5 @@ class AgriculturalAlert extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
 }

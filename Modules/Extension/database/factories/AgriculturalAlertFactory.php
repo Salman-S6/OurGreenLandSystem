@@ -1,28 +1,19 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Extension\Database\Factories;
 
-use App\Models\AgriculturalAlert;
-use App\Models\CropPlan;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\AgriculturalAlert;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalAlert>
- */
 class AgriculturalAlertFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
-     *
-     * @var string
      */
     protected $model = AgriculturalAlert::class;
 
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
      */
     public function definition(): array
     {
@@ -37,3 +28,4 @@ class AgriculturalAlertFactory extends Factory
         ];
     }
 }
+

@@ -1,27 +1,19 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Extension\Database\Factories;
 
-use App\Models\Question;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\Question;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Question>
- */
 class QuestionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
-     *
-     * @var string
      */
     protected $model = Question::class;
 
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
      */
     public function definition(): array
     {

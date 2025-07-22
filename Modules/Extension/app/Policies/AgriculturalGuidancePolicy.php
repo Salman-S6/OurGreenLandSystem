@@ -1,13 +1,20 @@
 <?php
 
-namespace App\Policies;
+namespace Modules\Extension\Policies;
 
-use App\Models\AgriculturalAlert;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Auth\Access\HandlesAuthorization;
+use Modules\Extension\Models\AgriculturalGuidance;
 
-class AgriculturalAlertPolicy
+class AgriculturalGuidancePolicy
 {
+    use HandlesAuthorization;
+
+    /**
+     * Create a new policy instance.
+     */
+    public function __construct() {}
+
     /**
      * Determine whether the user can view any models.
      */
@@ -19,7 +26,7 @@ class AgriculturalAlertPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, AgriculturalAlert $agriculturalAlert): bool
+    public function view(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
         return false;
     }
@@ -35,7 +42,7 @@ class AgriculturalAlertPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, AgriculturalAlert $agriculturalAlert): bool
+    public function update(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
         return false;
     }
@@ -43,7 +50,7 @@ class AgriculturalAlertPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, AgriculturalAlert $agriculturalAlert): bool
+    public function delete(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
         return false;
     }

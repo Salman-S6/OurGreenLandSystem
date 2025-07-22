@@ -1,28 +1,19 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Extension\Database\Factories;
 
-use App\Models\Answer;
-use App\Models\Question;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\Answer;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Answer>
- */
 class AnswerFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
-     *
-     * @var string
      */
     protected $model = Answer::class;
 
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
      */
     public function definition(): array
     {
@@ -33,3 +24,4 @@ class AnswerFactory extends Factory
         ];
     }
 }
+

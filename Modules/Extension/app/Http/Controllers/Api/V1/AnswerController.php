@@ -1,12 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Extension;
+namespace Modules\Extension\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\Answer\StoreAnswerRequest;
-use App\Http\Requests\Answer\UpdateAnswerRequest;
-use App\Models\Answer;
+use Illuminate\Http\Request;
 
 class AnswerController extends Controller
 {
@@ -16,37 +13,47 @@ class AnswerController extends Controller
     public function index()
     {
         //
+
+        return response()->json([]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAnswerRequest $request)
+    public function store(Request $request)
     {
         //
+
+        return response()->json([]);
     }
 
     /**
-     * Display the specified resource.
+     * Show the specified resource.
      */
-    public function show(Answer $answer)
+    public function show($id)
     {
         //
+
+        return response()->json([]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAnswerRequest $request, Answer $answer)
+    public function update(Request $request, $id)
     {
         //
+
+        return response()->json([]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Answer $answer)
+    public function destroy($id)
     {
         //
+
+        return response()->json([]);
     }
 }

@@ -1,27 +1,19 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Extension\Database\Factories;
 
-use App\Models\AgriculturalGuidance;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\AgriculturalGuidance;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalGuidance>
- */
 class AgriculturalGuidanceFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
-     *
-     * @var string
      */
     protected $model = AgriculturalGuidance::class;
 
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
      */
     public function definition(): array
     {
@@ -35,3 +27,4 @@ class AgriculturalGuidanceFactory extends Factory
         ];
     }
 }
+

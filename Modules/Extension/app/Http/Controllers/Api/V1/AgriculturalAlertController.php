@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Extension;
+namespace Modules\Extension\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\AgriculturalAlert\StoreAgriculturalAlertRequest;
-use App\Http\Requests\AgriculturalAlert\UpdateAgriculturalAlertRequest;
-use App\Models\AgriculturalAlert;
+use Illuminate\Http\Request;
+use Modules\Extension\Http\Requests\AgriculturalAlert\StoreAgriculturalAlertRequest;
+use Modules\Extension\Http\Requests\AgriculturalAlert\UpdateAgriculturalAlertRequest;
+use Modules\Extension\Models\AgriculturalAlert;
 
 class AgriculturalAlertController extends Controller
 {
@@ -49,4 +49,5 @@ class AgriculturalAlertController extends Controller
     {
         //
     }
+
 }

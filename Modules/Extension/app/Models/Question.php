@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Extension\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Extension\Database\Factories\QuestionFactory;
 
 class Question extends Model
 {
@@ -13,8 +15,6 @@ class Question extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'farmer_id',
@@ -22,6 +22,12 @@ class Question extends Model
         'description',
         'status',
     ];
+
+
+    protected static function newFactory(): QuestionFactory
+    {
+        return QuestionFactory::new();
+    }
 
     /**
      * Get the farmer who asked the question.
