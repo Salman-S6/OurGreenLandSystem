@@ -36,9 +36,8 @@ class Land extends Model
     ];
 
     protected $casts = [
-        'gps_coordinates' => 'array',
-        'boundary_coordinates' => 'array',
-        'rehabilitation_date' => 'date',
+        'gps_coordinates' => 'json',
+        'boundary_coordinates' => 'json',
     ];
 
     public function user(): BelongsTo

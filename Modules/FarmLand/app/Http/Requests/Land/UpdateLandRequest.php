@@ -24,7 +24,16 @@ class UpdateLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'sometimes|exists:users,id',
+            'farmer_id' => 'sometimes|exists:users,id',
+            'area' => 'nullable|numeric|min:0',
+            'soil_type_id' => 'sometimes|exists:soils,id',
+            'damage_level' => 'nullable|in:low,medium,high',
+            'gps_coordinates' => 'nullable|array',
+            'gps_coordinates.*' => 'numeric',
+            'boundary_coordinates' => 'nullable|array',
+            'boundary_coordinates.*' => 'array', // [[lat,lng],[lat,lng]]
+            'rehabilitation_date' => 'sometimes|date|before_or_equal:today',
         ];
     }
 
