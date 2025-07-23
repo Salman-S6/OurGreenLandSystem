@@ -2,18 +2,30 @@
 
 namespace Modules\FarmLand\Http\Policies;
 
-use Modules\FarmLand\Models\SoilAnalysis;
 use App\Models\User;
+use Modules\FarmLand\Models\SoilAnalysis;
 use Illuminate\Auth\Access\Response;
 
 class SoilAnalysisPolicy
 {
     /**
+     * Summary of before
+     * @param \App\Models\User $user
+     *
+     */
+    public function before(User $user)
+    {
+        if ($user->hasRole('SuperAdmin')) {
+            return true;
+        }
+    }
+
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer', 'DataAnalyst']);
     }
 
     /**
@@ -21,6 +33,18 @@ class SoilAnalysisPolicy
      */
     public function view(User $user, SoilAnalysis $soilAnalysis): bool
     {
+        if ($user->hasAnyRole(['ProgramManager', 'DataAnalyst'])) {
+            return true;
+        }
+
+        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $soilAnalysis->performed_by === $user->id) {
+            return true;
+        }
+
+        if ($user->hasRole('Farmer') && $soilAnalysis->land->farmer_id === $user->id) {
+            return true;
+        }
+
         return false;
     }
 
@@ -29,7 +53,7 @@ class SoilAnalysisPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']);
     }
 
     /**
@@ -37,6 +61,10 @@ class SoilAnalysisPolicy
      */
     public function update(User $user, SoilAnalysis $soilAnalysis): bool
     {
+        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $soilAnalysis->performed_by === $user->id) {
+            return true;
+        }
+
         return false;
     }
 
@@ -45,7 +73,6 @@ class SoilAnalysisPolicy
      */
     public function delete(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer') && $soilAnalysis->performed_by === $user->id;
     }
-
 }

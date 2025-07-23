@@ -13,7 +13,7 @@ class StoreWaterAnalysisRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +24,21 @@ class StoreWaterAnalysisRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'land_id' => 'required|exists:lands,id',
+            'performed_by' => 'required|exists:users,id',
+            'sample_date' => 'required|date',
+            'ph_level' => 'required|numeric|between:0,14',
+            'salinity_level' => 'required|numeric',
+            'water_quality' => 'nullable|string|max:255',
+            'suitability' => 'required|in:suitable,limited,unsuitable',
+
+            'contaminants' => 'nullable|array',
+            'contaminants.ar' => 'nullable|string|min:10|max:255',
+            'contaminants.en' => 'nullable|string|min:10|max:255',
+
+            'recommendations' => 'nullable|array',
+            'recommendations.ar' => 'nullable|string|max:255',
+            'recommendations.en' => 'nullable|string|max:255',
         ];
     }
-
 }

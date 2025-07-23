@@ -13,7 +13,7 @@ class UpdateSoilAnalysisRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +24,24 @@ class UpdateSoilAnalysisRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'land_id' => 'sometimes|exists:lands,id',
+            'performed_by' => 'sometimes|exists:users,id',
+            'sample_date' => 'sometimes|date',
+            'ph_level' => 'sometimes|numeric|between:0,14',
+            'salinity_level' => 'sometimes|numeric',
+            'fertility_level' => 'sometimes|in:high,medium,low',
+
+            'nutrient_content' => 'nullable|array',
+            'nutrient_content.ar' => 'nullable|string',
+            'nutrient_content.en' => 'nullable|string',
+
+            'contaminants' => 'nullable|array',
+            'contaminants.ar' => 'nullable|string',
+            'contaminants.en' => 'nullable|string',
+
+            'recommendations' => 'nullable|array',
+            'recommendations.ar' => 'nullable|string',
+            'recommendations.en' => 'nullable|string',
         ];
     }
-
 }

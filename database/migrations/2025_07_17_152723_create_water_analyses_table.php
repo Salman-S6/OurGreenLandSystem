@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('water_analyses', function (Blueprint $table) {
             $table->id();
-
             $table->foreignId('land_id')->constrained('lands')->cascadeOnDelete();
             $table->foreignId('performed_by')->constrained('users')->cascadeOnDelete();
             $table->date('sample_date');
@@ -22,7 +21,6 @@ return new class extends Migration {
             $table->enum('suitability', ['suitable', 'limited', 'unsuitable']);
             $table->json('contaminants')->nullable();
             $table->json('recommendations')->nullable();
-
             $table->timestamps();
         });
     }
