@@ -3,6 +3,8 @@
 
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\AuthorizationController;
+use App\Http\Controllers\Api\V1\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +15,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+/**
+ * 
+ * 
+ * --------------------------------------------------------------
+ * AuthenticationController routes
+ * ---------------------------------------------------------------
+ */
 Route::post("/login", [AuthenticationController::class, "login"])
     ->name("login");
 Route::post("/sign-up", [AuthenticationController::class, "register"])
@@ -21,9 +30,20 @@ Route::post("/logout", [AuthenticationController::class, "logout"])
     ->middleware("auth:sanctum")
     ->name("logout");
 
+Route::post('/email/resend', [AuthenticationController::class, 'resendVerificationEmail'])
+    ->middleware('auth:sanctum');
+
+Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verify'])
+    ->middleware(['auth:sanctum', 'signed'])
+    ->name('verification.verify');
+
+
 Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
     
     /**
+     * 
+     * 
+     * ----------------------------------------------------------------
      * AuthorizationController routes.
      * ----------------------------------------------------------------
      */
@@ -58,5 +78,13 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
             ->name('users.permissions.remove');
     
     });
-    /** --------------------------------------------------------------- */
+    /**
+     *  
+     * 
+     * 
+     * ----------------------------------------------------------------
+     * UserController routes.
+     * -----------------------------------------------------------------
+    */
+    Route::apiResource('users', UserController::class);
 });
