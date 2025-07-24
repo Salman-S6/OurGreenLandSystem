@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\CropManagement\Models\CropPlan;
 use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
 use Spatie\Translatable\HasTranslations;
 // use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
@@ -50,10 +51,10 @@ class AgriculturalAlert extends Model
     /**
      * Get the crop plan associated with the alert.
      */
-    // public function cropPlan(): BelongsTo
-    // {
-    //     return $this->belongsTo(CropPlan::class);
-    // }
+    public function cropPlan(): BelongsTo
+    {
+        return $this->belongsTo(CropPlan::class);
+    }
 
     /**
      * Get the user who created the alert.

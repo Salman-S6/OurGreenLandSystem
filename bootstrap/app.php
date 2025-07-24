@@ -34,10 +34,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'status' => false,
                     'message' => 'You are not authorized to perform this action.',
-                ], Response::HTTP_FORBIDDEN);
+                ], 403);
             }
 
-            return response('Unauthorized action.', Response::HTTP_FORBIDDEN);
+            return response('Unauthorized action.', 403);
         });
 
 

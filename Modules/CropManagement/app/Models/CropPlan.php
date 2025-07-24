@@ -2,14 +2,17 @@
 
 namespace Modules\CropManagement\Models;
 
+
 use App\Models\User;
-use  Modules\FarmLand\Models\Land;
+// use  Modules\FarmLand\Models\Land;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
+use Modules\Extension\Models\AgriculturalAlert;
+use Modules\Farmland\Models\Land;
 use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model
@@ -26,19 +29,19 @@ class CropPlan extends Model
      */
     protected $fillable = [
         'crop_id',
-        'planned_by',
         'land_id',
         'planned_planting_date',
         'actual_planting_date',
         'planned_harvest_date',
         'actual_harvest_date',
-        'seed_type',
         'seed_quantity',
         'seed_expiry_date',
         'area_size',
         'status',
     ];
-    public array $translatable = ['seed_type', 'status'];
+
+    protected  $guarded=[ 'planned_by'];
+    public  $translatable = ['seed_type'];
 
     /**
      * The attributes that should be cast.
@@ -53,6 +56,10 @@ class CropPlan extends Model
         'seed_expiry_date' => 'date',
         'seed_quantity' => 'decimal:2',
         'area_size' => 'decimal:2',
+        'seed_type'=>'array'
+       
+        
+     
     ];
 
     /**
@@ -74,10 +81,10 @@ class CropPlan extends Model
     /**
      * Get the land for the plan.
      */
-    // public function land(): BelongsTo
-    // {
-    //     return $this->belongsTo(Land::class);
-    // }
+    public function land(): BelongsTo
+    {
+        return $this->belongsTo(Land::class);
+    }
 
     /**
      * Get the production estimations for the crop plan.
@@ -98,10 +105,10 @@ class CropPlan extends Model
     /**
      * Get the agricultural alerts for the crop plan.
      */
-    // public function agriculturalAlerts(): HasMany
-    // {
-    //     return $this->hasMany(AgriculturalAlert::class);
-    // }
+    public function agriculturalAlerts(): HasMany
+    {
+        return $this->hasMany(AgriculturalAlert::class);
+    }
 
     public function cropGrowthStages(): HasMany
     {

@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\AgriculturalGuidance;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\AgriculturalGuidance;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalGuidance>
+ * Summary of AgriculturalGuidanceFactory
  */
 class AgriculturalGuidanceFactory extends Factory
 {

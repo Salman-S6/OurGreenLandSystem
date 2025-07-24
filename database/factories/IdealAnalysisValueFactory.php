@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Crop;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\Crop;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\IdealAnalysisValue>
+ * Summary of IdealAnalysisValueFactory
  */
 class IdealAnalysisValueFactory extends Factory
 {

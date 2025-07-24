@@ -63,7 +63,7 @@ class CropPolicy
     /**
      * Summary of update
      * @param \App\Models\User $user
-     * @param \App\Models\Crop $crop
+     * @param \Modules\CropManagement\Models\Crop $crop
      * @return bool
      */
     public function update(User $user, Crop $crop): bool

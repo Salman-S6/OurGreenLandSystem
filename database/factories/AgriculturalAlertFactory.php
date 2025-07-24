@@ -2,13 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\AgriculturalAlert;
-use App\Models\CropPlan;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\CropPlan;
+use Modules\Extension\Models\AgriculturalAlert;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AgriculturalAlert>
+ * Summary of AgriculturalAlertFactory
  */
 class AgriculturalAlertFactory extends Factory
 {

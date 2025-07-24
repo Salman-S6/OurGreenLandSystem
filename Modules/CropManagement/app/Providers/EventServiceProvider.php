@@ -3,6 +3,8 @@
 namespace Modules\CropManagement\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\CropManagement\Events\CropPlanCreated;
+use Modules\CropManagement\Listeners\CropPlanCreatedListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,11 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+         CropPlanCreated::class => [
+            CropPlanCreatedListener::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.

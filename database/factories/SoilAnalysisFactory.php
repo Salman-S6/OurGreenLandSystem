@@ -2,13 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Land;
-use App\Models\SoilAnalysis;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Farmland\Models\Land;
+use Modules\Farmland\Models\SoilAnalysis;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SoilAnalysis>
+ * Summary of SoilAnalysisFactory
  */
 class SoilAnalysisFactory extends Factory
 {

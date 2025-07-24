@@ -2,7 +2,7 @@
 
 namespace Modules\CropManagement\Models;
 
-use App\Models\IdealAnalysisValue;
+
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropFactory;
+use Modules\Farmland\Models\IdealAnalysisValue;
 use Spatie\Translatable\HasTranslations;
 
 class Crop extends Model

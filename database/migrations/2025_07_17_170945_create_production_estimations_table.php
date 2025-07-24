@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('crop_quality')->nullable();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
             $table->json('notes')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

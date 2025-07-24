@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('description');
             $table->date('discovery_date');
             $table->json('location_details');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\CropManagement\Models\Crop;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Crop>
+ * Summary of CropFactory
  */
 class CropFactory extends Factory
 {

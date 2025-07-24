@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Question;
+
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Extension\Models\Question ;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Question>
+ * Summary of QuestionFactory
  */
 class QuestionFactory extends Factory
 {

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('name');
             $table->json('notes')->nullable();
             $table->foreignId('recorded_by')->constrained('users')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Soil;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Farmland\Models\Soil;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Land>
+ * Summary of LandFactory
  */
 class LandFactory extends Factory
 {
