@@ -22,9 +22,8 @@ class LandController extends Controller
         return ApiResponse::success(
             [
                 "message" => 'Lands retrieved successfully.',
-                200,
-                $lands
-            ]
+                "Land"=>   $lands
+            ] , 200
         );
     }
 
@@ -37,9 +36,8 @@ class LandController extends Controller
         return ApiResponse::success(
             [
                 "message" => 'Land Created successfully.',
-                201,
-                $land
-            ]
+                "Land"=>$land
+            ],  201
         );
     }
 
@@ -52,9 +50,8 @@ class LandController extends Controller
          return ApiResponse::success(
             [
                 "message" => 'land retrieved successfully.',
-                200,
-                $land
-            ]
+                "Land"=>   $land
+            ] , 200
         );
     }
 
@@ -67,9 +64,8 @@ class LandController extends Controller
                 return ApiResponse::success(
             [
                 "message" => 'Land updated successfully.',
-                200,
-                $updated
-            ]
+                "Land"=>$updated
+            ] , 200
         );
     }
 
@@ -79,6 +75,6 @@ class LandController extends Controller
     public function destroy(Land $land)
     {
         $this->landService->destroy($land);
-        return response()->json(['message' => 'Land deleted successfully.']);
+         return ApiResponse::success(['message' => 'Land deleted successfully.'],200);
     }
 }

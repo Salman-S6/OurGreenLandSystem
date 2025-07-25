@@ -23,11 +23,28 @@ class StoreRehabilitationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'event' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ];
+        return array_merge(
+            $this->translatableRule('event'),
+            $this->translatableRule('description', 'nullable|string'),
+            $this->translatableRule('notes', 'nullable|string'),
+            [
+                'lands' => ['required', 'array', 'min:1'],
+                'lands.*.land_id' => ['required', 'exists:lands,id'],
+                'lands.*.performed_by' => ['nullable', 'exists:users,id'],
+                'lands.*.performed_at' => ['nullable', 'date'],
+            ]
+        );
     }
 
+    /**
+     * Helper method to generate rules for translated fields like "event_ar" & "event_en"
+     */
+    protected function translatableRule(string $field, string $rule = 'required|string|max:255'): array
+    {
+        return [
+            "{$field}_ar" => $rule,
+            "{$field}_en" => $rule,
+        ];
+    }
 }
+

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
+use Modules\Extension\Models\AgriculturalAlert;
 use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
+use Modules\FarmLand\Models\Rehabilitation;
 
 // use Modules\FarmLand\Database\Factories\PostFactory;
 class Land extends Model
@@ -25,7 +26,7 @@ class Land extends Model
     }
 
     protected $fillable = [
-        "user_id",
+        "owner_id",
         "farmer_id",
         "area",
         "soil_type_id",

@@ -23,11 +23,27 @@ class UpdateRehabilitationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'event' => 'sometimes|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'notes' => 'sometimes|nullable|string',
-        ];
+            return array_merge(
+            $this->translatableRule('event'),
+            $this->translatableRule('description', 'nullable|string'),
+            $this->translatableRule('notes', 'nullable|string'),
+            [
+                'lands' => ['sometimes', 'array', 'min:1'],
+                'lands.*.land_id' => ['sometimes', 'exists:lands,id'],
+                'lands.*.performed_by' => ['nullable', 'exists:users,id'],
+                'lands.*.performed_at' => ['nullable', 'date'],
+            ]
+        );
     }
 
+    /**
+     * Helper method to generate rules for translated fields like "event_ar" & "event_en"
+     */
+    protected function translatableRule(string $field, string $rule = 'sometimes|string|max:255'): array
+    {
+        return [
+            "{$field}_ar" => $rule,
+            "{$field}_en" => $rule,
+        ];
+    }
 }
