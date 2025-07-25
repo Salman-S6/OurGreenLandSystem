@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('expected_quantity', 10, 2);
             $table->json('estimation_method');
             $table->decimal('actual_quantity', 10, 2)->nullable();
-            $table->json('crop_quality')->nullable();
+            $table->enum('crop_quality', ['excellent', 'average', 'poor'])->nullable();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
             $table->json('notes')->nullable();
             $table->softDeletes();

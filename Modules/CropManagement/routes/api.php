@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\CropManagement\Http\Controllers\CropController;
 use Modules\CropManagement\Http\Controllers\CropManagementController;
 use Modules\CropManagement\Http\Controllers\CropPlanController;
+use Modules\CropManagement\Http\Controllers\ProductionEstimationController;
 use Spatie\Permission\Contracts\Role;
 
 Route::prefix('crops')->group(function(){
@@ -23,6 +24,15 @@ Route::prefix('cropPlan')->group(function(){
     Route::get('/all/paln',[CropPlanController::class,'index'])->name('cropPaln.all');
     Route::post('/change-to-cancelled/{cropPlan}',[CropPlanController::class,'switchStatusToCancelled'])->name('cropPlan.cancelled');
     Route::delete('/{cropPlan}',[CropPlanController::class,'destroy'])->name('cropPlan.destroy');
+});
+
+
+Route::prefix('production-estimation')->group(function(){
+    Route::post('/create',[ProductionEstimationController::class,'store'])->name('estimation.create');
+    Route::post('/update/{productionEstimation}',[ProductionEstimationController::class,'update'])->name('estimation.update');
+    Route::get('/get/{productionEstimation}',[ProductionEstimationController::class,'show'])->name('estimation.show');
+    Route::get('/all',[ProductionEstimationController::class,'index'])->name('estimation.all');
+    Route::delete('/{productionEstimation}',[ProductionEstimationController::class,'destroy'])->name('estimation.delete');
 });
 
 

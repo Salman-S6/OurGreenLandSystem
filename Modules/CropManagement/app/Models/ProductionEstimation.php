@@ -28,11 +28,11 @@ class ProductionEstimation extends Model
         'estimation_method',
         'actual_quantity',
         'crop_quality',
-        'reported_by',
         'notes',
     ];
 
-    public array $translatable = ['notes','crop_quality','estimation_method'];
+    protected $guarded=['reported_by'];
+    public array $translatable = ['notes','estimation_method'];
     /**
      * The attributes that should be cast.
      *
