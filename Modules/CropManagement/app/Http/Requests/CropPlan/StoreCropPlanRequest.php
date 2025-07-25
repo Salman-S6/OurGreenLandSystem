@@ -15,7 +15,7 @@ class StoreCropPlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user =  auth('sanctum')->user();
+        $user =$this->user();
         return $user->hasRole('AgriculturalEngineer') || $user->hasRole('SuperAdmin');
     }
 

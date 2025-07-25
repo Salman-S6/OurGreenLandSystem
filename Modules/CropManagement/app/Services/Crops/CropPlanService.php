@@ -6,6 +6,7 @@ namespace Modules\CropManagement\Services\Crops;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,7 @@ class CropPlanService implements CropPlanInterface
      */
     public function index()
     {
-        $user = auth('sanctum')->user();
+        $user = Auth::user();
         $this->authorize('viewAny', CropPlan::class);
 
         $relations = [
@@ -106,10 +107,10 @@ class CropPlanService implements CropPlanInterface
             $cropPlan->seed_expiry_date = $validate['seed_expiry_date'];
             $cropPlan->area_size = $validate['area_size'];
             $cropPlan->setTranslations('seed_type', $validate['seed_type']);
-            $cropPlan->planned_by = auth('sanctum')->user()->id;
+            $cropPlan->planned_by = Auth::id();
             $cropPlan->save();
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' .auth('sanctum')->user()->id);
+            Cache::forget('crop_plans_user_' . Auth::id());
 
             event(new CropPlanCreated($cropPlan));
 
@@ -203,7 +204,7 @@ class CropPlanService implements CropPlanInterface
             }
             $cropPlan->save();
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' .auth('sanctum')->user()->id);
+            Cache::forget('crop_plans_user_' . Auth::id());
             event(new CropPlanUpdated($cropPlan));
             DB::commit();
             return [
@@ -255,7 +256,7 @@ class CropPlanService implements CropPlanInterface
                 $cropPlan->delete();
             });
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' .auth('sanctum')->user()->id);
+            Cache::forget('crop_plans_user_' . Auth::id());
             return [
                 'message' => "Successfully deleted crop plan",
             ];
@@ -296,7 +297,7 @@ class CropPlanService implements CropPlanInterface
                 }
             });
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' .auth('sanctum')->user()->id);
+            Cache::forget('crop_plans_user_' . Auth::id());
 
             return [
                 'message' => 'Successfully Changed Status To Cancelled',

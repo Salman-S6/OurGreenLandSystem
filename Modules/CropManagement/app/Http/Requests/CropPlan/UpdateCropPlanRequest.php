@@ -16,7 +16,7 @@ class UpdateCropPlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user =  auth('sanctum')->user();
+        $user = $this->user();
         $cropPlan = $this->route('cropPlan');
         if ($user->hasRole('SuperAdmin')) {
             return true;
