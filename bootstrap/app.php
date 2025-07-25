@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\CrudException;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -35,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 403
             );
         });
-        
+
         $exceptions->render(function (AuthorizationException $e) {
             return ApiResponse::error(
                 "Unauthorized Action",
@@ -56,6 +57,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 429
             );
         });
-    
+
+
+           $exceptions->render(function (CrudException $e) {
+            return ApiResponse::error($e->getMessage(), $e->getCode());
+        });
 
     })->create();
