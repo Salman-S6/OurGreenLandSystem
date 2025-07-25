@@ -4,7 +4,7 @@ namespace Modules\CropManagement\Http\Requests\CropPlan;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+
 
 class StoreCropPlanRequest extends FormRequest
 {
@@ -15,7 +15,7 @@ class StoreCropPlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user();
+        $user =  auth('sanctum')->user();
         return $user->hasRole('AgriculturalEngineer') || $user->hasRole('SuperAdmin');
     }
 

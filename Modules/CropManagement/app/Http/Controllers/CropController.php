@@ -18,7 +18,7 @@ class CropController extends Controller
 
     /**
      * Summary of __construct
-     * @param \App\Interfaces\Crops\CropInterface $crop
+     * @param \Modules\CropManagement\Interfaces\Crops\CropInterface $crop
      */
     public  function __construct(CropInterface $crop)
     {

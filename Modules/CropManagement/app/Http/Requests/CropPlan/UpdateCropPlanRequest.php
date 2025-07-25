@@ -4,7 +4,7 @@ namespace Modules\CropManagement\Http\Requests\CropPlan;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+
 use Modules\CropManagement\Models\CropPlan;
 
 class UpdateCropPlanRequest extends FormRequest
@@ -16,7 +16,7 @@ class UpdateCropPlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user();
+        $user =  auth('sanctum')->user();
         $cropPlan = $this->route('cropPlan');
         if ($user->hasRole('SuperAdmin')) {
             return true;

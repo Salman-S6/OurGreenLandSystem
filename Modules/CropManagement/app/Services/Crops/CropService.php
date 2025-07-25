@@ -7,7 +7,6 @@ namespace Modules\CropManagement\Services\Crops;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -66,7 +65,7 @@ class CropService implements CropInterface
             $crop = new Crop();
             $crop->setTranslations('name', $validated['name']);
             $crop->setTranslations('description', $validated['description'] ?? []);
-            $crop->farmer_id = Auth::id();
+            $crop->farmer_id = auth('sanctum')->user()->id;
             $crop->save();
             Cache::forget('allCrops');
             return [
