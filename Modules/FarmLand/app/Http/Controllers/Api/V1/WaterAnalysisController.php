@@ -1,23 +1,27 @@
 <?php
 
-namespace Modules\FarmLand\Http\Controllers;
+namespace Modules\FarmLand\Http\Controllers\Api\V1;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Responses\ApiResponse;
 use App\Http\Controllers\Controller;
 use Modules\FarmLand\Models\WaterAnalysis;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Modules\FarmLand\Services\WaterAnalysis\WaterAnalysisService;
 use Modules\FarmLand\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest;
 use Modules\FarmLand\Http\Requests\WaterAnalysis\UpdateWaterAnalysisRequest;
 
 class WaterAnalysisController extends Controller
 {
-    use AuthorizesRequests;
-
+    /**
+     * Summary of WaterAnalysisService.
+     *
+     * @var WaterAnalysisService
+     */
     protected WaterAnalysisService $waterAnalysisService;
 
     /**
-     * Summary of __construct
+     * WaterAnalysisController Constructor.
+     *
      * @param WaterAnalysisService $waterAnalysisService
      */
     public function __construct(WaterAnalysisService $waterAnalysisService)
@@ -27,30 +31,35 @@ class WaterAnalysisController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Get All Water Analyses.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $data = $this->waterAnalysisService->getAll();
 
         return ApiResponse::success(
             $data,
-            "SuccessFully Get All Water Analyses",
+            "SuccessFully Get All Water Analyses.",
             200
         );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create A New Water Analysis.
+     *
+     * @param \Modules\FarmLand\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreWaterAnalysisRequest $request)
+    public function store(StoreWaterAnalysisRequest $request): JsonResponse
     {
         try {
             $data = $this->waterAnalysisService->store($request);
 
             return ApiResponse::success(
                 $data,
-                "Analysis Created Successfully",
+                "Analysis Created Successfully.",
                 201
             );
         } catch (\Exception $e) {
@@ -59,29 +68,29 @@ class WaterAnalysisController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show The Specified Water Analysis.
      */
-    public function show(WaterAnalysis $waterAnalysis)
+    public function show(WaterAnalysis $waterAnalysis): JsonResponse
     {
         $data = $this->waterAnalysisService->getWaterAnalysis($waterAnalysis);
         return ApiResponse::success(
             $data,
-            "SuccessFully Get Water Analysis",
+            "SuccessFully Get Water Analysis.",
             200
         );
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update The Specified Water Analysis.
      */
-    public function update(UpdateWaterAnalysisRequest $request, WaterAnalysis $waterAnalysis)
+    public function update(UpdateWaterAnalysisRequest $request, WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
             $data = $this->waterAnalysisService->update($request, $waterAnalysis);
 
             return ApiResponse::success(
                 $data,
-                "Analysis Updated Successfully",
+                "Analysis Updated Successfully.",
                 200
             );
         } catch (\Exception $e) {
@@ -90,15 +99,15 @@ class WaterAnalysisController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete The Specified Water Analysis.
      */
-    public function destroy(WaterAnalysis $waterAnalysis)
+    public function destroy(WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
             $this->waterAnalysisService->destroy($waterAnalysis);
             return ApiResponse::success(
                 [],
-                'Analysis Deleted',
+                'Analysis Deleted Successfully.',
                 200
             );
         } catch (\Exception $e) {

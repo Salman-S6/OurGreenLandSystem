@@ -2,26 +2,31 @@
 
 namespace Modules\FarmLand\Http\Policies;
 
-use Modules\FarmLand\Models\WaterAnalysis;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Modules\FarmLand\Models\WaterAnalysis;
 
 class WaterAnalysisPolicy
 {
     /**
-     * Summary of before
-     * @param \App\Models\User $user
+     * Summary Of Before.
      *
+     * @param \App\Models\User $user
+     * @return ?bool
      */
-    public function before(User $user)
+    public function before(User $user): ?bool
     {
         if ($user->hasRole('SuperAdmin')) {
             return true;
         }
+        return null;
     }
 
     /**
-     * Determine whether the user can view any models.
+     * Determine Whether The User Can View Any Models.
+     *
+     * @param \App\Models\User $user
+     * @return bool
      */
     public function viewAny(User $user): bool
     {
@@ -29,7 +34,11 @@ class WaterAnalysisPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine Whether The User Can View The Model.
+     *
+     * @param \App\Models\User $user
+     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @return bool
      */
     public function view(User $user, WaterAnalysis $waterAnalysis): bool
     {
@@ -49,7 +58,10 @@ class WaterAnalysisPolicy
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine Whether The User Can Create Models.
+     *
+     * @param \App\Models\User $user
+     * @return bool
      */
     public function create(User $user): bool
     {
@@ -57,7 +69,11 @@ class WaterAnalysisPolicy
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine Whether The User Can Update The Model.
+     *
+     * @param \App\Models\User $user
+     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @return bool
      */
     public function update(User $user, WaterAnalysis $waterAnalysis): bool
     {
@@ -69,7 +85,12 @@ class WaterAnalysisPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine Whether The User Can Delete The Model.
+     *
+     * @param \App\Models\User $user
+     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @return bool
+     *
      */
     public function delete(User $user, WaterAnalysis $waterAnalysis): bool
     {

@@ -3,16 +3,22 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
-use Modules\FarmLand\Database\Factories\SoilAnalysisFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\FarmLand\Database\Factories\SoilAnalysisFactory;
 
 class SoilAnalysis extends Model
 {
     use HasFactory, HasTranslations;
 
+    /**
+     * Summary of newFactory.
+     * 
+     * @return SoilAnalysisFactory
+     */
     protected static function newFactory(): SoilAnalysisFactory
     {
         return SoilAnalysisFactory::new();
@@ -34,6 +40,11 @@ class SoilAnalysis extends Model
         'recommendations',
     ];
 
+    /**
+     * The attributes that are translatable.
+     *
+     * @var array
+     */
     public array $translatable = ['nutrient_content', 'contaminants', 'recommendations'];
 
     /**
@@ -45,10 +56,13 @@ class SoilAnalysis extends Model
         'sample_date' => 'date',
         'ph_level' => 'decimal:2',
         'salinity_level' => 'decimal:2',
+        'fertility_level' => SoilAnalysesFertilityLevel::class,
     ];
 
     /**
      * Get the land that this soil analysis belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function land(): BelongsTo
     {
@@ -57,6 +71,8 @@ class SoilAnalysis extends Model
 
     /**
      * Get the user who performed the soil analysis.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function performer(): BelongsTo
     {

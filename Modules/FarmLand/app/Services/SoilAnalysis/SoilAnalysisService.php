@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\FarmLand\Services\WaterAnalysis;
+namespace Modules\FarmLand\Services\SoilAnalysis;
 
-use Modules\FarmLand\Models\WaterAnalysis;
+use Modules\FarmLand\Models\SoilAnalysis;
 use Modules\FarmLand\Services\AnalysisComparison\AnalysisComparisonService;
 
-class WaterAnalysisService
+class SoilAnalysisService
 {
     public function __construct(protected AnalysisComparisonService $analysisComparison)
     {
@@ -18,19 +18,19 @@ class WaterAnalysisService
      */
     public function getAll(): array
     {
-        $data = WaterAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
+        $data = SoilAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
         return [$data];
     }
 
     /**
-     * Summary of getWaterAnalysis.
+     * Summary of getSoilAnalysis.
      *
-     * @param mixed $waterAnalysis
+     * @param mixed $soilAnalysis
      * @return array
      */
-    public function getWaterAnalysis($waterAnalysis): array
+    public function getSoilAnalysis($soilAnalysis): array
     {
-        $data = $waterAnalysis->load(['land', 'performer']);
+        $data = $soilAnalysis->load(['land', 'performer']);
         return [$data];
     }
 
@@ -42,8 +42,7 @@ class WaterAnalysisService
      */
     public function store($request): array
     {
-        // return [1];
-        $data = WaterAnalysis::create($request->validated());
+        $data = SoilAnalysis::create($request->validated());
         $comparisonResult = $this->analysisComparison->compare($data);
         if (!isset($comparisonResult['error'])) {
             $data['comparison_result'] = $comparisonResult;
@@ -56,29 +55,29 @@ class WaterAnalysisService
      * Summary of update.
      *
      * @param mixed $request
-     * @param mixed $waterAnalysis
+     * @param mixed $soilAnalysis
      * @return array
      */
-    public function update($request, $waterAnalysis): array
+    public function update($request, $soilAnalysis): array
     {
-        $waterAnalysis->update($request->validated());
-        $data = $waterAnalysis;
+        $soilAnalysis->update($request->validated());
+        $data = $soilAnalysis;
         $comparisonResult = $this->analysisComparison->compare($data);
         if (!isset($comparisonResult['error'])) {
             $data['comparison_result'] = $comparisonResult;
         }
-        $data = $waterAnalysis->load(['land', 'performer']);
+        $data = $soilAnalysis->load(['land', 'performer']);
         return [$data];
     }
 
     /**
      * Summary of destroy.
      *
-     * @param mixed $waterAnalysis
+     * @param mixed $soilAnalysis
      * @return array
      */
-    public function destroy($waterAnalysis): mixed
+    public function destroy($soilAnalysis): mixed
     {
-        return $waterAnalysis->delete();
+        return $soilAnalysis->delete();
     }
 }

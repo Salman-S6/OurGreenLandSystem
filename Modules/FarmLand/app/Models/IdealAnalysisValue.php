@@ -2,17 +2,24 @@
 
 namespace Modules\FarmLand\Models;
 
-use Modules\FarmLand\Database\Factories\IdealAnalysisValueFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\CropManagement\Models\Crop;
+use Modules\FarmLand\Enums\AnalysisType;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\FarmLand\Database\Factories\IdealAnalysisValueFactory;
 
 class IdealAnalysisValue extends Model
 {
-    /** @use HasFactory<\Database\Factories\IdealAnalysisValueFactory> */
     use HasFactory, HasTranslations;
 
+    /**
+     * Summary of newFactory.
+     *
+     * @return IdealAnalysisValueFactory
+     */
     protected static function newFactory(): IdealAnalysisValueFactory
     {
         return IdealAnalysisValueFactory::new();
@@ -35,6 +42,11 @@ class IdealAnalysisValue extends Model
         "notes",
     ];
 
+    /**
+     * The attributes that are translatable.
+     *
+     * @var array
+     */
     public array $translatable = ['notes'];
 
     /**
@@ -47,14 +59,15 @@ class IdealAnalysisValue extends Model
         'ph_max' => 'decimal:2',
         'salinity_min' => 'decimal:2',
         'salinity_max' => 'decimal:2',
+        'type' => AnalysisType::class,
+        'fertility_level' => SoilAnalysesFertilityLevel::class,
     ];
 
     /**
      * Get the crop that this ideal analysis value belongs to.
      */
-    // public function crop(): BelongsTo
-    // {
-    //     return $this->belongsTo(Crop::class, 'crop_id');
-    // }
-
+    public function crop(): BelongsTo
+    {
+        return $this->belongsTo(Crop::class, 'crop_id');
+    }
 }

@@ -1,23 +1,27 @@
 <?php
 
-namespace Modules\FarmLand\Http\Controllers;
+namespace Modules\FarmLand\Http\Controllers\Api\V1;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Responses\ApiResponse;
 use App\Http\Controllers\Controller;
 use Modules\FarmLand\Models\SoilAnalysis;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Modules\FarmLand\Services\SoilAnalyses\SoilAnalysisService;
+use Modules\FarmLand\Services\SoilAnalysis\SoilAnalysisService;
 use Modules\FarmLand\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest;
 use Modules\FarmLand\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest;
 
 class SoilAnalysisController extends Controller
 {
-    use AuthorizesRequests;
-
+    /**
+     * Summary of SoilAnalysisService.
+     *
+     * @var SoilAnalysisService
+     */
     protected SoilAnalysisService $soilAnalysisService;
 
     /**
-     * Summary of __construct
+     * SoilAnalysisController Constructor.
+     *
      * @param SoilAnalysisService $soilAnalysisService
      */
     public function __construct(SoilAnalysisService $soilAnalysisService)
@@ -27,30 +31,35 @@ class SoilAnalysisController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Get All Soil Analyses.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $data = $this->soilAnalysisService->getAll();
 
         return ApiResponse::success(
             $data,
-            "SuccessFully Get All Soil Analyses",
+            "SuccessFully Get All Soil Analyses.",
             200
         );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create A New Soil Analysis.
+     *
+     * @param \Modules\FarmLand\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreSoilAnalysisRequest $request)
+    public function store(StoreSoilAnalysisRequest $request): JsonResponse
     {
         try {
             $data = $this->soilAnalysisService->store($request);
 
             return ApiResponse::success(
                 $data,
-                "Analysis Created Successfully",
+                "Analysis Created Successfully.",
                 201
             );
         } catch (\Exception $e) {
@@ -59,29 +68,36 @@ class SoilAnalysisController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show The Specified Soil Analysis.
+     *
+     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(SoilAnalysis $soilAnalysis)
+    public function show(SoilAnalysis $soilAnalysis): JsonResponse
     {
         $data = $this->soilAnalysisService->getSoilAnalysis($soilAnalysis);
         return ApiResponse::success(
             $data,
-            "SuccessFully Get Soil Analysis",
+            "SuccessFully Get Soil Analysis.",
             200
         );
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update The Specified Soil Analysis.
+     *
+     * @param \Modules\FarmLand\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest $request
+     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateSoilAnalysisRequest $request, SoilAnalysis $soilAnalysis)
+    public function update(UpdateSoilAnalysisRequest $request, SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
             $data = $this->soilAnalysisService->update($request, $soilAnalysis);
 
             return ApiResponse::success(
                 $data,
-                "Analysis Updated Successfully",
+                "Analysis Updated Successfully.",
                 200
             );
         } catch (\Exception $e) {
@@ -90,15 +106,18 @@ class SoilAnalysisController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete The Specified Soil Analysis.
+     *
+     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(SoilAnalysis $soilAnalysis)
+    public function destroy(SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
             $this->soilAnalysisService->destroy($soilAnalysis);
             return ApiResponse::success(
                 [],
-                'Analysis Deleted',
+                'Analysis Deleted Successfully.',
                 200
             );
         } catch (\Exception $e) {

@@ -3,13 +3,19 @@
 namespace Modules\FarmLand\Http\Requests\SoilAnalysis;
 
 use App\Traits\RequestTrait;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\FarmLand\Rules\SampleDateWithinCropPlan;
+use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
 
 class UpdateSoilAnalysisRequest extends FormRequest
 {
     use RequestTrait;
+
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -26,22 +32,31 @@ class UpdateSoilAnalysisRequest extends FormRequest
         return [
             'land_id' => 'sometimes|exists:lands,id',
             'performed_by' => 'sometimes|exists:users,id',
-            'sample_date' => 'sometimes|date',
+
+            'sample_date' => [
+                'sometimes',
+                'date',
+                'before_or_equal:today',
+                new SampleDateWithinCropPlan($this->input('land_id')),
+            ],
+
+
             'ph_level' => 'sometimes|numeric|between:0,14',
-            'salinity_level' => 'sometimes|numeric',
-            'fertility_level' => 'sometimes|in:high,medium,low',
+            'salinity_level' => 'sometimes|numeric|between:0,100',
 
-            'nutrient_content' => 'nullable|array',
-            'nutrient_content.ar' => 'nullable|string',
-            'nutrient_content.en' => 'nullable|string',
+            'fertility_level' => ['sometimes', Rule::enum(SoilAnalysesFertilityLevel::class)],
 
-            'contaminants' => 'nullable|array',
-            'contaminants.ar' => 'nullable|string',
-            'contaminants.en' => 'nullable|string',
+            'nutrient_content' => 'sometimes|nullable|array',
+            'nutrient_content.ar' => 'nullable|string|max:255',
+            'nutrient_content.en' => 'nullable|string|max:255',
 
-            'recommendations' => 'nullable|array',
-            'recommendations.ar' => 'nullable|string',
-            'recommendations.en' => 'nullable|string',
+            'contaminants' => 'sometimes|nullable|array',
+            'contaminants.ar' => 'nullable|string|max:255',
+            'contaminants.en' => 'nullable|string|max:255',
+
+            'recommendations' => 'sometimes|nullable|array',
+            'recommendations.ar' => 'nullable|string|max:500',
+            'recommendations.en' => 'nullable|string|max:500',
         ];
     }
 }
