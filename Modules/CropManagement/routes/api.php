@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\CropManagement\Http\Controllers\CropController;
-use Modules\CropManagement\Http\Controllers\CropManagementController;
-use Modules\CropManagement\Http\Controllers\CropPlanController;
-use Modules\CropManagement\Http\Controllers\ProductionEstimationController;
-use Spatie\Permission\Contracts\Role;
+use Modules\CropManagement\Http\Controllers\Api\V1\CropController;
+use Modules\CropManagement\Http\Controllers\Api\V1\CropPlanController;
+use Modules\CropManagement\Http\Controllers\Api\V1\ProductionEstimationController;
+
 
 Route::prefix('crops')->group(function(){
     Route::post('/create',[CropController::class,'store'])->name('crop.create');
