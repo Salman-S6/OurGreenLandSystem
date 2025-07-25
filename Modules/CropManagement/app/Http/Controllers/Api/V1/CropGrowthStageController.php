@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\CropManagement\Http\Controllers;
+namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
