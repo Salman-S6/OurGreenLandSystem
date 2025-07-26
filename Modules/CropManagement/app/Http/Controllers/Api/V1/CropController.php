@@ -7,6 +7,7 @@ use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Modules\CropManagement\Http\Requests\Crop\StoreCropRequest;
 use Modules\CropManagement\Http\Requests\Crop\UpdateCropRequest;
+use Modules\CropManagement\Interfaces\Crops\CropInterface;
 use Modules\CropManagement\Models\Crop;
 
 class CropController extends Controller
@@ -17,7 +18,7 @@ class CropController extends Controller
 
     /**
      * Summary of __construct
-     * @param \App\Interfaces\Crops\CropInterface $crop
+     * @param \Modules\CropManagement\Interfaces\Crops\CropInterface $crop
      */
     public  function __construct(CropInterface $crop)
     {

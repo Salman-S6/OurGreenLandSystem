@@ -9,7 +9,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Modules\CropManagement\Events\CropPlanDeleted;
 use Modules\CropManagement\Interfaces\Crops\CropInterface;
 use Modules\CropManagement\Models\Crop;
 
@@ -96,15 +98,13 @@ class CropService implements CropInterface
                 $crop->setTranslations('description', $validated['description']);
             }
             $crop->save();
-
             Cache::forget('allCrops');
-
             return [
                 'message' => 'Successfully updated crop',
                 'data' => $crop
             ];
         } catch (Exception $e) {
-            Log::error('Failed to update crop: ' . $e->getMessage());
+            Log::error("Failed to update crop ID {$crop->id}: " . $e->getMessage());
             throw $e;
         }
     }
@@ -122,18 +122,40 @@ class CropService implements CropInterface
             ->whereNotIn('status', ['completed', 'cancelled'])
             ->exists();
         if ($hasUnfinishedPlans) {
-            throw  new HttpResponseException(response()->json(
+            throw new HttpResponseException(response()->json(
                 [
-                    'message' => 'Cannot delete the crop. There are active or in-progress plans associated with it.',
+                    'message' => 'This crop cannot be deleted because it has active or in-progress plans.',
                 ],
                 422
             ));
         }
-        $message = "successfully Delete Crop";
-        $crop->delete();
-        cache::forget('allCrops');
+        DB::transaction(function () use ($crop) {
+            $cropPlans = $crop->cropPlans()->get();
+            foreach ($cropPlans as $cropPlan) {
+                $cropPlan->load([
+                    'cropGrowthStages' => fn($q) => $q->withTrashed(),
+                    'cropGrowthStages.bestAgriculturalPractices' => fn($q) => $q->withTrashed(),
+                    'productionEstimations' => fn($q) => $q->withTrashed(),
+                    'pestDiseaseCases' => fn($q) => $q->withTrashed(),
+                    'pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
+                ]);
+                event(new CropPlanDeleted($cropPlan));
+                foreach ($cropPlan->cropGrowthStages as $stage) {
+                    $stage->bestAgriculturalPractices()->forceDelete();
+                    $stage->forceDelete();
+                }
+                $cropPlan->productionEstimations()->forceDelete();
+                foreach ($cropPlan->pestDiseaseCases as $case) {
+                    $case->recommendations()->forceDelete();
+                    $case->forceDelete();
+                }
+                $cropPlan->delete();
+            }
+            $crop->delete();
+        });
+        Cache::forget('allCrops');
         return [
-            'message' => $message,
+            'message' => 'Successfully deleted crop and all associated data.',
         ];
     }
 }
