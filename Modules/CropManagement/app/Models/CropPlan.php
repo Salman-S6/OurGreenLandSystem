@@ -4,7 +4,7 @@ namespace Modules\CropManagement\Models;
 
 
 use App\Models\User;
-// use  Modules\FarmLand\Models\Land;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
 use Modules\Extension\Models\AgriculturalAlert;
-use Modules\Farmland\Models\Land;
+use Modules\FarmLand\Models\Land;
 use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model

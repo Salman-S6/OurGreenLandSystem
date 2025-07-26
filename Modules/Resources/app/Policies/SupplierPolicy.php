@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Policies;
+namespace Modules\Resources\Policies;
 
 use App\Models\Supplier;
 use App\Models\User;

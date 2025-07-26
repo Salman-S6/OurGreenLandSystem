@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Http\Requests\SupplierRating;
+namespace Modules\Resources\Http\Requests\SupplierRating;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

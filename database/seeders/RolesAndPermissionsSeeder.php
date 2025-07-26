@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRoles;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -16,30 +16,41 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
+       
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        /**
-         * here, i used route names as permissions so i could add them dynamically
-         * by only running the seeder.
-         */
         $routes = Route::getRoutes()->getRoutes();
         $permissions = [];
+
         foreach ($routes as $route) {
-            if ($route->getPrefix() !== "sanctum" && str_contains($route->getPrefix(), "api"))
-                $permissions[] = [
-                    "name" => $route->getName(),
-                    "guard_name" => "web",
-                    "created_at" => now(),
-                    "updated_at" => now(),
-                ];
+            $name = $route->getName();
+            $prefix = $route->getPrefix();
+
+            
+            if (!$name || $prefix === "sanctum" || !str_contains($prefix, "api")) {
+                continue;
+            }
+
+          
+            $permissions[] = [
+                "name" => $name,
+                "guard_name" => "web",
+                "created_at" => now(),
+                "updated_at" => now(),
+            ];
         }
 
-        Permission::insert($permissions);
+      
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(
+                ['name' => $permission['name'], 'guard_name' => $permission['guard_name']],
+                ['created_at' => $permission['created_at'], 'updated_at' => $permission['updated_at']]
+            );
+        }
 
-
+       
         foreach (UserRoles::cases() as $role) {
-            $role = Role::create(["name" => $role->value]);
+            Role::firstOrCreate(['name' => $role->value]);
         }
-
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\CropPlan;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -18,10 +19,10 @@ class UpdateCropPlanRequest extends FormRequest
     {
         $user = $this->user();
         $cropPlan = $this->route('cropPlan');
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by === $user->id) {
+        if ($user->hasRole(UserRoles::AgriculturalAlert) && $cropPlan->planned_by === $user->id) {
             return true;
         }
 

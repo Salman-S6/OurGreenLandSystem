@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\CropGrowthStageFactory;
 use Spatie\Translatable\HasTranslations;
 
 class CropGrowthStage extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,SoftDeletes;
 
     protected static function newFactory(): CropGrowthStageFactory
     {

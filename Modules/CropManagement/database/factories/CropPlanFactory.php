@@ -9,7 +9,7 @@ use Modules\CropManagement\Models\Crop;
 use Modules\CropManagement\Models\CropPlan;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CropPlan>
+ * Summary of CropPlanFactory
  */
 class CropPlanFactory extends Factory
 {

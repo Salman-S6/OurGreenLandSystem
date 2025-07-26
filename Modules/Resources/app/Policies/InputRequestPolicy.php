@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Policies;
+namespace Modules\Resources\Policies;
 
 use App\Models\InputRequest;
 use App\Models\User;

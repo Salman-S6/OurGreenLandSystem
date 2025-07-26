@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Http\Requests\Supplier;
+namespace Modules\Resources\Http\Requests\Supplier;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

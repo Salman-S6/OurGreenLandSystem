@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\CropManagement\Models\Crop;
 use Modules\CropManagement\Models\CropGrowthStage;
 use Modules\CropManagement\Models\CropPlan;
 use Modules\CropManagement\Models\PestDiseaseCase;
@@ -197,5 +198,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(WaterAnalysis::class, 'performed_by');
     }
+
+     /**
+      * Get all of the comments for the User
+      *
+      * @return \Illuminate\Database\Eloquent\Relations\HasMany
+      */
+     public function crops(): HasMany
+     {
+         return $this->hasMany(Crop::class, 'farmer_id', 'id');
+     }
 
 }

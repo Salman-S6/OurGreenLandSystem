@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\Crop;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -20,11 +21,11 @@ class UpdateCropRequest extends FormRequest
         $crop = $this->route('crop');
         $user =  $this->user();
 
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
 
-        if ($user->hasRole('Farmer') && $crop && $user->id === optional($crop)->farmer_id) {
+        if ($user->hasRole(UserRoles::Farmer) && $crop && $user->id === optional($crop)->farmer_id) {
             return true;
         }
 

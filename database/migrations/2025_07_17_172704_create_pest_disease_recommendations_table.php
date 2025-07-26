@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('application_method');
             $table->text('safety_notes')->nullable();
             $table->foreignId('recommended_by')->constrained('users')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

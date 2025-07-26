@@ -2,7 +2,7 @@
 
 namespace Modules\CropManagement\Services\Crops;
 
-
+use App\Enums\UserRoles;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,21 +15,28 @@ use Modules\CropManagement\Events\CropPlanDeleted;
 use Modules\CropManagement\Events\CropPlanUpdated;
 use Modules\CropManagement\Interfaces\Crops\CropPlanInterface;
 use Modules\CropManagement\Models\CropPlan;
-use Modules\Farmland\Models\Land;
 
-class CropPlanService implements CropPlanInterface
+use App\Services\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Modules\FarmLand\Models\Land;
+
+class CropPlanService extends BaseCrudService implements CropPlanInterface
 {
-
     use AuthorizesRequests;
 
-
-
+    /**
+     * Summary of __construct
+     * @param \Modules\CropManagement\Models\CropPlan $model
+     */
+    public function __construct(CropPlan $model)
+    {
+        parent::__construct($model);
+    }
 
     /**
-     * Summary of index
-     * @return array{message: string, plans: mixed}
+     * Override getAll to include relations and caching & authorization
      */
-    public function index()
+    public function getAll(array $filters = []): iterable
     {
         $user = Auth::user();
         $this->authorize('viewAny', CropPlan::class);
@@ -42,46 +49,46 @@ class CropPlanService implements CropPlanInterface
             'pestDiseaseCases' => fn($q) => $q->withTrashed(),
             'cropGrowthStages' => fn($q) => $q->withTrashed(),
         ];
-        $cacheKey = $user->hasRole('SuperAdmin')
+
+        $cacheKey = $user->hasRole(UserRoles::SuperAdmin)
             ? 'crop_plans_all'
             : 'crop_plans_user_' . $user->id;
-        $plans = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($user, $relations) {
-            $query = CropPlan::with($relations)->orderBy('id', 'desc');
 
-            if (!$user->hasRole('SuperAdmin')) {
-                $query->where('planned_by', $user->id);
-            }
-            return $query->get();
+        return $this->handle(function () use ($user, $relations, $cacheKey, $filters) {
+            return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($user, $relations, $filters) {
+                $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
+
+
+                if (!$user->hasRole(UserRoles::SuperAdmin)) {
+                    $query->where('planned_by', $user->id);
+                }
+                foreach ($filters as $field => $value) {
+                    if ($value !== null && $value !== '') {
+                        $query->where($field, $value);
+                    }
+                }
+                return $query->get();
+            });
         });
-
-        return [
-            'message' => 'Successfully Get Plans',
-            'plans' => $plans,
-        ];
     }
 
 
     /**
-     * Summary of store
-     * @param mixed $request
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @return array{message: string, plan: CropPlan}
+     * Override store to add validations, authorization, events, and caching
      */
-    public function store($request)
+    public function store(array $data): Model
     {
-        try {
+        return $this->handle(function () use ($data) {
             DB::beginTransaction();
-
-            $validate = $request->validated();
 
             $this->authorize('create', CropPlan::class);
 
-            $land = Land::findOrFail($validate['land_id']);
+            $land = Land::findOrFail($data['land_id']);
 
-            if ($land->area < $validate['area_size']) {
+            if ($land->area < $data['area_size']) {
                 throw new HttpResponseException(response()->json([
                     "message" => 'Fail Make Plan For Land Because Land Area :' . $land->area .
-                        ' and Plan Area is :' . $validate['area_size'],
+                        ' and Plan Area is :' . $data['area_size'],
                 ], 422));
             }
 
@@ -91,24 +98,25 @@ class CropPlanService implements CropPlanInterface
 
             $availableArea = $land->area - $usedArea;
 
-            if ($validate['area_size'] > $availableArea) {
+            if ($data['area_size'] > $availableArea) {
                 throw new HttpResponseException(response()->json([
                     "message" => 'Fail to create crop plan: Available area is ' . $availableArea .
-                        ', but the requested plan area is ' . $validate['area_size'],
+                        ', but the requested plan area is ' . $data['area_size'],
                 ], 422));
             }
 
-            $cropPlan = new CropPlan();
-            $cropPlan->land_id = $validate['land_id'];
-            $cropPlan->crop_id = $validate['crop_id'];
-            $cropPlan->planned_planting_date = $validate['planned_planting_date'];
-            $cropPlan->planned_harvest_date = $validate['planned_harvest_date'];
-            $cropPlan->seed_quantity = $validate['seed_quantity'];
-            $cropPlan->seed_expiry_date = $validate['seed_expiry_date'];
-            $cropPlan->area_size = $validate['area_size'];
-            $cropPlan->setTranslations('seed_type', $validate['seed_type']);
+            $cropPlan = $this->model->newInstance();
+            $cropPlan->land_id = $data['land_id'];
+            $cropPlan->crop_id = $data['crop_id'];
+            $cropPlan->planned_planting_date = $data['planned_planting_date'];
+            $cropPlan->planned_harvest_date = $data['planned_harvest_date'];
+            $cropPlan->seed_quantity = $data['seed_quantity'];
+            $cropPlan->seed_expiry_date = $data['seed_expiry_date'];
+            $cropPlan->area_size = $data['area_size'];
+            $cropPlan->setTranslations('seed_type', $data['seed_type']);
             $cropPlan->planned_by = Auth::id();
             $cropPlan->save();
+
             Cache::forget('crop_plans_all');
             Cache::forget('crop_plans_user_' . Auth::id());
 
@@ -116,162 +124,147 @@ class CropPlanService implements CropPlanInterface
 
             DB::commit();
 
-            return [
-                'message' => "Successfully Add Plan To Land " . $land->id,
-                'plan' => $cropPlan,
-            ];
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error("Failed to add crop plan to land ID {$validate['land_id']}: " . $e->getMessage());
-            throw $e;
-        }
+            return $cropPlan;
+        }, "Failed to add crop plan");
     }
 
-
     /**
-     * Summary of show
-     * @param mixed $cropPlan
-     * @return array{message: string, plan: mixed}
+     * Override get (show) to add authorization and message formatting
      */
-    public function show($cropPlan)
+    public function show($cropPlan): Model
     {
         $this->authorize('view', $cropPlan);
-        $message = "Successfully Get Plan";
-        return [
-            'message' => $message,
-            'plan' => $cropPlan
-        ];
+        return $cropPlan;
     }
 
     /**
-     * Summary of update
-     * @param mixed $request
-     * @param mixed $cropPlan
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     *
+     * Override update to add validation, authorization, caching, events, and status logic
      */
-    public function update($request, $cropPlan)
+    public function update(array $data, Model $model): Model
     {
-        try {
+        return $this->handle(function () use ($data, $model) {
             DB::beginTransaction();
-            $validate = $request->validated();
-            $this->authorize('update', $cropPlan);
-            if (in_array($cropPlan->status, ['completed', 'cancelled'])) {
-                return response()->json([
+
+            $this->authorize('update', $model);
+
+            if (in_array($model->status, ['completed', 'cancelled'])) {
+                throw new HttpResponseException(response()->json([
                     'message' => 'You cannot update a crop plan that is already cancelled or completed.'
-                ], 403);
+                ], 403));
             }
-            if (isset($validate['area_size'])) {
-                $landId = $validate['land_id'] ?? $cropPlan->land_id;
+
+            if (isset($data['area_size'])) {
+                $landId = $data['land_id'] ?? $model->land_id;
                 $land = Land::findOrFail($landId);
-                if ($land->area < $validate['area_size']) {
+
+                if ($land->area < $data['area_size']) {
                     throw new HttpResponseException(response()->json([
                         "message" => 'Fail Make Plan For Land Because Land Area: ' . $land->area .
-                            ' and Plan Area is: ' . $validate['area_size'],
+                            ' and Plan Area is: ' . $data['area_size'],
                     ], 422));
                 }
+
                 $usedArea = CropPlan::where('land_id', $land->id)
                     ->whereIn('status', ['active', 'in-progress'])
-                    ->where('id', '!=', $cropPlan->id)
+                    ->where('id', '!=', $model->id)
                     ->sum('area_size');
+
                 $availableArea = $land->area - $usedArea;
-                if ($validate['area_size'] > $availableArea) {
+
+                if ($data['area_size'] > $availableArea) {
                     throw new HttpResponseException(response()->json([
                         "message" => 'Fail to update crop plan: Available area is ' . $availableArea .
-                            ', but the requested plan area is ' . $validate['area_size'],
+                            ', but the requested plan area is ' . $data['area_size'],
                     ], 422));
                 }
 
-                $cropPlan->area_size = $validate['area_size'];
+                $model->area_size = $data['area_size'];
             }
-            $cropPlan->land_id = $validate['land_id'] ?? $cropPlan->land_id;
-            $cropPlan->crop_id = $validate['crop_id'] ?? $cropPlan->crop_id;
-            $cropPlan->planned_planting_date = $validate['planned_planting_date'] ?? $cropPlan->planned_planting_date;
-            $cropPlan->planned_harvest_date = $validate['planned_harvest_date'] ?? $cropPlan->planned_harvest_date;
-            $cropPlan->seed_quantity = $validate['seed_quantity'] ?? $cropPlan->seed_quantity;
-            $cropPlan->seed_expiry_date = $validate['seed_expiry_date'] ?? $cropPlan->seed_expiry_date;
-            if (isset($validate['seed_type'])) {
-                $cropPlan->setTranslations('seed_type', $validate['seed_type']);
+
+            $model->land_id = $data['land_id'] ?? $model->land_id;
+            $model->crop_id = $data['crop_id'] ?? $model->crop_id;
+            $model->planned_planting_date = $data['planned_planting_date'] ?? $model->planned_planting_date;
+            $model->planned_harvest_date = $data['planned_harvest_date'] ?? $model->planned_harvest_date;
+            $model->seed_quantity = $data['seed_quantity'] ?? $model->seed_quantity;
+            $model->seed_expiry_date = $data['seed_expiry_date'] ?? $model->seed_expiry_date;
+
+            if (isset($data['seed_type'])) {
+                $model->setTranslations('seed_type', $data['seed_type']);
             }
-            if (isset($validate['actual_harvest_date'])) {
-                $cropPlan->actual_harvest_date = $validate['actual_harvest_date'];
-                $cropPlan->status = 'completed';
-            } elseif (isset($validate['actual_planting_date'])) {
-                $cropPlan->actual_planting_date = $validate['actual_planting_date'];
-                $cropPlan->status = 'in-progress';
+
+            if (isset($data['actual_harvest_date'])) {
+                $model->actual_harvest_date = $data['actual_harvest_date'];
+                $model->status = 'completed';
+            } elseif (isset($data['actual_planting_date'])) {
+                $model->actual_planting_date = $data['actual_planting_date'];
+                $model->status = 'in-progress';
             } else {
-                $cropPlan->status = 'active';
+                $model->status = 'active';
             }
-            $cropPlan->save();
+
+            $model->save();
+
             Cache::forget('crop_plans_all');
             Cache::forget('crop_plans_user_' . Auth::id());
-            event(new CropPlanUpdated($cropPlan));
+
+            event(new CropPlanUpdated($model));
+
             DB::commit();
-            return [
-                'message' => 'Crop plan updated successfully',
-                'plan' => $cropPlan,
-            ];
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Fail Update Plan: ' . $e->getMessage());
-            throw $e;
-        }
+
+            return $model;
+        }, "Failed to update crop plan");
     }
 
-
     /**
-     * Summary of destroy
-     * @param mixed $cropPlan
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @return array{message: string}
+     * Override destroy to handle deletion logic & cascade
      */
-    public function destroy($cropPlan)
+    public function destroy(Model $model): bool
     {
-        if (in_array($cropPlan->status, ['cancelled', 'completed', 'active'])) {
-            DB::transaction(function () use ($cropPlan) {
-                if ($cropPlan->status === 'active') {
-                    $cropPlan->delete();
+        $this->authorize('delete', $model);
+        return $this->handle(function () use ($model) {
+            if (!in_array($model->status, ['cancelled', 'completed', 'active'])) {
+                throw new HttpResponseException(response()->json([
+                    'message' => 'Plan must be either active, cancelled, or completed before it can be deleted.',
+                ], 403));
+            }
+
+            DB::transaction(function () use ($model) {
+                if ($model->status === 'active') {
+                    $model->delete();
                     return;
                 }
-                $cropPlan->load([
+
+                $model->load([
                     'cropGrowthStages' => fn($q) => $q->withTrashed(),
                     'cropGrowthStages.bestAgriculturalPractices' => fn($q) => $q->withTrashed(),
                     'productionEstimations' => fn($q) => $q->withTrashed(),
                     'pestDiseaseCases' => fn($q) => $q->withTrashed(),
                     'pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
                 ]);
-                event(new CropPlanDeleted($cropPlan));
 
-                foreach ($cropPlan->cropGrowthStages as $stage) {
+                event(new CropPlanDeleted($model));
+
+                foreach ($model->cropGrowthStages as $stage) {
                     $stage->bestAgriculturalPractices()->forceDelete();
                     $stage->forceDelete();
                 }
-                $cropPlan->productionEstimations()->forceDelete();
 
-                foreach ($cropPlan->pestDiseaseCases as $case) {
+                $model->productionEstimations()->forceDelete();
+
+                foreach ($model->pestDiseaseCases as $case) {
                     $case->recommendations()->forceDelete();
                     $case->forceDelete();
                 }
 
-                $cropPlan->delete();
+                $model->delete();
             });
+
             Cache::forget('crop_plans_all');
             Cache::forget('crop_plans_user_' . Auth::id());
-            return [
-                'message' => "Successfully deleted crop plan",
-            ];
-        } else {
-            throw new HttpResponseException(
-                response()->json([
-                    'message' => 'Plan must be either active, cancelled, or completed before it can be deleted.',
-                ], 403)
-            );
-        }
+
+            return true;
+        }, notFoundMessage: "Failed to delete crop plan");
     }
-
-
-
-
 
     /**
      * Summary of switchStatusToCancelled
@@ -300,8 +293,7 @@ class CropPlanService implements CropPlanInterface
             Cache::forget('crop_plans_user_' . Auth::id());
 
             return [
-                'message' => 'Successfully Changed Status To Cancelled',
-                'plan' => $cropPlan->fresh(),
+                'plan' => $cropPlan,
             ];
         } catch (Exception $e) {
             Log::error('Fail Switch The Status to Cancelled: ' . $e->getMessage());

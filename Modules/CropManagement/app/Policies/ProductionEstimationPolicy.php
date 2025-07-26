@@ -2,7 +2,7 @@
 
 namespace Modules\CropManagement\Policies;
 
-
+use App\Enums\UserRoles;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Modules\CropManagement\Models\ProductionEstimation;
@@ -15,7 +15,7 @@ class ProductionEstimationPolicy
      *
      */
     public function before(User $user){
-        if($user->hasRole('SuperAdmin')){
+        if($user->hasRole(UserRoles::SuperAdmin)){
             return true;
         }
     }
@@ -24,7 +24,7 @@ class ProductionEstimationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalAlert);
     }
 
     /**
@@ -32,7 +32,7 @@ class ProductionEstimationPolicy
      */
     public function view(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return $user->hasRole('AgriculturalEngineer')&&
+        return $user->hasRole(UserRoles::AgriculturalAlert)&&
         $productionEstimation->reported_by===$user->id;
     }
 
@@ -41,7 +41,7 @@ class ProductionEstimationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalAlert);
     }
 
     /**
@@ -49,7 +49,7 @@ class ProductionEstimationPolicy
      */
     public function update(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return $user->hasRole('AgriculturalEngineer')&&
+        return $user->hasRole(UserRoles::AgriculturalAlert)&&
         $productionEstimation->reported_by===$user->id;
     }
 
@@ -58,7 +58,7 @@ class ProductionEstimationPolicy
      */
     public function delete(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return $user->hasRole('AgriculturalEngineer')&&
+        return $user->hasRole(UserRoles::AgriculturalAlert)&&
         $productionEstimation->reported_by===$user->id;
     }
 

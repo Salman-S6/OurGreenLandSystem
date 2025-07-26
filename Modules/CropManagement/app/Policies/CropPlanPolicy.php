@@ -2,7 +2,7 @@
 
 namespace Modules\CropManagement\Policies;
 
-
+use App\Enums\UserRoles;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Modules\CropManagement\Models\CropPlan;
@@ -16,7 +16,7 @@ class CropPlanPolicy
      */
     public function before(User $user)
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
     }
@@ -25,7 +25,7 @@ class CropPlanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalAlert);
     }
 
     /**
@@ -33,7 +33,8 @@ class CropPlanPolicy
      */
     public function view(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer');
+        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+            $user->id == $cropPlan->planned_by;
     }
 
     /**
@@ -41,7 +42,7 @@ class CropPlanPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalAlert);
     }
 
     /**
@@ -49,7 +50,7 @@ class CropPlanPolicy
      */
     public function update(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
+        return  $user->hasRole(UserRoles::AgriculturalAlert) && $cropPlan->planned_by === $user->id;
     }
 
     /**
@@ -57,8 +58,6 @@ class CropPlanPolicy
      */
     public function delete(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
+        return $user->hasRole(UserRoles::AgriculturalAlert) && $cropPlan->planned_by === $user->id;
     }
-
-
 }

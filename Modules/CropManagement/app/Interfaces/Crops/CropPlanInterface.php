@@ -2,17 +2,11 @@
 
  namespace Modules\CropManagement\Interfaces\Crops;
 
- interface CropPlanInterface{
+use App\Interfaces\BaseCrudServiceInterface;
 
-    public function  index();
-
-    public function store($request);
+ interface CropPlanInterface extends BaseCrudServiceInterface{
 
     public function show($cropPlan);
-
-    public function update($request,$cropPlan);
-
-    public function destroy($cropPlan);
 
     public  function  switchStatusToCancelled($cropPlan);
  }

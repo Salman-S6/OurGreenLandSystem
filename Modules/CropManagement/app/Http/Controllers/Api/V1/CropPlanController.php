@@ -11,12 +11,8 @@ use Modules\CropManagement\Models\CropPlan;
 
 class CropPlanController extends Controller
 {
-    protected $cropPlan;
+    protected  $cropPlan;
 
-    /**
-     * Summary of __construct
-     * @param \Modules\CropManagement\Interfaces\Crops\CropPlanInterface $cropPlan
-     */
     public function __construct(CropPlanInterface $cropPlan)
     {
         $this->cropPlan = $cropPlan;
@@ -27,24 +23,25 @@ class CropPlanController extends Controller
      */
     public function index()
     {
-      $data=$this->cropPlan->index();
-      ApiResponse::success(
-        [$data['plans']],
-        $data['message'],
-        200
-      );
+        $plans = $this->cropPlan->getAll();
+
+        return ApiResponse::success(
+            $plans,
+            'Successfully retrieved crop plans',
+            200
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCropPlanRequest $request)
-
     {
-        $data = $this->cropPlan->store($request);
+        $plan = $this->cropPlan->store($request->validated());
+
         return ApiResponse::success(
-            [$data['plan']],
-            $data['message'],
+            [$plan],
+            'Successfully created crop plan',
             201
         );
     }
@@ -54,8 +51,13 @@ class CropPlanController extends Controller
      */
     public function show(CropPlan $cropPlan)
     {
-        $data=$this->cropPlan->show($cropPlan);
-         ApiResponse::success([$data['plan'],$data['message'],200]);
+        $plan = $this->cropPlan->show($cropPlan);
+
+        return ApiResponse::success(
+            $plan,
+            'Successfully retrieved crop plan',
+            200
+        );
     }
 
     /**
@@ -63,8 +65,13 @@ class CropPlanController extends Controller
      */
     public function update(UpdateCropPlanRequest $request, CropPlan $cropPlan)
     {
-        $data=$this->cropPlan->update($request,$cropPlan);
-        ApiResponse::success([$data['plan']],$data['message'],200);
+        $plan = $this->cropPlan->update($request->validated(), $cropPlan);
+
+        return ApiResponse::success(
+            [$plan],
+            'Successfully updated crop plan',
+            200
+        );
     }
 
     /**
@@ -72,17 +79,26 @@ class CropPlanController extends Controller
      */
     public function destroy(CropPlan $cropPlan)
     {
-        $data=$this->cropPlan->destroy($cropPlan);
-        ApiResponse::success(['status'=>true],$data['message'],200);
+        $deleted = $this->cropPlan->destroy($cropPlan);
+
+        return ApiResponse::success(
+            ['deleted' => $deleted],
+            'Successfully deleted crop plan',
+            200
+        );
     }
 
     /**
-     * Summary of switchStatusToCancelled
-     * @param \Modules\CropManagement\Models\CropPlan $cropPlan
-     * @return \Illuminate\Http\JsonResponse
+     * Switch status to cancelled.
      */
-    public function switchStatusToCancelled(CropPlan $cropPlan){
-        $data=$this->cropPlan->switchStatusToCancelled($cropPlan);
-        return ApiResponse::success([$data['plan']],$data['message'],200);
+    public function switchStatusToCancelled(CropPlan $cropPlan)
+    {
+        $plan = $this->cropPlan->switchStatusToCancelled($cropPlan);
+
+        return ApiResponse::success(
+            $plan['plan'],
+            'Successfully cancelled crop plan',
+            200
+        );
     }
 }

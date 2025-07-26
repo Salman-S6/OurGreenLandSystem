@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\ProductionEstimation;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +17,7 @@ class StoreProductionEstimationRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user->hasRole('AgriculturalEngineer') || $user->hasRole('SuperAdmin');
+        return $user->hasRole(UserRoles::AgriculturalAlert) || $user->hasRole(UserRoles::SuperAdmin);
     }
 
     /**

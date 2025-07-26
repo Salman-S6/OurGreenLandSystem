@@ -2,7 +2,7 @@
 
 namespace Modules\CropManagement\Policies;
 
-
+use App\Enums\UserRoles;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Modules\CropManagement\Models\Crop;
@@ -16,7 +16,7 @@ class CropPolicy
      */
     public function before(User $user)
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(roles: UserRoles::SuperAdmin)) {
             return true;
         }
     }
@@ -25,13 +25,13 @@ class CropPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('ProgramManager') ||
-            $user->hasRole('AgriculturalEngineer') ||
-            $user->hasRole('Farmer') ||
-            $user->hasRole('SoilWaterSpecialist') ||
-            $user->hasRole('Supplier') ||
-            $user->hasRole('FundingAgency') ||
-            $user->hasRole('DataAnalyst');
+        return $user->hasRole(UserRoles::ProgramManager) ||
+            $user->hasRole(UserRoles::AgriculturalAlert) ||
+            $user->hasRole(UserRoles::Farmer) ||
+            $user->hasRole(UserRoles::SoilWaterSpecialist) ||
+            $user->hasRole(UserRoles::Supplier) ||
+            $user->hasRole(UserRoles::FundingAgency) ||
+            $user->hasRole(UserRoles::DataAnalyst);
     }
 
     /**
@@ -39,13 +39,13 @@ class CropPolicy
      */
     public function view(User $user, Crop $crop): bool
     {
-        return $user->hasRole('ProgramManager') ||
-            $user->hasRole('AgriculturalEngineer') ||
-            $user->hasRole('Farmer') ||
-            $user->hasRole('SoilWaterSpecialist') ||
-            $user->hasRole('Supplier') ||
-            $user->hasRole('FundingAgency') ||
-            $user->hasRole('DataAnalyst');
+         return $user->hasRole(UserRoles::ProgramManager) ||
+            $user->hasRole(UserRoles::AgriculturalAlert) ||
+            $user->hasRole(UserRoles::Farmer) ||
+            $user->hasRole(UserRoles::SoilWaterSpecialist) ||
+            $user->hasRole(UserRoles::Supplier) ||
+            $user->hasRole(UserRoles::FundingAgency) ||
+            $user->hasRole(UserRoles::DataAnalyst);
     }
 
     /**
@@ -53,7 +53,7 @@ class CropPolicy
      */
     public function create(User $user): bool
     {
-        if ($user->hasRole('Farmer')) {
+        if ($user->hasRole(UserRoles::Farmer)) {
             return true;
         }
         return false;
@@ -68,7 +68,7 @@ class CropPolicy
      */
     public function update(User $user, Crop $crop): bool
     {
-        return $user->hasRole('Farmer') && $crop->farmer_id == $user->id;
+        return $user->hasRole(UserRoles::Farmer) && $crop->farmer_id == $user->id;
     }
 
     /**
@@ -76,7 +76,7 @@ class CropPolicy
      */
     public function delete(User $user, Crop $crop): bool
     {
-         return $user->hasRole('Farmer') && $crop->farmer_id == $user->id;
+         return $user->hasRole(UserRoles::Farmer) && $crop->farmer_id == $user->id;
     }
 
     /**

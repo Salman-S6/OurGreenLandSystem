@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description');
             $table->date('discovery_date');
             $table->text('location_details');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

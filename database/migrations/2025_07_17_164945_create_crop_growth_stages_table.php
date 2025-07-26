@@ -26,6 +26,7 @@ return new class extends Migration
             ]);
             $table->text('notes')->nullable();
             $table->foreignId('recorded_by')->constrained('users')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

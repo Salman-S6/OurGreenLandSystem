@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('crops', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->foreignId('farmer_id')->constrained('users')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->json('name');
+            $table->json('description')->nullable();
             $table->timestamps();
         });
     }

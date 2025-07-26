@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\CrudException;
 
-abstract class BaseCrudService implements BaseCrudServiceInterface
+abstract class BaseCrudService  implements BaseCrudServiceInterface
 {
     /**
      * The model instance.

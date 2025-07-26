@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\ProductionEstimation;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,9 +18,9 @@ class UpdateProductionEstimationRequest extends FormRequest
     {
         $productionEstimation = $this->route('productionEstimation');
         return (
-            ($this->user()->hasRole('AgriculturalEngineer') &&
+            ($this->user()->hasRole(UserRoles::AgriculturalAlert) &&
                 $this->user()->id === $productionEstimation->reported_by)
-            || $this->user()->hasRole('SuperAdmin')
+            || $this->user()->hasRole(UserRoles::SuperAdmin)
         );
     }
 
