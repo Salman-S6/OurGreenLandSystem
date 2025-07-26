@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('soils', function (Blueprint $table) {
             $table->id();
-            $table->json('name')->unique();
+            $table->json('name');
             $table->timestamps();
         });
     }

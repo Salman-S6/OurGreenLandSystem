@@ -10,4 +10,6 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 });
 
 Route::apiResource('Reahabilitation', RehabilitationController::class)->names('Reahabilitation');
+Route::get('/lands/prioritized', [LandController::class, 'prioritized']);
 Route::apiResource('lands', LandController::class)->names('lands');
+

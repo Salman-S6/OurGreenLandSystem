@@ -26,7 +26,7 @@ class StoreLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            'owner_id' => 'required|exists:users,id',
             'farmer_id' => 'required|exists:users,id',
             'area' => 'nullable|numeric|min:0',
             'soil_type_id' => 'required|exists:soils,id',

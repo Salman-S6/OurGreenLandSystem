@@ -92,14 +92,17 @@ class RehabilitationService
      * @param int $id
      * @return Rehabilitation
      */
-    public function getById(int $id): Rehabilitation
+    public function getById(int $id)
     {
+     
         $cacheKey = "rehabilitation_{$id}";
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($id) {
-            return Rehabilitation::findOrFail($id);
+       
+            return Rehabilitation::findOrFail($id)->toArray();
         });
     }
+   
 
     /**
      * Update a rehabilitation event and clear related caches.

@@ -9,12 +9,22 @@ class LandService
 {
     public function handle() {}
 
-       /**
+
+    /**
+     * Get lands sorted by rehabilitation priority (high → low).
+     */
+    public function getPrioritizedLands()
+    {
+        return Land::with(['farmer', 'soilType'])
+                   ->prioritized()
+                   ->get();
+    }
+     /**
      * Return all lands with their related data.
      */
     public function getAllLands()
     {
-           return Land::with(['user', 'farmer', 'soilType', 'rehabilitations', 'agriculturalInfrastructures'])
+           return Land::with(['user', 'farmer', 'soilType', 'rehabilitations'])
             ->latest()
             ->get();
     }
@@ -24,7 +34,7 @@ class LandService
      */
     public function show(int $id)
     {
-        return Land::with(['soil'])->findOrFail($id)->toArray();
+        return Land::with(['soilType'])->findOrFail($id)->toArray();
     }
 
     /**
