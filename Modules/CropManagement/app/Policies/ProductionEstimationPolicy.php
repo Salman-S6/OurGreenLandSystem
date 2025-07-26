@@ -10,11 +10,21 @@ use Modules\CropManagement\Models\ProductionEstimation;
 class ProductionEstimationPolicy
 {
     /**
+     * Summary of before
+     * @param \App\Models\User $user
+     *
+     */
+    public function before(User $user){
+        if($user->hasRole('SuperAdmin')){
+            return true;
+        }
+    }
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer');
     }
 
     /**
@@ -22,7 +32,8 @@ class ProductionEstimationPolicy
      */
     public function view(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer')&&
+        $productionEstimation->reported_by===$user->id;
     }
 
     /**
@@ -30,7 +41,7 @@ class ProductionEstimationPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer');
     }
 
     /**
@@ -38,7 +49,8 @@ class ProductionEstimationPolicy
      */
     public function update(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer')&&
+        $productionEstimation->reported_by===$user->id;
     }
 
     /**
@@ -46,7 +58,8 @@ class ProductionEstimationPolicy
      */
     public function delete(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer')&&
+        $productionEstimation->reported_by===$user->id;
     }
 
 }

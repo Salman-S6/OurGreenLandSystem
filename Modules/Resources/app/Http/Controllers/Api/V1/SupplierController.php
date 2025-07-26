@@ -1,14 +1,14 @@
 <?php
 
-namespace Modules\CropManagement\Http\Controllers;
+namespace  Modules\Resources\app\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Modules\CropManagement\Http\Requests\Crop\StoreCropRequest;
-use Modules\CropManagement\Http\Requests\Crop\UpdateCropRequest;
-use Modules\CropManagement\Models\Crop;
 
-class CropController extends Controller
+use App\Http\Requests\Supplier\StoreSupplierRequest;
+use App\Http\Requests\Supplier\UpdateSupplierRequest;
+use App\Models\Supplier;
+
+class SupplierController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +21,7 @@ class CropController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCropRequest $request)
+    public function store(StoreSupplierRequest $request)
     {
         //
     }
@@ -29,7 +29,7 @@ class CropController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Crop $crop)
+    public function show(Supplier $supplier)
     {
         //
     }
@@ -37,7 +37,7 @@ class CropController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCropRequest $request, Crop $crop)
+    public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
         //
     }
@@ -45,7 +45,7 @@ class CropController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Crop $crop)
+    public function destroy(Supplier $supplier)
     {
         //
     }

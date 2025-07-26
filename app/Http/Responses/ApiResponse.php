@@ -14,12 +14,20 @@ class ApiResponse {
         ], $code);
     }
 
-    public static function error(string $message = "", int $code = 400, array $errors = []): JsonResponse
+    public static function error(string $message = "Something Went Wrong.", int $code = 400, array $errors = []): JsonResponse
     {
         return response()->json([
             "status" => false,
             "message" => $message,
             $errors
         ], $code);
+    }
+
+    public static function unauthorized() {
+        return response()->json([
+            "status" => false,
+            "message" => "Unauthorized Action.",
+            "errors" => []
+        ], 401);
     }
 }
