@@ -10,11 +10,22 @@ use Modules\CropManagement\Models\CropPlan;
 class CropPlanPolicy
 {
     /**
+     * Summary of before
+     * @param \App\Models\User $user
+     *
+     */
+    public function before(User $user)
+    {
+        if ($user->hasRole('SuperAdmin')) {
+            return true;
+        }
+    }
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer');
     }
 
     /**
@@ -22,7 +33,7 @@ class CropPlanPolicy
      */
     public function view(User $user, CropPlan $cropPlan): bool
     {
-        return false;
+        return  $user->hasRole('AgriculturalEngineer');
     }
 
     /**
@@ -30,7 +41,7 @@ class CropPlanPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('AgriculturalEngineer');
     }
 
     /**
@@ -38,7 +49,7 @@ class CropPlanPolicy
      */
     public function update(User $user, CropPlan $cropPlan): bool
     {
-        return false;
+        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
     }
 
     /**
@@ -46,7 +57,7 @@ class CropPlanPolicy
      */
     public function delete(User $user, CropPlan $cropPlan): bool
     {
-        return false;
+        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
     }
 
 

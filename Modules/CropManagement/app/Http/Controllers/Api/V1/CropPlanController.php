@@ -3,19 +3,36 @@
 namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
 use Modules\CropManagement\Http\Requests\CropPlan\StoreCropPlanRequest;
 use Modules\CropManagement\Http\Requests\CropPlan\UpdateCropPlanRequest;
+use Modules\CropManagement\Interfaces\Crops\CropPlanInterface;
 use Modules\CropManagement\Models\CropPlan;
 
 class CropPlanController extends Controller
 {
+    protected $cropPlan;
+
+    /**
+     * Summary of __construct
+     * @param \Modules\CropManagement\Interfaces\Crops\CropPlanInterface $cropPlan
+     */
+    public function __construct(CropPlanInterface $cropPlan)
+    {
+        $this->cropPlan = $cropPlan;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+      $data=$this->cropPlan->index();
+      ApiResponse::success(
+        [$data['plans']],
+        $data['message'],
+        200
+      );
     }
 
     /**
@@ -24,7 +41,12 @@ class CropPlanController extends Controller
     public function store(StoreCropPlanRequest $request)
 
     {
-        //
+        $data = $this->cropPlan->store($request);
+        return ApiResponse::success(
+            [$data['plan']],
+            $data['message'],
+            201
+        );
     }
 
     /**
@@ -32,7 +54,8 @@ class CropPlanController extends Controller
      */
     public function show(CropPlan $cropPlan)
     {
-        //
+        $data=$this->cropPlan->show($cropPlan);
+         ApiResponse::success([$data['plan'],$data['message'],200]);
     }
 
     /**
@@ -40,7 +63,8 @@ class CropPlanController extends Controller
      */
     public function update(UpdateCropPlanRequest $request, CropPlan $cropPlan)
     {
-        //
+        $data=$this->cropPlan->update($request,$cropPlan);
+        ApiResponse::success([$data['plan']],$data['message'],200);
     }
 
     /**
@@ -48,6 +72,17 @@ class CropPlanController extends Controller
      */
     public function destroy(CropPlan $cropPlan)
     {
-        //
+        $data=$this->cropPlan->destroy($cropPlan);
+        ApiResponse::success(['status'=>true],$data['message'],200);
+    }
+
+    /**
+     * Summary of switchStatusToCancelled
+     * @param \Modules\CropManagement\Models\CropPlan $cropPlan
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function switchStatusToCancelled(CropPlan $cropPlan){
+        $data=$this->cropPlan->switchStatusToCancelled($cropPlan);
+        return ApiResponse::success([$data['plan']],$data['message'],200);
     }
 }
