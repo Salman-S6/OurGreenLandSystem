@@ -72,6 +72,16 @@ class LandPolicy
     {
         return $user->hasRole('Farmer') && $user->is($land->farmer);;
     }
-  
+        
+/**
+ * Determine if the user can view prioritized lands.
+ *
+ * Only the Agricultural Rehabilitation Program Manager or SuperAdmin can do this.
+ */
+public function viewPrioritized(User $user):bool
+    {
+        return $user->hasRole('ProgramManager'); 
+    }
+
 
 }

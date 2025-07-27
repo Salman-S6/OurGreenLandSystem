@@ -1,6 +1,7 @@
 <?php
 
-namespace Modules\FarmLand\Http\Controllers;
+namespace Modules\FarmLand\Http\Controllers\Api\V1;
+
 
 use App\Http\Controllers\Controller;
 

@@ -1,15 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\FarmLand\Http\Controllers\Api\V1\LandController;
+use Modules\FarmLand\Http\Controllers\Api\V1\RehabilitationController;
 use Modules\FarmLand\Http\Controllers\FarmLandController;
-use Modules\FarmLand\Http\Controllers\LandController;
-use Modules\FarmLand\Http\Controllers\RehabilitationController;
+
+
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     Route::apiResource('farmlands', FarmLandController::class)->names('farmland');
 });
 
-Route::apiResource('Reahabilitation', RehabilitationController::class)->names('Reahabilitation');
-Route::get('/lands/prioritized', [LandController::class, 'prioritized']);
-Route::apiResource('lands', LandController::class)->names('lands');
 
+
+Route::prefix('farm-land')->middleware(['auth:sanctum'])->group(function(){
+    Route::apiResource('Reahabilitation', RehabilitationController::class)->names('farm-land.reahabilitation');
+    Route::get('/lands/prioritized', [LandController::class, 'prioritized'])->names('farm-land.prioritized');;
+    Route::apiResource('lands', LandController::class)->names('farm-land.lands');
+});
