@@ -4,19 +4,29 @@ namespace App\Models;
 
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\CropManagement\Models\CropGrowthStage;
+use Modules\CropManagement\Models\CropPlan;
+use Modules\CropManagement\Models\PestDiseaseCase;
+use Modules\CropManagement\Models\PestDiseaseRecommendation;
+use Modules\CropManagement\Models\ProductionEstimation;
+use Modules\Extension\Models\AgriculturalAlert;
+use Modules\Extension\Models\AgriculturalGuidance;
+use Modules\Extension\Models\Answer;
+use Modules\Extension\Models\Question;
 use Modules\FarmLand\Models\Land;
 use Modules\FarmLand\Models\Rehabilitation;
 use Modules\FarmLand\Models\SoilAnalysis;
 use Modules\FarmLand\Models\WaterAnalysis;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
@@ -58,18 +68,18 @@ class User extends Authenticatable
     /**
      * Get the questions asked by the user (farmer).
      */
-    // public function questions(): HasMany
-    // {
-    //     return $this->hasMany(Question::class, 'farmer_id');
-    // }
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'farmer_id');
+    }
     
     /**
      * Get the answers provided by experts.
      */
-    // public function answers(): HasMany
-    // {
-    //     return $this->hasMany(Answer::class, 'expert_id');
-    // }
+    public function answers(): HasMany
+    {
+        return $this->hasMany(Answer::class, 'expert_id');
+    }
 
     /**
      * Get the supplier profile associated with the user.
@@ -130,55 +140,55 @@ class User extends Authenticatable
     /**
      * Get the agricultural guidances added by the user.
      */
-    // public function agriculturalGuidances(): HasMany
-    // {
-    //     return $this->hasMany(AgriculturalGuidance::class, 'added_by_id');
-    // }
+    public function agriculturalGuidances(): HasMany
+    {
+        return $this->hasMany(AgriculturalGuidance::class, 'added_by_id');
+    }
 
     /**
      * Get the pest and disease cases reported by the user.
      */
-    // public function pestDiseaseCases(): HasMany
-    // {
-    //     return $this->hasMany(PestDiseaseCase::class, 'reported_by');
-    // }
+    public function pestDiseaseCases(): HasMany
+    {
+        return $this->hasMany(PestDiseaseCase::class, 'reported_by');
+    }
 
     /**
      * Get the pest and disease recommendations made by the user.
      */
-    // public function pestDiseasesRecommendations(): HasMany
-    // {
-    //     return $this->hasMany(PestDiseaseRecommendation::class, 'recommended_by');
-    // }
+    public function pestDiseasesRecommendations(): HasMany
+    {
+        return $this->hasMany(PestDiseaseRecommendation::class, 'recommended_by');
+    }
 
     /**
      * Get the crop plans created by the user.
      */
-    // public function cropPlans(): HasMany
-    // {
-    //     return $this->hasMany(CropPlan::class, 'planned_by');
-    // }
+    public function cropPlans(): HasMany
+    {
+        return $this->hasMany(CropPlan::class, 'planned_by');
+    }
 
     /**
      * Get the crop growth stages recorded by the user.
      */
-    // public function cropGrowthStages(): HasMany
-    // {
-    //     return $this->hasMany(CropGrowthStage::class, 'recorded_by');
-    // }
+    public function cropGrowthStages(): HasMany
+    {
+        return $this->hasMany(CropGrowthStage::class, 'recorded_by');
+    }
 
-    // public function productionEstimations(): HasMany
-    // {
-    //     return $this->hasMany(ProductionEstimation::class, 'reported_by');
-    // }
+    public function productionEstimations(): HasMany
+    {
+        return $this->hasMany(ProductionEstimation::class, 'reported_by');
+    }
 
     /**
      * Get the agricultural alerts created by the user.
      */
-    // public function agriculturalAlerts(): HasMany
-    // {
-    //     return $this->hasMany(AgriculturalAlert::class, 'created_by');
-    // }
+    public function agriculturalAlerts(): HasMany
+    {
+        return $this->hasMany(AgriculturalAlert::class, 'created_by');
+    }
 
     /**
      * Get the water analyses performed by the user.
