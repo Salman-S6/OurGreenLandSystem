@@ -6,6 +6,7 @@ namespace Modules\FarmLand\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 use Modules\FarmLand\Http\Requests\Land\StoreLandRequest;
 use Modules\FarmLand\Http\Requests\Land\UpdateLandRequest;
 use Modules\FarmLand\Http\Resources\LandResource;
@@ -36,7 +37,7 @@ class LandController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Land::class);
-        $lands = $this->landService->getAllLands();
+        $lands = $this->landService->getAll();
         return ApiResponse::success(
             ["Land" => LandResource::collection($lands)],
             'Lands retrieved successfully.',
@@ -50,6 +51,7 @@ class LandController extends Controller
      */
     public function store(StoreLandRequest $request)
     {
+
         $this->authorize('create', land::class);
         $land = $this->landService->store($request->validated());
         return ApiResponse::success(
@@ -61,18 +63,16 @@ class LandController extends Controller
 
     /**
      * Show a specific land.
-     */
-    public function show(string $id)
-    {
+     */ 
+public function show(Land $land)
+{
+    $this->authorize('view', $land);
+    $land = $this->landService->get($land);
 
-        $land = $this->landService->show($id);
-        $this->authorize('view', $land);
-        return ApiResponse::success(
-            ["Land" =>   $land],
-            'land retrieved successfully.',
-            200
-        );
-    }
+    return ApiResponse::success([
+        'Land' => $land,
+    ], 'land retrieved successfully.', 200);
+}
 
     /**
      * Update a land.

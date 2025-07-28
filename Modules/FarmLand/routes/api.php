@@ -14,7 +14,8 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
 
 Route::prefix('farm-land')->middleware(['auth:sanctum'])->group(function(){
-    Route::apiResource('Reahabilitation', RehabilitationController::class)->names('farm-land.reahabilitation');
-    Route::get('/lands/prioritized', [LandController::class, 'prioritized'])->names('farm-land.prioritized');;
+    Route::apiResource('rehabilitation', RehabilitationController::class)->names('farm-land.rehabilitation');
+
+    Route::get('/lands/prioritized', [LandController::class, 'prioritized'])->name('farm-land.prioritized');
     Route::apiResource('lands', LandController::class)->names('farm-land.lands');
 });

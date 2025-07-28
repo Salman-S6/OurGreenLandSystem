@@ -2,16 +2,18 @@
 
 namespace Modules\FarmLand\Services;
 
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\FarmLand\Models\Rehabilitation;
 
-class RehabilitationService
+class RehabilitationService implements BaseCrudServiceInterface
 {
 
-        protected string $cacheKeyAll = 'allRehabilitations';
+    protected string $cacheKeyAll = 'allRehabilitations';
 
     /**
      * Create a new class instance.
@@ -28,7 +30,7 @@ class RehabilitationService
      * 
      * @throws \Exception
      */
-    public function store(array $data)
+    public function store(array $data):Rehabilitation
     {
 
          try {
@@ -80,7 +82,7 @@ class RehabilitationService
      * 
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAll()
+    public function getAll(array $filters = []): iterable
     {
             return Cache::remember($this->cacheKeyAll, now()->addMinutes(10), function () {
             return Rehabilitation::latest()->get();
@@ -92,14 +94,13 @@ class RehabilitationService
      * @param int $id
      * @return Rehabilitation
      */
-    public function getById(int $id)
+    public function get(Model $model): Rehabilitation
     {
      
-        $cacheKey = "rehabilitation_{$id}";
+        $cacheKey = "rehabilitation_{$model->id}";
 
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($id) {
-       
-            return Rehabilitation::findOrFail($id)->toArray();
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($model) {
+            return Rehabilitation::with('lands')->findOrFail($model->id);
         });
     }
    
@@ -111,7 +112,7 @@ class RehabilitationService
      * @param array $data
      * @return Rehabilitation
      */
-    public function update(Rehabilitation $rehabilitation, array $data): Rehabilitation
+        public function update(array $data, Model $rehabilitation): Rehabilitation
     {
     
         if (isset($data['description_ar'])) {
@@ -147,11 +148,13 @@ class RehabilitationService
      * @param Rehabilitation $rehabilitation
      * @return void
      */
-    public function delete(Rehabilitation $rehabilitation): void
+    public function destroy(Model $rehabilitation): bool
     {
-        $rehabilitation->delete();
+        $deleted = $rehabilitation->delete();
 
         Cache::forget($this->cacheKeyAll);
         Cache::forget("rehabilitation_{$rehabilitation->id}");
+
+        return $deleted;
     }
 }

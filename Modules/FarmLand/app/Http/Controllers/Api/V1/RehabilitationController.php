@@ -54,9 +54,9 @@ class RehabilitationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Rehabilitation $rehabilitation)
     {
-        $rehabilitation = $this->rehabilitationService->getById($id);
+        $rehabilitation = $this->rehabilitationService->get($rehabilitation);
         $this->authorize('view', $rehabilitation);
         return ApiResponse::success(
             [
@@ -73,7 +73,7 @@ class RehabilitationController extends Controller
     public function update(UpdateRehabilitationRequest $request, Rehabilitation $rehabilitation)
     {
         $this->authorize('update', $rehabilitation);
-        $updated = $this->rehabilitationService->update($rehabilitation, $request->validated());
+        $updated = $this->rehabilitationService->update( $request->validated(),$rehabilitation);
 
         return ApiResponse::success(
             ['rehabilitations' => new RehabilitationResource($updated)],
@@ -89,7 +89,7 @@ class RehabilitationController extends Controller
     {
         $this->authorize('delete', $rehabilitation);
 
-        $this->rehabilitationService->delete($rehabilitation);
+        $this->rehabilitationService->destroy($rehabilitation);
 
         return ApiResponse::success(
 
