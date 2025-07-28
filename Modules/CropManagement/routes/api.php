@@ -4,14 +4,18 @@ use Illuminate\Support\Facades\Route;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropGrowthStageController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropPlanController;
+use Modules\CropManagement\Http\Controllers\Api\V1\BestAgriculturalPracticeController;
 use Modules\CropManagement\Http\Controllers\Api\V1\ProductionEstimationController;
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('crop-management')->group(function () {
-        Route::resource('cropGrowthStage', CropGrowthStageController::class)->names('crop_management.growth_stages');
+        Route::resource('cropGrowthStage', CropGrowthStageController::class)->names('crop_management.cropGrowthStage');
+        Route::delete('{cropGrowthStage}', [CropGrowthStageController::class,'forceDestroy']);
+        Route::resource('bestAgriculturalPractice', BestAgriculturalPracticeController::class)->names('crop_management.bestAgriculturalPractice');
+        Route::delete('{bestAgriculturalPractice}', [BestAgriculturalPracticeController::class,'forceDestroy']);
     });
-    
+
 
     Route::prefix('crops')->group(function () {
         Route::post('/create', [CropController::class, 'store'])->name('crop.create');

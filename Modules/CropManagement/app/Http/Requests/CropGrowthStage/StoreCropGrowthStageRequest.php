@@ -5,6 +5,7 @@ namespace Modules\CropManagement\Http\Requests\CropGrowthStage;
 use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\CropManagement\Models\CropPlan;
 
 class StoreCropGrowthStageRequest extends FormRequest
 {
@@ -14,6 +15,7 @@ class StoreCropGrowthStageRequest extends FormRequest
      */
     public function authorize(): bool
     {
+       
         $user = $this->user();
         return $user->hasRole(UserRoles::AgriculturalAlert) || $user->hasRole(UserRoles::SuperAdmin);
     }
@@ -26,7 +28,16 @@ class StoreCropGrowthStageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'crop_plan_id' => 'required|exists:crop_plans,id',
+             'crop_plan_id' => [
+                'required',
+                'exists:crop_plans,id',
+                function ($attribute, $value, $fail) {
+                    $cropPlan = CropPlan::find($value);
+                    if ($cropPlan && $cropPlan->status !== 'in-progress') {
+                        $fail('The crop plan must be in-progress to add a growth stage.');
+                    }
+                },
+            ],
             'name' => 'required|array',
             'name.en' => 'required|string|max:255',
             'name.ar' => 'required|string|max:255',

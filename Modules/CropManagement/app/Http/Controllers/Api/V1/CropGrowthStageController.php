@@ -16,6 +16,7 @@ class CropGrowthStageController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->authorizeResource(CropGrowthStage::class, 'cropGrowthStage');
+        $this->middleware('can:forceDelete,cropGrowthStage')->only('forceDestroy');
     }
 
     public function index()
@@ -24,7 +25,7 @@ class CropGrowthStageController extends Controller
             'crop_plan_id' => request()->query('crop_plan_id'),
             'recorded_by' => auth()->id(),
         ];
-       
+
         $cropGrowthStages = $this->service->getAll($filters);
         return ApiResponse::success([
             'stages' => CropGrowthStageResource::collection($cropGrowthStages),
@@ -35,10 +36,10 @@ class CropGrowthStageController extends Controller
     {
         $data = $request->validated();
         $data['recorded_by'] = auth()->id();
-        // dd($data);
+
         $cropGrowthStage = $this->service->store($data);
         return ApiResponse::success(
-            [  'stage' => new CropGrowthStageResource($cropGrowthStage->load(['cropPlan', 'recorder']))],
+            ['stage' => new CropGrowthStageResource($cropGrowthStage->load(['cropPlan', 'recorder']))],
             'Crop growth stage created successfully',
             201
         );
@@ -47,7 +48,7 @@ class CropGrowthStageController extends Controller
     public function show(CropGrowthStage $cropGrowthStage)
     {
         return ApiResponse::success(
-            [ 'stage' => new CropGrowthStageResource($this->service->get($cropGrowthStage)->load(['cropPlan', 'recorder']))],
+            ['stage' => new CropGrowthStageResource($this->service->get($cropGrowthStage)->load(['cropPlan', 'recorder']))],
             'Crop growth stage retrieved successfully'
         );
     }
@@ -58,7 +59,7 @@ class CropGrowthStageController extends Controller
         $data['recorded_by'] = auth()->id();
         $cropGrowthStage = $this->service->update($data, $cropGrowthStage);
         return ApiResponse::success(
-           [ 'stage' =>  new CropGrowthStageResource($cropGrowthStage->load(['cropPlan', 'recorder']))],
+            ['stage' =>  new CropGrowthStageResource($cropGrowthStage->load(['cropPlan', 'recorder']))],
             'Crop growth stage updated successfully'
         );
     }
@@ -67,5 +68,11 @@ class CropGrowthStageController extends Controller
     {
         $this->service->destroy($cropGrowthStage);
         return ApiResponse::success([], 'Crop growth stage deleted successfully');
+    }
+
+    public function forceDestroy(CropGrowthStage $cropGrowthStage)
+    {
+        $this->service->forceDestroy($cropGrowthStage);
+        return ApiResponse::success([], 'Crop growth stage permanently deleted successfully');
     }
 }

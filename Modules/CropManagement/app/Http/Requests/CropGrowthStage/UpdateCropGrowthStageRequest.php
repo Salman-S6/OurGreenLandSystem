@@ -5,6 +5,7 @@ namespace Modules\CropManagement\Http\Requests\CropGrowthStage;
 use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\CropManagement\Models\CropPlan;
 
 class UpdateCropGrowthStageRequest extends FormRequest
 {
@@ -14,9 +15,9 @@ class UpdateCropGrowthStageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        
+
         $user = $this->user();
-        $cropGrowthStage = $this->route('cropPlan');
+        $cropGrowthStage = $this->route('cropGrowthStage');
         if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
@@ -25,7 +26,7 @@ class UpdateCropGrowthStageRequest extends FormRequest
         }
 
         return false;
-        }
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -35,7 +36,16 @@ class UpdateCropGrowthStageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'crop_plan_id' => 'sometimes|exists:crop_plans,id',
+             'crop_plan_id' => [
+                'required',
+                'exists:crop_plans,id',
+                function ($attribute, $value, $fail) {
+                    $cropPlan = CropPlan::find($value);
+                    if ($cropPlan && $cropPlan->status !== 'in-progress') {
+                        $fail('The crop plan must be in-progress to add a growth stage.');
+                    }
+                },
+            ],
             'name' => 'sometimes|array',
             'name.en' => 'sometimes|string|max:255',
             'name.ar' => 'sometimes|string|max:255',
@@ -46,5 +56,4 @@ class UpdateCropGrowthStageRequest extends FormRequest
             'notes.ar' => 'nullable|string|max:1000',
         ];
     }
-
 }

@@ -51,7 +51,8 @@ class CropGrowthStagePolicy
      */
     public function update(User $user, CropGrowthStage $cropGrowthStage): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) && $cropGrowthStage->recorded_by === $user->id;
+        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+        $cropGrowthStage->recorded_by === $user->id;
     }
 
     /**
@@ -62,5 +63,13 @@ class CropGrowthStagePolicy
         return  $user->hasRole(UserRoles::AgriculturalAlert) && $cropGrowthStage->recorded_by === $user->id;
     }
 
+     /**
+     * Determine whether the user can force delete the model.
+     */
+    public function forceDelete(User $user, CropGrowthStage $cropGrowthStage): bool
+    {
+        return $user->hasRole(UserRoles::AgriculturalAlert) &&
+               $cropGrowthStage->recorded_by === $user->id;
+    }
 
 }

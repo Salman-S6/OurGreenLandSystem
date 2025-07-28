@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\BestAgriculturalPractice;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +14,9 @@ class StoreBestAgriculturalPracticeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+
+        $user = $this->user();
+        return $user->hasRole(UserRoles::AgriculturalAlert) || $user->hasRole(UserRoles::SuperAdmin);
     }
 
     /**
@@ -24,9 +27,17 @@ class StoreBestAgriculturalPracticeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+
+            'growth_stage_id' => 'required|exists:crop_growth_stages,id',
+            'material' => 'required|array',
+            'quantity' => 'required|numeric|min:1',
+            'practice_type' => 'required|in:irrigation,fertilization,pest-control',
+            'material.en' => 'required|string|max:255',
+            'material.ar' => 'required|string|max:255',
+            'application_date' => 'required|date',
+            'notes' => 'nullable|array',
+            'notes.en' => 'nullable|string|max:1000',
+            'notes.ar' => 'nullable|string|max:1000',
         ];
     }
-
-
 }

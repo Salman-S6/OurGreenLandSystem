@@ -3,33 +3,33 @@
 namespace Modules\CropManagement\Services\Crops;
 
 use App\Services\BaseCrudService;
-use Modules\CropManagement\Models\CropGrowthStage;
+use Modules\CropManagement\Models\BestAgriculturalPractice;
 use Illuminate\Database\Eloquent\Model;
 
-class CropGrowthStageService extends BaseCrudService
+class BestAgriculturalPracticeService extends BaseCrudService
 {
     /**
      * CropGrowthStageService constructor.
      */
-    public function __construct(CropGrowthStage $model)
+    public function __construct(BestAgriculturalPractice $model)
     {
         parent::__construct($model);
     }
 
     protected function applyFilters($query, array $filters): void
     {
-        if (isset($filters['crop_plan_id'])) {
-            $query->where('crop_plan_id', $filters['crop_plan_id']);
+        if (isset($filters['growth_stage_id'])) {
+            $query->where('growth_stage_id', $filters['growth_stage_id']);
         }
 
-        if (isset($filters['recorded_by'])) {
-            $query->where('recorded_by', $filters['recorded_by']);
+        if (isset($filters['expert_id'])) {
+            $query->where('expert_id', $filters['expert_id']);
         }
 
     }
 
      /**
-     * Force delete 
+     * Force delete
      *
      * @param Model $model
      * @return bool
