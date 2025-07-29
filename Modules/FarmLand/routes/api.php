@@ -21,12 +21,13 @@ Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 
 
 
+Route::prefix('farm-land')->middleware('auth:sanctum')->group(function () {
 
+    Route::apiResource('soil-analyses', SoilAnalysisController::class)->names('farm_land.soil_analyses');
 
-Route::apiResource('soil-analyses', SoilAnalysisController::class);
+    Route::apiResource('water-analyses', WaterAnalysisController::class)->names('farm_land.water_analyses');
 
-Route::apiResource('water-analyses', WaterAnalysisController::class);
+    Route::apiResource('ideal-analysis-values', IdealAnalysisValueController::class)->names('farm_land.ideal_analysis_values');
 
-Route::apiResource('agricultural-infrastructures', AgriculturalInfrastructureController::class);
-
-Route::apiResource('ideal-analysis-values', IdealAnalysisValueController::class);
+    Route::apiResource('agricultural-infrastructures', AgriculturalInfrastructureController::class)->names('farm_land.agricultural_infrastructures');
+});

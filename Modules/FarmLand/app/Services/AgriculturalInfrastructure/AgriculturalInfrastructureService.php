@@ -2,78 +2,88 @@
 
 namespace Modules\FarmLand\Services\AgriculturalInfrastructure;
 
+use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
-class AgriculturalInfrastructureService
+class AgriculturalInfrastructureService implements BaseCrudServiceInterface
 {
     /**
-     * Summary of getAll.
+     * Summary of __construct.
      *
-     * @return array
      */
-    public function getAll(): array
+    public function __construct()
+    {
+    }
+
+    /**
+     * Get all Agricultural Infrastructures.
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getAll(array $filters = []): LengthAwarePaginator
     {
         $data = AgriculturalInfrastructure::with('lands')->paginate(15);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of getAgricultureInfrastructure.
+     * Get a Agricultural Infrastructure.
      *
      * @param mixed $infrastructure
-     * @return array
+     * @return Model
      */
-    public function getAgricultureInfrastructure($infrastructure): array
+    public function get($infrastructure): Model
     {
-        $data = $infrastructure->load('lands');
-        return [$data];
+        $infrastructure->load('lands');
+        return $infrastructure;
     }
 
     /**
-     * Summary of store.
+     * Store Agricultural Infrastructure.
      *
-     * @param mixed $request
-     * @return array
+     * @param mixed $data
+     * @return Model
      */
-    public function store($request): array
+    public function store($data): Model
     {
-        $validatedData = $request->validated();
-        $infrastructure = AgriculturalInfrastructure::create($validatedData);
+        $infrastructure = AgriculturalInfrastructure::create($data);
 
-        if (!empty($validatedData['land_ids'])) {
-            $infrastructure->lands()->attach($validatedData['land_ids']);
+        if (!empty($data['land_is'])) {
+            $infrastructure->lands()->attach($data['land_is']);
         }
-        $data = $infrastructure->load('lands');
-        return [$data];
+        $infrastructure->load('lands');
+        return $infrastructure;
     }
 
     /**
-     * Summary of update.
+     * Update Agricultural Infrastructure.
      *
-     * @param mixed $request
+     * @param mixed $data
      * @param mixed $infrastructure
-     * @return array
+     * @return Model
      */
-    public function update($request, $infrastructure): array
+    public function update($data, $infrastructure): Model
     {
-        $validatedData = $request->validated();
-        $infrastructure->update($validatedData);
+        $infrastructure->update($data);
 
-        if ($request->has('land_ids')) {
-            $infrastructure->lands()->sync($validatedData['land_ids'] ?? []);
+        if ($data->has('land_ids')) {
+            $infrastructure->lands()->sync($data['land_is'] ?? []);
         }
 
-        $data = $infrastructure->load('lands');
-        return [$data];
+        $infrastructure->load('lands');
+        return $infrastructure;
     }
 
     /**
-     * Summary of destroy.
+     * Delete a Agricultural Infrastructure.
      *
      * @param mixed $infrastructure
-     * @return array
+     * @return bool
      */
-    public function destroy($infrastructure): mixed
+    public function destroy($infrastructure): bool
     {
         return $infrastructure->delete();
     }

@@ -4,6 +4,6 @@ namespace Modules\FarmLand\Enums;
 
 enum AgriculturalInfrastructuresStatus: string
 {
-    case functional = 'functional';
-    case damaged = 'damaged';
+    case Functional = 'functional';
+    case Damaged = 'damaged';
 }

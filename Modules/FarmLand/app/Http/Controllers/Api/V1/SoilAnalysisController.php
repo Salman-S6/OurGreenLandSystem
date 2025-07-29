@@ -27,20 +27,20 @@ class SoilAnalysisController extends Controller
     public function __construct(SoilAnalysisService $soilAnalysisService)
     {
         $this->soilAnalysisService = $soilAnalysisService;
-        // $this->authorizeResource(SoilAnalysis::class, 'water_analysis');
     }
 
     /**
      * Get All Soil Analyses.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
+        $this->authorize('viewAny', SoilAnalysis::class);
         $data = $this->soilAnalysisService->getAll();
 
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get All Soil Analyses.",
             200
         );
@@ -49,16 +49,17 @@ class SoilAnalysisController extends Controller
     /**
      * Create A New Soil Analysis.
      *
-     * @param \Modules\FarmLand\Http\Requests\SoilAnalysis\StoreSoilAnalysisRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreSoilAnalysisRequest $request
+     * @return JsonResponse
      */
     public function store(StoreSoilAnalysisRequest $request): JsonResponse
     {
         try {
-            $data = $this->soilAnalysisService->store($request);
+            $this->authorize('create', SoilAnalysis::class);
+            $data = $this->soilAnalysisService->store($request->validated());
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Analysis Created Successfully.",
                 201
             );
@@ -70,14 +71,15 @@ class SoilAnalysisController extends Controller
     /**
      * Show The Specified Soil Analysis.
      *
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
-     * @return \Illuminate\Http\JsonResponse
+     * @param SoilAnalysis $soilAnalysis
+     * @return JsonResponse
      */
     public function show(SoilAnalysis $soilAnalysis): JsonResponse
     {
-        $data = $this->soilAnalysisService->getSoilAnalysis($soilAnalysis);
+        $this->authorize('view', $soilAnalysis);
+        $data = $this->soilAnalysisService->get($soilAnalysis);
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get Soil Analysis.",
             200
         );
@@ -86,17 +88,18 @@ class SoilAnalysisController extends Controller
     /**
      * Update The Specified Soil Analysis.
      *
-     * @param \Modules\FarmLand\Http\Requests\SoilAnalysis\UpdateSoilAnalysisRequest $request
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
-     * @return \Illuminate\Http\JsonResponse
+     * @param UpdateSoilAnalysisRequest $request
+     * @param SoilAnalysis $soilAnalysis
+     * @return JsonResponse
      */
     public function update(UpdateSoilAnalysisRequest $request, SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
-            $data = $this->soilAnalysisService->update($request, $soilAnalysis);
+            $this->authorize('update', $soilAnalysis);
+            $data = $this->soilAnalysisService->update($request->validated(), $soilAnalysis);
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Analysis Updated Successfully.",
                 200
             );
@@ -108,12 +111,13 @@ class SoilAnalysisController extends Controller
     /**
      * Delete The Specified Soil Analysis.
      *
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
-     * @return \Illuminate\Http\JsonResponse
+     * @param SoilAnalysis $soilAnalysis
+     * @return JsonResponse
      */
     public function destroy(SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
+            $this->authorize('delete', $soilAnalysis);
             $this->soilAnalysisService->destroy($soilAnalysis);
             return ApiResponse::success(
                 [],

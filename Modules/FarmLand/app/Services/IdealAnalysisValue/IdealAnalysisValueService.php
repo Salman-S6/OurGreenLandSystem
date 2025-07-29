@@ -2,69 +2,80 @@
 
 namespace Modules\FarmLand\Services\IdealAnalysisValue;
 
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\FarmLand\Models\IdealAnalysisValue;
 
-class IdealAnalysisValueService
+class IdealAnalysisValueService implements BaseCrudServiceInterface
 {
     /**
-     * Summary of getAll.
-     *
-     * @return array
+     * Summary of __construct.
      */
-    public function getAll(): array
+    public function __construct()
+    {
+    }
+
+    /**
+     * Get all Ideal Analysis Values.
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getAll(array $filters = []): LengthAwarePaginator
     {
         $data = IdealAnalysisValue::with('crop')->paginate(15);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of getIdealAnalysisValue.
+     * Get an Ideal Analysis Value.
      *
      * @param mixed $idealAnalysisValue
-     * @return array
+     * @return Model
      */
-    public function getIdealAnalysisValue($idealAnalysisValue): array
+    public function get($idealAnalysisValue): Model
     {
         $data = $idealAnalysisValue->load('crop');
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of store.
+     * Store Ideal Analysis Value.
      *
-     * @param mixed $request
-     * @return array
+     * @param mixed $data
+     * @return Model
      */
-    public function store($request): array
+    public function store($data): Model
     {
-        $idealAnalysisValue = IdealAnalysisValue::create($request->validated());
+        $idealAnalysisValue = IdealAnalysisValue::create($data);
+        $idealAnalysisValue->load('crop');
 
-        $data = $idealAnalysisValue->load('crop');
-        return [$data];
+        return $idealAnalysisValue;
     }
 
     /**
-     * Summary of update.
+     * Update Ideal Analysis Value.
      *
-     * @param mixed $request
+     * @param mixed $data
      * @param mixed $idealAnalysisValue
-     * @return array
+     * @return Model
      */
-    public function update($request, $idealAnalysisValue): array
+    public function update($data, $idealAnalysisValue): Model
     {
-        $idealAnalysisValue->update($request->validated());
+        $idealAnalysisValue->update($data);
+        $idealAnalysisValue->load('crop');
 
-        $data = $idealAnalysisValue->load('crop');
-        return [$data];
+        return $idealAnalysisValue;
     }
 
     /**
-     * Summary of destroy.
+     * Delete an Ideal Analysis Value.
      *
      * @param mixed $idealAnalysisValue
-     * @return array
+     * @return bool
      */
-    public function destroy($idealAnalysisValue): mixed
+    public function destroy($idealAnalysisValue): bool
     {
         return $idealAnalysisValue->delete();
     }

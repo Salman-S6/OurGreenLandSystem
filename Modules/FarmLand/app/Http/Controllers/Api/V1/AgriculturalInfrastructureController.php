@@ -22,24 +22,24 @@ class AgriculturalInfrastructureController extends Controller
     /**
      * AgriculturalInfrastructureController Constructor.
      *
-     * @param \Modules\FarmLand\Services\AgriculturalInfrastructure\AgriculturalInfrastructureService $infrastructureService
+     * @param AgriculturalInfrastructureService $infrastructureService
      */
     public function __construct(AgriculturalInfrastructureService $infrastructureService)
     {
         $this->infrastructureService = $infrastructureService;
-        // $this->authorizeResource(AgriculturalInfrastructure::class, 'agricultural_infrastructure');
     }
 
     /**
      * Get All Agricultural Infrastructure.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
+        $this->authorize('viewAny', AgriculturalInfrastructure::class);
         $data = $this->infrastructureService->getAll();
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get All Agricultural Infrastructures.",
             200
         );
@@ -48,16 +48,17 @@ class AgriculturalInfrastructureController extends Controller
     /**
      * Create A New Agricultural Infrastructure.
      *
-     * @param \Modules\FarmLand\Http\Requests\AgriculturalInfrastructure\StoreAgriculturalInfrastructureRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreAgriculturalInfrastructureRequest $request
+     * @return JsonResponse
      */
     public function store(StoreAgriculturalInfrastructureRequest $request): JsonResponse
     {
         try {
-            $data = $this->infrastructureService->store($request);
+            $this->authorize('create', AgriculturalInfrastructure::class);
+            $data = $this->infrastructureService->store($request->validated());
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Agricultural Infrastructure Created Successfully.",
                 201
             );
@@ -69,14 +70,15 @@ class AgriculturalInfrastructureController extends Controller
     /**
      * Show The Specified Agricultural Infrastructure.
      *
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
-     * @return \Illuminate\Http\JsonResponse
+     * @param AgriculturalInfrastructure $agriculturalInfrastructure
+     * @return JsonResponse
      */
     public function show(AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
-        $data = $this->infrastructureService->getAgricultureInfrastructure($agriculturalInfrastructure);
+        $this->authorize('view', $agriculturalInfrastructure);
+        $data = $this->infrastructureService->get($agriculturalInfrastructure);
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get Agricultural Infrastructure.",
             200
         );
@@ -85,17 +87,18 @@ class AgriculturalInfrastructureController extends Controller
     /**
      * Update The Specified Agricultural Infrastructure.
      *
-     * @param \Modules\FarmLand\Http\Requests\AgriculturalInfrastructure\UpdateAgriculturalInfrastructureRequest $request
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
-     * @return \Illuminate\Http\JsonResponse
+     * @param UpdateAgriculturalInfrastructureRequest $request
+     * @param AgriculturalInfrastructure $agriculturalInfrastructure
+     * @return JsonResponse
      */
     public function update(UpdateAgriculturalInfrastructureRequest $request, AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
         try {
-            $data = $this->infrastructureService->update($request, $agriculturalInfrastructure);
+            $this->authorize('update', $agriculturalInfrastructure);
+            $data = $this->infrastructureService->update($request->validated(), $agriculturalInfrastructure);
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Agricultural Infrastructure Updated Successfully.",
                 200
             );
@@ -107,12 +110,13 @@ class AgriculturalInfrastructureController extends Controller
     /**
      * Delete The Specified Agricultural Infrastructure.
      *
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
-     * @return \Illuminate\Http\JsonResponse
+     * @param AgriculturalInfrastructure $agriculturalInfrastructure
+     * @return JsonResponse
      */
     public function destroy(AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
         try {
+            $this->authorize('delete', $agriculturalInfrastructure);
             $this->infrastructureService->destroy($agriculturalInfrastructure);
             return ApiResponse::success(
                 [],

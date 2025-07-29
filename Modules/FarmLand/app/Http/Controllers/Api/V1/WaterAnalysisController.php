@@ -27,20 +27,20 @@ class WaterAnalysisController extends Controller
     public function __construct(WaterAnalysisService $waterAnalysisService)
     {
         $this->waterAnalysisService = $waterAnalysisService;
-        // $this->authorizeResource(WaterAnalysis::class, 'water_analysis');
     }
 
     /**
      * Get All Water Analyses.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
+        $this->authorize('viewAny', WaterAnalysis::class);
         $data = $this->waterAnalysisService->getAll();
 
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get All Water Analyses.",
             200
         );
@@ -49,16 +49,17 @@ class WaterAnalysisController extends Controller
     /**
      * Create A New Water Analysis.
      *
-     * @param \Modules\FarmLand\Http\Requests\WaterAnalysis\StoreWaterAnalysisRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreWaterAnalysisRequest $request
+     * @return JsonResponse
      */
     public function store(StoreWaterAnalysisRequest $request): JsonResponse
     {
         try {
-            $data = $this->waterAnalysisService->store($request);
+            $this->authorize('create', WaterAnalysis::class);
+            $data = $this->waterAnalysisService->store($request->validated());
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Analysis Created Successfully.",
                 201
             );
@@ -69,12 +70,16 @@ class WaterAnalysisController extends Controller
 
     /**
      * Show The Specified Water Analysis.
+     *
+     * @param WaterAnalysis $waterAnalysis
+     * @return JsonResponse
      */
     public function show(WaterAnalysis $waterAnalysis): JsonResponse
     {
-        $data = $this->waterAnalysisService->getWaterAnalysis($waterAnalysis);
+        $this->authorize('view', $waterAnalysis);
+        $data = $this->waterAnalysisService->get($waterAnalysis);
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get Water Analysis.",
             200
         );
@@ -82,14 +87,19 @@ class WaterAnalysisController extends Controller
 
     /**
      * Update The Specified Water Analysis.
+     *
+     * @param UpdateWaterAnalysisRequest $request
+     * @param WaterAnalysis $waterAnalysis
+     * @return JsonResponse
      */
     public function update(UpdateWaterAnalysisRequest $request, WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
-            $data = $this->waterAnalysisService->update($request, $waterAnalysis);
+            $this->authorize('update', $waterAnalysis);
+            $data = $this->waterAnalysisService->update($request->validated(), $waterAnalysis);
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Analysis Updated Successfully.",
                 200
             );
@@ -100,10 +110,14 @@ class WaterAnalysisController extends Controller
 
     /**
      * Delete The Specified Water Analysis.
+     *
+     * @param WaterAnalysis $waterAnalysis
+     * @return JsonResponse
      */
     public function destroy(WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
+            $this->authorize('delete', $waterAnalysis);
             $this->waterAnalysisService->destroy($waterAnalysis);
             return ApiResponse::success(
                 [],

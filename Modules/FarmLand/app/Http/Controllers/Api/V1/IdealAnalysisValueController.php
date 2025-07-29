@@ -22,25 +22,24 @@ class IdealAnalysisValueController extends Controller
     /**
      * IdealAnalysisValueController Constructor.
      *
-     * @param \Modules\FarmLand\Services\IdealAnalysisValue\IdealAnalysisValueService $idealAnalysisValueService
+     * @param IdealAnalysisValueService $idealAnalysisValueService
      */
     public function __construct(IdealAnalysisValueService $idealAnalysisValueService)
     {
         $this->idealAnalysisValueService = $idealAnalysisValueService;
-        // $this->authorizeResource(IdealAnalysisValue::class, 'ideal_analysis_value');
     }
 
     /**
      *Get All Ideal Analyses Values.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
-
+        $this->authorize('viewAny', IdealAnalysisValue::class);
         $data = $this->idealAnalysisValueService->getAll();
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get All Ideal Analyses Values.",
             200
         );
@@ -49,16 +48,17 @@ class IdealAnalysisValueController extends Controller
     /**
      * Create A New Ideal Analysis Value.
      *
-     * @param \Modules\FarmLand\Http\Requests\IdealAnalysisValue\StoreIdealAnalysisValueRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreIdealAnalysisValueRequest $request
+     * @return JsonResponse
      */
     public function store(StoreIdealAnalysisValueRequest $request): JsonResponse
     {
         try {
-            $data = $this->idealAnalysisValueService->store($request);
+            $this->authorize('create', IdealAnalysisValue::class);
+            $data = $this->idealAnalysisValueService->store($request->validated());
 
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Ideal Analysis Value Created Successfully.",
                 201
             );
@@ -70,14 +70,15 @@ class IdealAnalysisValueController extends Controller
     /**
      * Show The Specified Ideal Analysis Value.
      *
-     * @param \Modules\FarmLand\Models\IdealAnalysisValue $idealAnalysisValue
-     * @return \Illuminate\Http\JsonResponse
+     * @param IdealAnalysisValue $idealAnalysisValue
+     * @return JsonResponse
      */
     public function show(IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
-        $data = $this->idealAnalysisValueService->getIdealAnalysisValue($idealAnalysisValue);
+        $this->authorize('view', $idealAnalysisValue);
+        $data = $this->idealAnalysisValueService->get($idealAnalysisValue);
         return ApiResponse::success(
-            $data,
+            [$data],
             "SuccessFully Get Ideal Analysis Value.",
             200
         );
@@ -86,16 +87,17 @@ class IdealAnalysisValueController extends Controller
     /**
      * Update The Specified Ideal Analysis Value.
      *
-     * @param \Modules\FarmLand\Http\Requests\IdealAnalysisValue\UpdateIdealAnalysisValueRequest $request
-     * @param \Modules\FarmLand\Models\IdealAnalysisValue $idealAnalysisValue
-     * @return \Illuminate\Http\JsonResponse
+     * @param UpdateIdealAnalysisValueRequest $request
+     * @param IdealAnalysisValue $idealAnalysisValue
+     * @return JsonResponse
      */
     public function update(UpdateIdealAnalysisValueRequest $request, IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
         try {
-            $data = $this->idealAnalysisValueService->update($request, $idealAnalysisValue);
+            $this->authorize('update', $idealAnalysisValue);
+            $data = $this->idealAnalysisValueService->update($request->validated(), $idealAnalysisValue);
             return ApiResponse::success(
-                $data,
+                [$data],
                 "Ideal Analysis Value Updated Successfully.",
                 200
             );
@@ -107,12 +109,13 @@ class IdealAnalysisValueController extends Controller
     /**
      * Delete The Specified Ideal Analysis Value.
      *
-     * @param \Modules\FarmLand\Models\IdealAnalysisValue $idealAnalysisValue
-     * @return \Illuminate\Http\JsonResponse
+     * @param IdealAnalysisValue $idealAnalysisValue
+     * @return JsonResponse
      */
     public function destroy(IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
         try {
+            $this->authorize('delete', $idealAnalysisValue);
             $this->idealAnalysisValueService->destroy($idealAnalysisValue);
             return ApiResponse::success(
                 [],

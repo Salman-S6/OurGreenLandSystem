@@ -9,9 +9,9 @@ use Modules\FarmLand\Models\SoilAnalysis;
 class SoilAnalysisPolicy
 {
     /**
-     * Summary Of Before.
+     * Summary of before.
      *
-     * @param \App\Models\User $user
+     * @param $user
      * @return ?bool
      */
     public function before(User $user): ?bool
@@ -25,7 +25,7 @@ class SoilAnalysisPolicy
     /**
      * Determine Whether The User Can View Any Models.
      *
-     * @param \App\Models\User $user
+     * @param $user
      * @return bool
      */
     public function viewAny(User $user): bool
@@ -36,8 +36,8 @@ class SoilAnalysisPolicy
     /**
      * Determine Whether The User Can View The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @param $user
+     * @param SoilAnalysis $soilAnalysis
      * @return bool
      */
     public function view(User $user, SoilAnalysis $soilAnalysis): bool
@@ -60,7 +60,7 @@ class SoilAnalysisPolicy
     /**
      * Determine Whether The User Can Create Models.
      *
-     * @param \App\Models\User $user
+     * @param $user
      * @return bool
      */
     public function create(User $user): bool
@@ -71,8 +71,8 @@ class SoilAnalysisPolicy
     /**
      * Determine Whether The User Can Update The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @param $user
+     * @param SoilAnalysis $soilAnalysis
      * @return bool
      */
     public function update(User $user, SoilAnalysis $soilAnalysis): bool
@@ -87,8 +87,8 @@ class SoilAnalysisPolicy
     /**
      * Determine Whether The User Can Delete The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\SoilAnalysis $soilAnalysis
+     * @param $user
+     * @param SoilAnalysis $soilAnalysis
      * @return bool
      */
     public function delete(User $user, SoilAnalysis $soilAnalysis): bool

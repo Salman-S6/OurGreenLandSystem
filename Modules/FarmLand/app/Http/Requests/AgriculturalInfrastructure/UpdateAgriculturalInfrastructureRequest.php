@@ -4,7 +4,9 @@ namespace Modules\FarmLand\Http\Requests\AgriculturalInfrastructure;
 
 use App\Traits\RequestTrait;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\FarmLand\Rules\LandsBelongToUser;
 use Modules\FarmLand\Enums\AgriculturalInfrastructuresType;
 use Modules\FarmLand\Enums\AgriculturalInfrastructuresStatus;
 
@@ -29,7 +31,10 @@ class UpdateAgriculturalInfrastructureRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $rules = [
             'type' => ['sometimes', Rule::enum(AgriculturalInfrastructuresType::class)],
             'status' => ['sometimes', Rule::enum(AgriculturalInfrastructuresStatus::class)],
 
@@ -41,5 +46,11 @@ class UpdateAgriculturalInfrastructureRequest extends FormRequest
             'land_ids' => 'sometimes|array',
             'land_ids.*' => 'sometimes|required|exists:lands,id',
         ];
+
+        if ($user && !$user->hasRole('AgriculturalEngineer')) {
+            $rules['land_ids'][] = new LandsBelongToUser($user);
+        }
+
+        return $rules;
     }
 }

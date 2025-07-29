@@ -2,81 +2,113 @@
 
 namespace Modules\FarmLand\Services\SoilAnalysis;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 use Modules\FarmLand\Models\SoilAnalysis;
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\FarmLand\Services\AnalysisComparison\AnalysisComparisonService;
 
-class SoilAnalysisService
+class SoilAnalysisService implements BaseCrudServiceInterface
 {
-    public function __construct(protected AnalysisComparisonService $analysisComparison)
+    public function __construct(protected AnalysisComparisonService $comparisonService)
     {
     }
 
     /**
-     * Summary of getAll.
+     * Get all Soil Analysis.
      *
-     * @return array
+     * @param array $filters
+     * @return LengthAwarePaginator
      */
-    public function getAll(): array
+    public function getAll(array $filters = []): LengthAwarePaginator
     {
         $data = SoilAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of getSoilAnalysis.
-     *
+     * Get a Soil Analysis
      * @param mixed $soilAnalysis
-     * @return array
+     * @return Model
      */
-    public function getSoilAnalysis($soilAnalysis): array
+    public function get($soilAnalysis): Model
     {
         $data = $soilAnalysis->load(['land', 'performer']);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of store.
+     * Store Soil Analysis.
      *
-     * @param mixed $request
-     * @return array
+     * @param mixed $data
+     * @return Model
      */
-    public function store($request): array
+    public function store($data): Model
     {
-        $data = SoilAnalysis::create($request->validated());
-        $comparisonResult = $this->analysisComparison->compare($data);
-        if (!isset($comparisonResult['error'])) {
-            $data['comparison_result'] = $comparisonResult;
+        $data['performed_by'] = Auth::id();
+
+        $soilAnalysis = SoilAnalysis::create($data);
+        $comparisonResult = $this->comparisonService->compare($soilAnalysis);
+
+        $suggestedRecommendations = [];
+        if (!empty($comparisonResult['recommendations'])) {
+            $recommendations_en = array_column($comparisonResult['recommendations'], 'en');
+            $recommendations_ar = array_column($comparisonResult['recommendations'], 'ar');
+
+            $suggestedRecommendations = [
+                'en' => implode(' ', $recommendations_en),
+                'ar' => implode(' ', $recommendations_ar),
+            ];
         }
-        $data->load(['land', 'performer']);
-        return [$data];
+
+        $soilAnalysis['comparison_result'] = $comparisonResult['details'] ?? [];
+        $soilAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
+        $soilAnalysis['suggested_recommendations'] = $suggestedRecommendations;
+        $soilAnalysis->load(['land', 'performer']);
+
+        return $soilAnalysis;
     }
 
     /**
-     * Summary of update.
+     * Update Soil Analysis.
      *
-     * @param mixed $request
+     * @param mixed $data
      * @param mixed $soilAnalysis
-     * @return array
+     * @return Model
      */
-    public function update($request, $soilAnalysis): array
+    public function update($data, $soilAnalysis): Model
     {
-        $soilAnalysis->update($request->validated());
-        $data = $soilAnalysis;
-        $comparisonResult = $this->analysisComparison->compare($data);
-        if (!isset($comparisonResult['error'])) {
-            $data['comparison_result'] = $comparisonResult;
+        $data['performed_by'] = Auth::id();
+        $soilAnalysis->update($data);
+
+        $comparisonResult = $this->comparisonService->compare($soilAnalysis);
+        $suggestedRecommendations = [];
+        if (!empty($comparisonResult['recommendations'])) {
+            $recommendations_en = array_column($comparisonResult['recommendations'], 'en');
+            $recommendations_ar = array_column($comparisonResult['recommendations'], 'ar');
+
+            $suggestedRecommendations = [
+                'en' => implode(' ', $recommendations_en),
+                'ar' => implode(' ', $recommendations_ar),
+            ];
         }
-        $data = $soilAnalysis->load(['land', 'performer']);
-        return [$data];
+
+        $soilAnalysis['comparison_result'] = $comparisonResult['details'] ?? [];
+        $soilAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
+        $soilAnalysis['suggested_recommendations'] = $suggestedRecommendations;
+        $soilAnalysis->load(['land', 'performer']);
+
+        return $soilAnalysis;
     }
 
     /**
-     * Summary of destroy.
+     * Delete a Soil Analysis.
      *
      * @param mixed $soilAnalysis
-     * @return array
+     * @return bool
      */
-    public function destroy($soilAnalysis): mixed
+    public function destroy($soilAnalysis): bool
     {
         return $soilAnalysis->delete();
     }

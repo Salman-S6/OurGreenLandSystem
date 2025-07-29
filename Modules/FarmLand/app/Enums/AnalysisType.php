@@ -4,6 +4,6 @@ namespace Modules\FarmLand\Enums;
 
 enum AnalysisType: string
 {
-    case soil = 'soil';
-    case water = 'water';
+    case Soil = 'soil';
+    case Water = 'water';
 }

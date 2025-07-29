@@ -9,9 +9,9 @@ use Modules\FarmLand\Models\WaterAnalysis;
 class WaterAnalysisPolicy
 {
     /**
-     * Summary Of Before.
+     * Summary of before.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return ?bool
      */
     public function before(User $user): ?bool
@@ -25,7 +25,7 @@ class WaterAnalysisPolicy
     /**
      * Determine Whether The User Can View Any Models.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return bool
      */
     public function viewAny(User $user): bool
@@ -36,8 +36,8 @@ class WaterAnalysisPolicy
     /**
      * Determine Whether The User Can View The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @param User $user
+     * @param WaterAnalysis $waterAnalysis
      * @return bool
      */
     public function view(User $user, WaterAnalysis $waterAnalysis): bool
@@ -60,7 +60,7 @@ class WaterAnalysisPolicy
     /**
      * Determine Whether The User Can Create Models.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return bool
      */
     public function create(User $user): bool
@@ -71,8 +71,8 @@ class WaterAnalysisPolicy
     /**
      * Determine Whether The User Can Update The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @param User $user
+     * @param WaterAnalysis $waterAnalysis
      * @return bool
      */
     public function update(User $user, WaterAnalysis $waterAnalysis): bool
@@ -87,10 +87,9 @@ class WaterAnalysisPolicy
     /**
      * Determine Whether The User Can Delete The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\WaterAnalysis $waterAnalysis
+     * @param User $user
+     * @param WaterAnalysis $waterAnalysis
      * @return bool
-     *
      */
     public function delete(User $user, WaterAnalysis $waterAnalysis): bool
     {

@@ -2,82 +2,115 @@
 
 namespace Modules\FarmLand\Services\WaterAnalysis;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 use Modules\FarmLand\Models\WaterAnalysis;
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\FarmLand\Services\AnalysisComparison\AnalysisComparisonService;
 
-class WaterAnalysisService
+class WaterAnalysisService implements BaseCrudServiceInterface
 {
-    public function __construct(protected AnalysisComparisonService $analysisComparison)
+    public function __construct(protected AnalysisComparisonService $comparisonService)
     {
     }
 
     /**
-     * Summary of getAll.
+     * Get all Water Analysis.
      *
-     * @return array
+     * @param array $filters
+     * @return LengthAwarePaginator
      */
-    public function getAll(): array
+    public function getAll(array $filters = []): LengthAwarePaginator
     {
         $data = WaterAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of getWaterAnalysis.
-     *
+     * Get a Water Analysis
      * @param mixed $waterAnalysis
-     * @return array
+     * @return Model
      */
-    public function getWaterAnalysis($waterAnalysis): array
+    public function get($waterAnalysis): Model
     {
         $data = $waterAnalysis->load(['land', 'performer']);
-        return [$data];
+        return $data;
     }
 
     /**
-     * Summary of store.
+     * Store Water Analysis.
      *
-     * @param mixed $request
-     * @return array
+     * @param mixed $data
+     * @return Model
      */
-    public function store($request): array
+    public function store($data): Model
     {
-        // return [1];
-        $data = WaterAnalysis::create($request->validated());
-        $comparisonResult = $this->analysisComparison->compare($data);
-        if (!isset($comparisonResult['error'])) {
-            $data['comparison_result'] = $comparisonResult;
+        $data['performed_by'] = Auth::id();
+
+        $waterAnalysis = WaterAnalysis::create($data);
+        $comparisonResult = $this->comparisonService->compare($waterAnalysis);
+
+        $suggestedRecommendations = [];
+        if (!empty($comparisonResult['recommendations_to_store'])) {
+            $recommendations_en = array_column($comparisonResult['recommendations_to_store'], 'en');
+            $recommendations_ar = array_column($comparisonResult['recommendations_to_store'], 'ar');
+
+            $suggestedRecommendations = [
+                'en' => implode(' ', $recommendations_en),
+                'ar' => implode(' ', $recommendations_ar),
+            ];
         }
-        $data->load(['land', 'performer']);
-        return [$data];
+
+        $waterAnalysis['comparison_result'] = $comparisonResult['details'] ?? [];
+        $waterAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
+        $waterAnalysis['suggested_recommendations'] = $suggestedRecommendations;
+        $data = $waterAnalysis->load(['land', 'performer']);
+
+        return $data;
     }
 
     /**
-     * Summary of update.
+     * Update Water Analysis.
      *
-     * @param mixed $request
+     * @param mixed $data
      * @param mixed $waterAnalysis
-     * @return array
+     * @return Model
      */
-    public function update($request, $waterAnalysis): array
+    public function update($data, $waterAnalysis): Model
     {
-        $waterAnalysis->update($request->validated());
+        $data['performed_by'] = Auth::id();
+
+        $waterAnalysis->update($data);
         $data = $waterAnalysis;
-        $comparisonResult = $this->analysisComparison->compare($data);
-        if (!isset($comparisonResult['error'])) {
-            $data['comparison_result'] = $comparisonResult;
+        $comparisonResult = $this->comparisonService->compare($data);
+
+        $suggestedRecommendations = [];
+        if (!empty($comparisonResult['recommendations_to_store'])) {
+            $recommendations_en = array_column($comparisonResult['recommendations_to_store'], 'en');
+            $recommendations_ar = array_column($comparisonResult['recommendations_to_store'], 'ar');
+
+            $suggestedRecommendations = [
+                'en' => implode(' ', $recommendations_en),
+                'ar' => implode(' ', $recommendations_ar),
+            ];
         }
-        $data = $waterAnalysis->load(['land', 'performer']);
-        return [$data];
+
+        $data['comparison_result'] = $comparisonResult['details'] ?? [];
+        $data['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
+        $data['suggested_recommendations'] = $suggestedRecommendations;
+        $data->load(['land', 'performer']);
+
+        return $data;
     }
 
     /**
-     * Summary of destroy.
+     * Delete a Water Analysis.
      *
      * @param mixed $waterAnalysis
-     * @return array
+     * @return bool
      */
-    public function destroy($waterAnalysis): mixed
+    public function destroy($waterAnalysis): bool
     {
         return $waterAnalysis->delete();
     }

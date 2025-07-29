@@ -5,7 +5,6 @@ namespace Modules\FarmLand\Http\Requests\WaterAnalysis;
 use App\Traits\RequestTrait;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
-use Modules\FarmLand\Rules\SampleDateWithinCropPlan;
 use Modules\FarmLand\Enums\WaterAnalysesSuitability;
 
 class StoreWaterAnalysisRequest extends FormRequest
@@ -31,14 +30,8 @@ class StoreWaterAnalysisRequest extends FormRequest
     {
         return [
             'land_id' => 'required|exists:lands,id',
-            'performed_by' => 'required|exists:users,id',
 
-            'sample_date' => [
-                'required',
-                'date',
-                'before_or_equal:today',
-                new SampleDateWithinCropPlan($this->input('land_id')),
-            ],
+            'sample_date' => 'required|date|before_or_equal:today',
 
             'ph_level' => 'required|numeric|between:0,14',
             'salinity_level' => 'required|numeric|between:0,100',

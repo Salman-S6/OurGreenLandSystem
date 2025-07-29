@@ -12,16 +12,81 @@ use Modules\FarmLand\Models\IdealAnalysisValue;
 class AnalysisComparisonService
 {
     /**
-     * Summary of results.
-     * @var array
-     */
-    private array $results = [];
-
-    /**
-     * Summary of ideal.
+     * Summary of ideal
      * @var
      */
     private ?IdealAnalysisValue $ideal = null;
+
+    /**
+     * Summary of rules
+     * @var array
+     */
+    private array $rules = [];
+
+    /**
+     * Summary of __construct.
+     *
+     */
+    public function __construct()
+    {
+        $this->initializeRules();
+    }
+
+    /**
+     * Initializes the rules engine with all conditions and recommendations.
+     *
+     * @return void
+     */
+    private function initializeRules(): void
+    {
+        $this->rules = [
+            'ph' => [
+                'field' => 'ph_level',
+                'evaluator' => function ($value, $ideal) {
+                    if ($value < $ideal->ph_min) {
+                        return [
+                            'status' => 'low',
+                            'recommendation' => ['en' => 'pH is too acidic. Consider adding lime.', 'ar' => 'درجة الحموضة حمضية جداً. ينصح بإضافة الجير.']
+                        ];
+                    }
+                    if ($value > $ideal->ph_max) {
+                        return [
+                            'status' => 'high',
+                            'recommendation' => ['en' => 'pH is too alkaline. Consider adding sulfur.', 'ar' => 'درجة الحموضة قلوية جداً. ينصح بإضافة الكبريت.']
+                        ];
+                    }
+                    return [
+                        'status' => 'ideal',
+                        'recommendation' => ['en' => 'pH level is optimal.', 'ar' => 'مستوى درجة الحموضة مثالي.']
+                    ];
+                }
+            ],
+            'salinity' => [
+                'field' => 'salinity_level',
+                'evaluator' => function ($value, $ideal) {
+                    if ($value > $ideal->salinity_max) {
+                        return [
+                            'status' => 'high',
+                            'recommendation' => ['en' => 'Salinity is too high. Ensure proper drainage.', 'ar' => 'نسبة الملوحة مرتفعة جداً. تأكد من وجود تصريف جيد.']
+                        ];
+                    }
+                    if ($value < $ideal->salinity_min) {
+                        return [
+                            'status' => 'low',
+                            'recommendation' => [
+                                'en' => 'Salinity level is very low, which is excellent for most crops.',
+                                'ar' => 'مستوى الملوحة منخفض جداً، وهو ممتاز لمعظم المحاصيل.'
+                            ]
+                        ];
+                    }
+                    return [
+                        'status' => 'ideal',
+                        'recommendation' => ['en' => 'Salinity level is optimal.', 'ar' => 'مستوى الملوحة مثالي.']
+                    ];
+                }
+            ],
+        ];
+    }
 
     /**
      * Compare An Analysis Model With Its Ideal Values.
@@ -40,97 +105,40 @@ class AnalysisComparisonService
             return ['status' => 'no_crop_plan', 'message' => 'No active crop plan found.'];
         }
 
-        $analysisType = $analysis instanceof SoilAnalysis ? AnalysisType::soil : AnalysisType::water;
+        $analysisType = $analysis instanceof SoilAnalysis ? AnalysisType::Soil : AnalysisType::Water;
         $this->ideal = IdealAnalysisValue::where('crop_id', $cropPlan->crop_id)->where('type', $analysisType)->first();
 
         if (!$this->ideal) {
             return ['status' => 'missing_ideal_values', 'message' => "No ideal values for this crop.", 'crop_id' => $cropPlan->crop_id];
         }
 
-        $this->comparePH($analysis->ph_level);
-        $this->compareSalinity($analysis->salinity_level);
-        if ($analysisType === AnalysisType::soil) {
-            $this->compareFertility($analysis->fertility_level);
-        }
+        $comparisonDetails = [];
+        $recommendationsToStore = [];
 
-        $overallGrade = $this->calculateOverallGrade();
+        foreach ($this->rules as $metric => $rule) {
+            if (!isset($analysis->{$rule['field']}))
+                continue;
+
+            $value = $analysis->{$rule['field']};
+            $result = $rule['evaluator']($value, $this->ideal);
+
+            $comparisonDetails[$metric] = [
+                'status' => $result['status'],
+                'recommendation' => $result['recommendation'][app()->getLocale()] ?? $result['recommendation']['en'],
+            ];
+
+            if ($result['status'] !== 'ideal') {
+                $recommendationsToStore[] = $result['recommendation'];
+            }
+        }
 
         $suggestedCrops = $this->suggestSuitableCrops($analysis);
 
         return [
-            'details' => $this->results,
-            'overall_grade' => $overallGrade,
+            'details' => $comparisonDetails,
+            'recommendations_to_store' => $recommendationsToStore,
             'suggested_crops' => $suggestedCrops,
         ];
-    }
-
-    /**
-     * Summary of comparePH.
-     *
-     * @param float $value
-     * @return void
-     */
-    private function comparePH(float $value): void
-    {
-        if ($value < $this->ideal->ph_min) {
-            $this->results['ph'] = ['status' => 'low', 'recommendation' => 'pH is too acidic. Consider adding lime.'];
-        } elseif ($value > $this->ideal->ph_max) {
-            $this->results['ph'] = ['status' => 'high', 'recommendation' => 'pH is too alkaline. Consider adding sulfur or organic matter.'];
-        } else {
-            $this->results['ph'] = ['status' => 'ideal', 'recommendation' => 'pH level is optimal.'];
-        }
-    }
-
-    /**
-     * Summary of compareSalinity.
-     *
-     * @param float $value
-     * @return void
-     */
-    private function compareSalinity(float $value): void
-    {
-        if ($value > $this->ideal->salinity_max) {
-            $this->results['salinity'] = ['status' => 'high', 'recommendation' => 'Salinity is too high. Ensure proper drainage and use low-salinity water.'];
-        } else {
-            $this->results['salinity'] = ['status' => 'ideal', 'recommendation' => 'Salinity level is optimal.'];
-        }
-    }
-
-    /**
-     * Summary of compareFertility.
-     *
-     * @param mixed $value
-     * @return void
-     */
-    private function compareFertility($value): void
-    {
-        $this->results['fertility'] = ($value === $this->ideal->fertility_level)
-            ? ['status' => 'ideal', 'recommendation' => 'Fertility level is as expected.']
-            : ['status' => 'mismatch', 'recommendation' => "Fertility is not ideal. Expected {$this->ideal->fertility_level->value}, but got {$value->value}."];
-    }
-
-    /**
-     * Summary of calculateOverallGrade.
-     *
-     * @return string
-     */
-    private function calculateOverallGrade(): string
-    {
-        $score = 0;
-        $total = count($this->results);
-        foreach ($this->results as $result) {
-            if ($result['status'] === 'ideal') {
-                $score += 2;
-            } elseif ($result['status'] !== 'ideal') {
-                $score += 1;
-            }
-        }
-        $percentage = ($score / ($total * 2)) * 100;
-        if ($percentage >= 80)
-            return 'Excellent';
-        if ($percentage >= 50)
-            return 'Good';
-        return 'Needs Improvement';
     }
 
     /**
@@ -141,7 +149,9 @@ class AnalysisComparisonService
      */
     private function suggestSuitableCrops(SoilAnalysis|WaterAnalysis $analysis): array
     {
-        $matchingIdeals = IdealAnalysisValue::where('type', $analysis instanceof SoilAnalysis ? 'soil' : 'water')
+        $analysisType = $analysis instanceof SoilAnalysis ? AnalysisType::Soil : AnalysisType::Water;
+
+        $matchingIdeals = IdealAnalysisValue::where('type', $analysisType)
             ->where('ph_min', '<=', $analysis->ph_level)
             ->where('ph_max', '>=', $analysis->ph_level)
             ->where('salinity_max', '>=', $analysis->salinity_level)

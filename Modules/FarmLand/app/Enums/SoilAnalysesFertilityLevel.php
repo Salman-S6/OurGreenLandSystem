@@ -4,7 +4,7 @@ namespace Modules\FarmLand\Enums;
 
 enum SoilAnalysesFertilityLevel: string
 {
-    case low = 'low';
-    case medium = 'medium';
-    case high = 'high';
+    case Low = 'low';
+    case Medium = 'medium';
+    case High = 'high';
 }

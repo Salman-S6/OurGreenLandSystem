@@ -6,12 +6,12 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
-class AgriculturalInfrastructurePolicy
+class infrastructurePolicy
 {
     /**
-     * Summary Of Before.
+     * Summary of before.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return ?bool
      */
     public function before(User $user): ?bool
@@ -25,7 +25,7 @@ class AgriculturalInfrastructurePolicy
     /**
      * Determine Whether The User Can View Any Models.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return bool
      */
     public function viewAny(User $user): bool
@@ -39,18 +39,22 @@ class AgriculturalInfrastructurePolicy
     /**
      * Determine Whether The User Can View The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
      * @return bool
      */
-    public function view(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function view(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
         if ($user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer'])) {
             return true;
         }
 
-        if ($user->hasRole('Farmer')) {
-            return $agriculturalInfrastructure->lands()->where('farmer_id', $user->id)->exists();
+        if ($user->hasAnyRole(['Farmer'])) {
+            return $infrastructure->lands()
+                ->where(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->orWhere('farmer_id', $user->id);
+                })->exists();
         }
 
         return false;
@@ -59,38 +63,45 @@ class AgriculturalInfrastructurePolicy
     /**
      * Determine Whether The User Can Create Models.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return bool
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasAnyRole(['AgriculturalEngineer', 'Farmer']);
     }
 
     /**
      * Determine Whether The User Can Update The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
      * @return bool
      */
-    public function update(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function update(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        return $user->hasRole('AgriculturalEngineer') &&
-            $user->lands()->whereHas('agriculturalInfrastructures', function ($query) use ($agriculturalInfrastructure) {
-                $query->where('id', $agriculturalInfrastructure->id);
-            })->exists();
+        if ($user->hasRole('AgriculturalEngineer'))
+            return true;
+        if ($user->hasAnyRole(['Farmer'])) {
+            return $infrastructure->lands()
+                ->where(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->orWhere('farmer_id', $user->id);
+                })->exists();
+        }
+
+        return false;
     }
 
     /**
      * Determine Whether The User Can Delete The Model.
      *
-     * @param \App\Models\User $user
-     * @param \Modules\FarmLand\Models\AgriculturalInfrastructure $agriculturalInfrastructure
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
      * @return bool
      */
-    public function delete(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function delete(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        return $this->update($user, $agriculturalInfrastructure);
+        return $this->update($user, $infrastructure);
     }
 }
