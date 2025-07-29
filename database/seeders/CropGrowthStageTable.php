@@ -4,17 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Modules\CropManagement\Models\Crop;
+use Modules\CropManagement\Models\CropGrowthStage;
 
-class CropTableSeeder extends Seeder
+class CropGrowthStageTable extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('crop_plans')->delete();
-        Crop::factory(5)->create();
+        CropGrowthStage::factory(10)->create();
     }
 }

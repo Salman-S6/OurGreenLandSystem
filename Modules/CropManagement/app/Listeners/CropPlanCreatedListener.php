@@ -14,29 +14,28 @@ class CropPlanCreatedListener implements ShouldQueue
     /**
      * Handle the event.
      */
-   public function handle(CropPlanCreated $event): void
-{
-    $cropPlan = $event->cropPlan;
+    public function handle(CropPlanCreated $event): void
+    {
+        $cropPlan = $event->cropPlan;
 
-    $cropPlan->loadMissing(['planner', 'land.user', 'land.farmer', 'crop']);
-    
-    $emails = [
-        optional($cropPlan->planner)->email,
-        optional($cropPlan->land->user)->email,
-        optional($cropPlan->land->land->farmer)->email,
-    ];
+        $cropPlan->loadMissing(['planner', 'land.user', 'land.farmer', 'crop']);
 
-    foreach ($emails as $email) {
-        try {
-            if ($email) {
-                Mail::to($email)->send(new CropPlanCreatedMail($cropPlan));
+        $emails = [
+            optional($cropPlan->planner)->email,
+            optional($cropPlan->land->user)->email,
+            optional($cropPlan->land->farmer)->email,
+        ];
+
+        foreach ($emails as $email) {
+            try {
+                if ($email) {
+                    Mail::to($email)->send(new CropPlanCreatedMail($cropPlan));
+                }
+            } catch (\Throwable $e) {
+                Log::error("Failed to send crop plan email to [$email]: " . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
-        } catch (\Throwable $e) {
-              Log::error("Failed to send crop plan email to [$email]: " . $e->getMessage(), [
-        'trace' => $e->getTraceAsString()
-    ]);
         }
     }
-}
-
 }

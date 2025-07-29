@@ -27,11 +27,20 @@ class PestDiseaseRecommendation extends Model
         'recommended_dose',
         'application_method',
         'safety_notes',
-        'recommended_by',
+        
     ];
 
+    /**
+     * Summary of translatable
+     * @var array
+     */
     public array $translatable = ['safety_notes','recommendation_name','application_method'];
-
+     
+    /**
+     * Summary of guarded
+     * @var array
+     */
+    protected  $guarded=['recommended_by'];
     /**
      * Get the pest/disease case for the recommendation.
      */

@@ -24,7 +24,8 @@ class ProductionEstimationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert);
+        return $user->hasRole(UserRoles::AgriculturalAlert)||
+        $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**
@@ -32,8 +33,9 @@ class ProductionEstimationPolicy
      */
     public function view(User $user, ProductionEstimation $productionEstimation): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert)&&
-        $productionEstimation->reported_by===$user->id;
+        return ($user->hasRole(UserRoles::AgriculturalAlert)&&
+        $productionEstimation->reported_by===$user->id)||
+        $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**

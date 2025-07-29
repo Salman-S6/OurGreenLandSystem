@@ -4,6 +4,8 @@ namespace Modules\Resources\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Resources\Interfaces\InputRequestInterface;
+use Modules\Resources\Services\InputRequestService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -36,6 +38,7 @@ class ResourcesServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(InputRequestInterface::class,InputRequestService::class);
     }
 
     /**

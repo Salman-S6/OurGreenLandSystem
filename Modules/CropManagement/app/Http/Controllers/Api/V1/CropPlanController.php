@@ -11,8 +11,12 @@ use Modules\CropManagement\Models\CropPlan;
 
 class CropPlanController extends Controller
 {
-    protected  $cropPlan;
+    protected   $cropPlan;
 
+    /**
+     * Summary of __construct
+     * @param \Modules\CropManagement\Interfaces\Crops\CropPlanInterface $cropPlan
+     */
     public function __construct(CropPlanInterface $cropPlan)
     {
         $this->cropPlan = $cropPlan;
@@ -26,7 +30,7 @@ class CropPlanController extends Controller
         $plans = $this->cropPlan->getAll();
 
         return ApiResponse::success(
-            $plans,
+            [$plans],
             'Successfully retrieved crop plans',
             200
         );
@@ -51,10 +55,10 @@ class CropPlanController extends Controller
      */
     public function show(CropPlan $cropPlan)
     {
-        $plan = $this->cropPlan->show($cropPlan);
+        $plan = $this->cropPlan->get($cropPlan);
 
         return ApiResponse::success(
-            $plan,
+            [$plan],
             'Successfully retrieved crop plan',
             200
         );
@@ -96,7 +100,7 @@ class CropPlanController extends Controller
         $plan = $this->cropPlan->switchStatusToCancelled($cropPlan);
 
         return ApiResponse::success(
-            $plan['plan'],
+            [$plan['plan']],
             'Successfully cancelled crop plan',
             200
         );

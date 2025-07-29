@@ -3,12 +3,20 @@
 namespace  Modules\Resources\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InputRequest\StoreInputRequestRequest;
-use App\Http\Requests\InputRequest\UpdateInputRequestRequest;
-use App\Models\InputRequest;
+
+
+use Modules\Resources\Http\Requests\InputRequest\StoreInputRequestRequest;
+use Modules\Resources\Http\Requests\InputRequest\UpdateInputRequestRequest;
+use Modules\Resources\Interfaces\InputRequestInterface;
+use Modules\Resources\Models\InputRequest ;
 
 class InputRequestController extends Controller
 {
+    protected InputRequestInterface $input;
+
+    public  function  __construct(InputRequestInterface $input){
+           $this->input=$input;
+    }
     /**
      * Display a listing of the resource.
      */

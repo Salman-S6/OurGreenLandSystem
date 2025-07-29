@@ -4,6 +4,7 @@ namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
+use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use Modules\CropManagement\Http\Requests\Crop\StoreCropRequest;
 use Modules\CropManagement\Http\Requests\Crop\UpdateCropRequest;
@@ -53,10 +54,10 @@ class CropController extends Controller
      */
     public function show(Crop $crop)
     {
-        $result = $this->crop->getCrop($crop);
+        $result = $this->crop->get($crop);
 
         return ApiResponse::success(
-            ['crop' => $result['crop']],
+            ['crop' => $result],
             'Crop retrieved successfully.',
             200
         );

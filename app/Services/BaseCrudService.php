@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\CrudException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 abstract class BaseCrudService  implements BaseCrudServiceInterface
 {
@@ -38,6 +40,9 @@ abstract class BaseCrudService  implements BaseCrudServiceInterface
         } catch (ModelNotFoundException $e) {
             $modelName = class_basename($this->model);
             throw new CrudException($notFoundMessage ?? "{$modelName} not found", 404);
+        } catch (HttpResponseException $e) {
+            throw $e;
+        
         } catch (\Throwable $e) {
             throw new CrudException('Unexpected error: ' . $e->getMessage(), 500);
         }

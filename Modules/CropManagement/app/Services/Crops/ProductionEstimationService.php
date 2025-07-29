@@ -3,6 +3,7 @@
 namespace Modules\CropManagement\Services\Crops;
 
 use App\Enums\UserRoles;
+use App\Interfaces\BaseCrudServiceInterface;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -13,6 +14,7 @@ use Modules\CropManagement\Models\CropPlan;
 use Modules\CropManagement\Models\ProductionEstimation;
 use App\Services\BaseCrudService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ProductionEstimationService extends BaseCrudService implements ProductionEstimationInterface
 {
@@ -34,34 +36,40 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
     {
         $user = Auth::user();
         $this->authorize('viewAny', ProductionEstimation::class);
-
         $relations = ['cropPlan', 'reporter'];
+        $filterKey = md5(json_encode($filters));
+        $cacheKey = match (true) {
+            $user->hasRole(UserRoles::SuperAdmin) => 'production_estimations_all_' . $filterKey,
+            $user->hasRole(UserRoles::ProgramManager) => 'production_estimations_program_manager_' . $filterKey,
+            default => 'production_estimations_user_' . $user->id . '_' . $filterKey,
+        };
+        return $this->handle(function () use ($user, $relations, $filters, $cacheKey) {
+            return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($user, $relations, $filters) {
+                $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
 
-        return $this->handle(function () use ($user, $relations, $filters) {
-            $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
-
-            if (!$user->hasRole(UserRoles::SuperAdmin)) {
-                $query->where('reported_by', $user->id);
-            }
-
-
-            foreach ($filters as $field => $value) {
-                if ($value !== null && $value !== '') {
-                    $query->where($field, $value);
+                if (!($user->hasRole(UserRoles::SuperAdmin) || $user->hasRole(UserRoles::ProgramManager))) {
+                    $query->where('reported_by', $user->id);
                 }
-            }
-
-            return $query->get();
+                foreach ($filters as $field => $value) {
+                    if ($value !== null && $value !== '') {
+                        $query->where($field, $value);
+                    }
+                }
+                return $query->get();
+            });
         });
     }
+
 
     /**
      * Override get (show) to add authorization
      */
-    public function getProductionEstimation($productionEstimation): Model
+
+
+    public  function  get(Model $model): Model
     {
-        $this->authorize('view', $productionEstimation);
-        return $productionEstimation->load('cropPlan', 'reporter');
+        $this->authorize('view', $model);
+        return $model;
     }
 
     /**
@@ -86,7 +94,9 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             $estimation->setTranslations('estimation_method', $data['estimation_method']);
             $estimation->reported_by = Auth::id();
             $estimation->save();
-
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $estimation->reported_by);
             return $estimation->load('cropPlan', 'reporter');
         }, 'Failed to create production estimation');
     }
@@ -119,7 +129,9 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             }
 
             $model->save();
-
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $model->reported_by);
             return $model->load('cropPlan', 'reporter');
         }, 'Failed to update production estimation');
     }
@@ -131,6 +143,9 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
     {
         $this->authorize('delete', $model);
         return $this->handle(function () use ($model) {
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $model->reported_by);
             return $model->forceDelete();
         }, 'Failed to delete production estimation');
     }

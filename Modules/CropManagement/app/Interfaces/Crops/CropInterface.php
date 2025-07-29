@@ -1,9 +1,13 @@
 <?php
 
- namespace Modules\CropManagement\Interfaces\Crops;
+namespace Modules\CropManagement\Interfaces\Crops;
 
 use App\Interfaces\BaseCrudServiceInterface;
+
+/**
+ * Summary of CropInterface
+ */
 interface CropInterface extends BaseCrudServiceInterface
 {
-        public function getCrop($crop);
+        
 }

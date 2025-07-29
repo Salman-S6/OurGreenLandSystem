@@ -17,7 +17,8 @@ class StoreProductionEstimationRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user->hasRole(UserRoles::AgriculturalAlert) || $user->hasRole(UserRoles::SuperAdmin);
+        return $user->hasRole(UserRoles::AgriculturalAlert) ||
+            $user->hasRole(UserRoles::SuperAdmin);
     }
 
     /**

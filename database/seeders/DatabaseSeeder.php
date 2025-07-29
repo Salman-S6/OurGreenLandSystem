@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             SoilTypeSeeder::class,
             CropTableSeeder::class,
-            LandTableSeeder::class
+            LandTableSeeder::class,
+            CropPlanTableSeeder::class
         ]);
     }
 }

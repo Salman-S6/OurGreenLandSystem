@@ -17,7 +17,10 @@ use Spatie\Translatable\HasTranslations;
 class Crop extends Model
 {
     use HasFactory, HasTranslations;
-
+    /**
+     * Summary of newFactory
+     * @return CropFactory
+     */
     protected static function newFactory(): CropFactory
     {
         return CropFactory::new();
@@ -32,15 +35,31 @@ class Crop extends Model
         "description",
     ];
 
+     /**
+      * Summary of translatable
+      * @var array
+      */
      public $translatable = ['name', 'description'];
 
+    /**
+     * Summary of guarded
+     * @var array
+     */
     protected $guarded = ['farmer_id'];
 
+    /**
+     * Summary of cropPlans
+     * @return HasMany<CropPlan, Crop>
+     */
     public function cropPlans(): HasMany
     {
         return $this->hasMany(CropPlan::class, "crop_id");
     }
 
+    /**
+     * Summary of idealAnalysisValues
+     * @return HasMany<IdealAnalysisValue, Crop>
+     */
     public function idealAnalysisValues(): HasMany
     {
         return $this->hasMany(IdealAnalysisValue::class, "crop_id");

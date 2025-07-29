@@ -3,19 +3,38 @@
 namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
+use App\Interfaces\BaseCrudServiceInterface;
 use Modules\CropManagement\Http\Requests\PestDiseaseCase\StorePestDiseaseCaseRequest;
 use Modules\CropManagement\Http\Requests\PestDiseaseCase\UpdatePestDiseaseCaseRequest;
+use Modules\CropManagement\Interfaces\Crops\PestDiseaseCasesInterface;
 use Modules\CropManagement\Models\PestDiseaseCase;
 
 class PestDiseaseCaseController extends Controller
 {
+    protected PestDiseaseCasesInterface  $pestDiseaseCaseService;
+
+    /**
+     * Summary of __construct
+     * @param \Modules\CropManagement\Interfaces\Crops\PestDiseaseCasesInterface $pestDiseaseCaseService
+     */
+    public function __construct(PestDiseaseCasesInterface $pestDiseaseCaseService)
+    {
+        $this->pestDiseaseCaseService = $pestDiseaseCaseService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $cases = $this->pestDiseaseCaseService->getAll();
+
+        return ApiResponse::success(
+            [$cases],
+            'Successfully retrieved pest and disease cases',
+            200
+        );
     }
 
     /**
@@ -23,7 +42,13 @@ class PestDiseaseCaseController extends Controller
      */
     public function store(StorePestDiseaseCaseRequest $request)
     {
-        //
+        $case = $this->pestDiseaseCaseService->store($request->validated());
+
+        return ApiResponse::success(
+            [$case],
+            'Successfully created pest/disease case',
+            201
+        );
     }
 
     /**
@@ -31,7 +56,13 @@ class PestDiseaseCaseController extends Controller
      */
     public function show(PestDiseaseCase $pestDiseaseCase)
     {
-        //
+        $case = $this->pestDiseaseCaseService->get($pestDiseaseCase);
+
+        return ApiResponse::success(
+            [$case],
+            'Successfully retrieved pest/disease case',
+            200
+        );
     }
 
     /**
@@ -39,7 +70,13 @@ class PestDiseaseCaseController extends Controller
      */
     public function update(UpdatePestDiseaseCaseRequest $request, PestDiseaseCase $pestDiseaseCase)
     {
-        //
+        $case = $this->pestDiseaseCaseService->update($request->validated(), $pestDiseaseCase);
+
+        return ApiResponse::success(
+            [$case],
+            'Successfully updated pest/disease case',
+            200
+        );
     }
 
     /**
@@ -47,6 +84,12 @@ class PestDiseaseCaseController extends Controller
      */
     public function destroy(PestDiseaseCase $pestDiseaseCase)
     {
-        //
+        $deleted = $this->pestDiseaseCaseService->destroy($pestDiseaseCase);
+
+        return ApiResponse::success(
+            ['deleted' => $deleted],
+            'Successfully deleted pest/disease case',
+            200
+        );
     }
 }

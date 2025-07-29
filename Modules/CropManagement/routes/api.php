@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropPlanController;
+use Modules\CropManagement\Http\Controllers\Api\V1\PestDiseaseCaseController;
 use Modules\CropManagement\Http\Controllers\Api\V1\ProductionEstimationController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -34,5 +35,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/get/{productionEstimation}', [ProductionEstimationController::class, 'show'])->name('estimation.show');
         Route::get('/all', [ProductionEstimationController::class, 'index'])->name('estimation.all');
         Route::delete('/{productionEstimation}', [ProductionEstimationController::class, 'destroy'])->name('estimation.delete');
+    });
+
+    Route::prefix('disease-case')->group(function () {
+        Route::post('/create', [PestDiseaseCaseController::class, 'store'])->name('case.make');
+        Route::post('/update/{pestDiseaseCase}', [PestDiseaseCaseController::class, 'update'])->name('case.update');
+        Route::get('/get-all', [PestDiseaseCaseController::class, 'index'])->name('case.all');
+        Route::get('/get/{pestDiseaseCase}', [PestDiseaseCaseController::class, 'show'])->name('case.get');
+        Route::delete('/{pestDiseaseCase}', [PestDiseaseCaseController::class, 'destroy'])->name('case.delete');
     });
 });

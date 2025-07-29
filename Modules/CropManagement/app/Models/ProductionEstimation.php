@@ -3,6 +3,7 @@
 namespace Modules\CropManagement\Models;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,8 +13,12 @@ use Modules\CropManagement\Database\Factories\ProductionEstimationFactory;
 
 class ProductionEstimation extends Model
 {
-    use HasFactory, HasTranslations,SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
+    /**
+     * Summary of newFactory
+     * @return ProductionEstimationFactory
+     */
     protected static function newFactory(): ProductionEstimationFactory
     {
         return ProductionEstimationFactory::new();
@@ -31,8 +36,16 @@ class ProductionEstimation extends Model
         'notes',
     ];
 
-    protected $guarded=['reported_by'];
-    public array $translatable = ['notes','estimation_method'];
+    /**
+     * Summary of guarded
+     * @var array
+     */
+    protected $guarded = ['reported_by'];
+    /**
+     * Summary of translatable
+     * @var array
+     */
+    public array $translatable = ['notes', 'estimation_method'];
     /**
      * The attributes that should be cast.
      *
@@ -57,5 +70,25 @@ class ProductionEstimation extends Model
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reported_by');
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
     }
 }

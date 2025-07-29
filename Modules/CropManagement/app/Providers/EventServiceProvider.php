@@ -17,20 +17,19 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    
-   protected $listen = [
-    CropPlanCreated::class => [
-        CropPlanCreatedListener::class,
-    ],
 
-    CropPlanUpdated::class => [
-        CropPlanUpdatedListener::class,
-    ],
+    protected $listen = [
+        CropPlanCreated::class => [
+            CropPlanCreatedListener::class,
+        ],
 
-    CropPlanDeleted::class => [
-        CropPlanDeletedListener::class,
-    ],
-];
+        CropPlanUpdated::class => [
+            CropPlanUpdatedListener::class,
+        ],
+
+
+
+    ];
 
     /**
      * Indicates if events should be discovered.

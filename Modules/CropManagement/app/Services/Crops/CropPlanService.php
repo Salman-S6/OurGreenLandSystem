@@ -46,31 +46,42 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             'planner',
             'land',
             'productionEstimations' => fn($q) => $q->withTrashed(),
-            'pestDiseaseCases' => fn($q) => $q->withTrashed(),
+            'cropGrowthStages.pestDiseaseCases' => fn($q) => $q->withTrashed(),
             'cropGrowthStages' => fn($q) => $q->withTrashed(),
+            'cropGrowthStages.bestAgriculturalPractices' => fn($q) => $q->withTrashed(),
+            'cropGrowthStages.pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
         ];
 
-        $cacheKey = $user->hasRole(UserRoles::SuperAdmin)
-            ? 'crop_plans_all'
-            : 'crop_plans_user_' . $user->id;
+        $cacheKey = match (true) {
+            $user->hasRole(UserRoles::SuperAdmin) => 'crop_plans_all',
+            $user->hasRole(UserRoles::ProgramManager) => 'crop_plans_program_manager',
+            $user->hasRole(UserRoles::Farmer) => 'crop_plans_farmer_' . $user->id,
+            default => 'crop_plans_user_' . $user->id
+        };
 
         return $this->handle(function () use ($user, $relations, $cacheKey, $filters) {
             return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($user, $relations, $filters) {
                 $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
 
 
-                if (!$user->hasRole(UserRoles::SuperAdmin)) {
+                if ($user->hasRole(UserRoles::AgriculturalAlert)) {
                     $query->where('planned_by', $user->id);
+                } elseif ($user->hasRole(UserRoles::Farmer)) {
+                    $query->whereHas('land', fn($q) => $q->where('farmer_id', $user->id));
                 }
+
                 foreach ($filters as $field => $value) {
-                    if ($value !== null && $value !== '') {
+                    if (!is_null($value) && $value !== '') {
                         $query->where($field, $value);
                     }
                 }
+
                 return $query->get();
             });
         });
     }
+
+
 
 
     /**
@@ -118,7 +129,10 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             $cropPlan->save();
 
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' . Auth::id());
+            Cache::forget('crop_plans_program_manager');
+            Cache::forget('crop_plans_farmer_' . $cropPlan->land->farmer_id);
+            Cache::forget('crop_plans_user_' . $cropPlan->planned_by);
+
 
             event(new CropPlanCreated($cropPlan));
 
@@ -128,13 +142,27 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
         }, "Failed to add crop plan");
     }
 
+
     /**
-     * Override get (show) to add authorization and message formatting
+     * Summary of get
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @return Model
      */
-    public function show($cropPlan): Model
+    public function get(Model $model): CropPlan
     {
-        $this->authorize('view', $cropPlan);
-        return $cropPlan;
+        $this->authorize('view', $model);
+
+        return $model->load([
+            'cropGrowthStages',
+            'cropGrowthStages.bestAgriculturalPractices',
+            'productionEstimations',
+            'cropGrowthStages.pestDiseaseCases',
+            'cropGrowthStages.pestDiseaseCases.recommendations',
+            'agriculturalAlerts',
+            'crop',
+            'planner',
+            'land',
+        ]);
     }
 
     /**
@@ -148,6 +176,7 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             $this->authorize('update', $model);
 
             if (in_array($model->status, ['completed', 'cancelled'])) {
+                Log::info('Trying to update a completed/cancelled crop plan');
                 throw new HttpResponseException(response()->json([
                     'message' => 'You cannot update a crop plan that is already cancelled or completed.'
                 ], 403));
@@ -205,7 +234,10 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             $model->save();
 
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' . Auth::id());
+            Cache::forget('crop_plans_program_manager');
+            Cache::forget('crop_plans_farmer_' . $model->land->farmer_id);
+            Cache::forget('crop_plans_user_' . $model->planned_by);
+
 
             event(new CropPlanUpdated($model));
 
@@ -229,7 +261,7 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             }
 
             DB::transaction(function () use ($model) {
-                if ($model->status === 'active') {
+                if ($model->status == 'active') {
                     $model->delete();
                     return;
                 }
@@ -238,29 +270,29 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
                     'cropGrowthStages' => fn($q) => $q->withTrashed(),
                     'cropGrowthStages.bestAgriculturalPractices' => fn($q) => $q->withTrashed(),
                     'productionEstimations' => fn($q) => $q->withTrashed(),
-                    'pestDiseaseCases' => fn($q) => $q->withTrashed(),
-                    'pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
+                    'cropGrowthStages.pestDiseaseCases' => fn($q) => $q->withTrashed(),
+                    'cropGrowthStages.pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
+
                 ]);
 
-                event(new CropPlanDeleted($model));
 
                 foreach ($model->cropGrowthStages as $stage) {
                     $stage->bestAgriculturalPractices()->forceDelete();
+                    foreach ($stage->pestDiseaseCases as $case) {
+                        $case->recommendations()->forceDelete();
+                        $case->forceDelete();
+                    }
                     $stage->forceDelete();
                 }
-
                 $model->productionEstimations()->forceDelete();
-
-                foreach ($model->pestDiseaseCases as $case) {
-                    $case->recommendations()->forceDelete();
-                    $case->forceDelete();
-                }
 
                 $model->delete();
             });
 
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' . Auth::id());
+            Cache::forget('crop_plans_program_manager');
+            Cache::forget('crop_plans_farmer_' . $model->land->farmer_id);
+            Cache::forget('crop_plans_user_' . $model->planned_by);
 
             return true;
         }, notFoundMessage: "Failed to delete crop plan");
@@ -275,22 +307,38 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
     {
         try {
             $this->authorize('update', $cropPlan);
+            if ($cropPlan->status == 'completed') {
+                throw new HttpResponseException(response()->json([
+                    'message' => 'Cant Canceled The Completed Paln',
+                ], 403));
+            }
             DB::transaction(function () use ($cropPlan) {
                 $cropPlan->status = 'cancelled';
                 $cropPlan->save();
+                $cropPlan->load([
+                    'cropGrowthStages',
+                    'cropGrowthStages.bestAgriculturalPractices',
+                    'productionEstimations',
+                    'cropGrowthStages.pestDiseaseCases',
+                    'cropGrowthStages.pestDiseaseCases.recommendations',
+                    'agriculturalAlerts'
+                ]);
                 $cropPlan->productionEstimations()->delete();
-                foreach ($cropPlan->pestDiseaseCases as $case) {
-                    $case->recommendations()->delete();
-                    $case->delete();
-                }
                 $cropPlan->agriculturalAlerts()->delete();
                 foreach ($cropPlan->cropGrowthStages as $stage) {
                     $stage->bestAgriculturalPractices()->delete();
+                    foreach ($stage->pestDiseaseCases as $case) {
+                        $case->recommendations()->delete();
+                        $case->delete();
+                    }
                     $stage->delete();
                 }
             });
+            event(new CropPlanUpdated($cropPlan));
             Cache::forget('crop_plans_all');
-            Cache::forget('crop_plans_user_' . Auth::id());
+            Cache::forget('crop_plans_program_manager');
+            Cache::forget('crop_plans_farmer_' . $cropPlan->land->farmer_id);
+            Cache::forget('crop_plans_user_' . $cropPlan->planned_by);
 
             return [
                 'plan' => $cropPlan,

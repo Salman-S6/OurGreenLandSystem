@@ -4,9 +4,14 @@
 
 use App\Interfaces\BaseCrudServiceInterface;
 
+ /**
+  * Summary of CropPlanInterface
+  */
  interface CropPlanInterface extends BaseCrudServiceInterface{
 
-    public function show($cropPlan);
+  
+   
 
+   
     public  function  switchStatusToCancelled($cropPlan);
  }

@@ -4,6 +4,7 @@ namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
+use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Http\Request;
 use Modules\CropManagement\Http\Requests\ProductionEstimation\StoreProductionEstimationRequest;
 use Modules\CropManagement\Http\Requests\ProductionEstimation\UpdateProductionEstimationRequest;
@@ -12,7 +13,7 @@ use Modules\CropManagement\Models\ProductionEstimation;
 
 class ProductionEstimationController extends Controller
 {
-    protected  $productionEstimation;
+    protected  ProductionEstimationInterface $productionEstimation;
 
     /**
      * Summary of __construct
@@ -30,7 +31,7 @@ class ProductionEstimationController extends Controller
     {
         $data = $this->productionEstimation->getAll();
         return ApiResponse::success(
-            [$data['data']],
+            [$data],
             'Successfully retrieved production estimations',
             200
         );
@@ -43,7 +44,7 @@ class ProductionEstimationController extends Controller
     {
         $data = $this->productionEstimation->store($request->validated());
         return ApiResponse::success(
-            [$data['data']],
+            [$data],
             'Successfully created new production estimation.',
             201
         );
@@ -54,7 +55,7 @@ class ProductionEstimationController extends Controller
      */
     public function show(ProductionEstimation $productionEstimation)
     {
-        $data = $this->productionEstimation->getProductionEstimation($productionEstimation);
+        $data = $this->productionEstimation->get($productionEstimation);
         return ApiResponse::success(
             [$data],
             'Successfully retrieved production estimation.',

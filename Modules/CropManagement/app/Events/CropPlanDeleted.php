@@ -13,13 +13,13 @@ use Illuminate\Queue\SerializesModels;
 class CropPlanDeleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $cropPlan;
+
+    public array $cropPlanData;
     /**
      * Create a new event instance.
      */
-    public function __construct($cropPlan) {
-        $this->cropPlan=$cropPlan;
+    public function __construct(array $cropPlanData)
+    {
+        $this->cropPlanData = $cropPlanData;
     }
-
-
 }
