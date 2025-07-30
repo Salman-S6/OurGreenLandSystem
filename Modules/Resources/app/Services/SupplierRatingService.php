@@ -26,7 +26,6 @@ class SupplierRatingService implements BaseCrudServiceInterface
     {
         $query = $this->model->query();
 
-        // هنا يمكنك إضافة فلترة إذا احتجت مثل الفلترة حسب المورد أو المراجع
         if (isset($filters['supplier_id'])) {
             $query->where('supplier_id', $filters['supplier_id']);
         }
