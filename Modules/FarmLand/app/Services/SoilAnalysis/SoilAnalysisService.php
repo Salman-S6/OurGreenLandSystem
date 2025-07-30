@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Services\SoilAnalysis;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Modules\FarmLand\Models\SoilAnalysis;
 use App\Interfaces\BaseCrudServiceInterface;
@@ -23,8 +24,10 @@ class SoilAnalysisService implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-        $data = SoilAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
-        return $data;
+        $cacheKey = "soil_analyses_all";
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            return SoilAnalysis::with(['land', 'performer'])->paginate(15);
+        });
     }
 
     /**
@@ -34,8 +37,10 @@ class SoilAnalysisService implements BaseCrudServiceInterface
      */
     public function get($soilAnalysis): Model
     {
-        $data = $soilAnalysis->load(['land', 'performer']);
-        return $data;
+        $cacheKey = "soil_analysis_{$soilAnalysis->id}";
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($soilAnalysis) {
+            return $soilAnalysis->load(['land', 'performer']);
+        });
     }
 
     /**
@@ -66,6 +71,8 @@ class SoilAnalysisService implements BaseCrudServiceInterface
         $soilAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
         $soilAnalysis['suggested_recommendations'] = $suggestedRecommendations;
         $soilAnalysis->load(['land', 'performer']);
+        Cache::forget('soil_analyses_all');
+        Cache::forget("soil_analysis_{$soilAnalysis->id}");
 
         return $soilAnalysis;
     }
@@ -98,6 +105,8 @@ class SoilAnalysisService implements BaseCrudServiceInterface
         $soilAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
         $soilAnalysis['suggested_recommendations'] = $suggestedRecommendations;
         $soilAnalysis->load(['land', 'performer']);
+        Cache::forget('soil_analyses_all');
+        Cache::forget("soil_analysis_{$soilAnalysis->id}");
 
         return $soilAnalysis;
     }
@@ -110,6 +119,8 @@ class SoilAnalysisService implements BaseCrudServiceInterface
      */
     public function destroy($soilAnalysis): bool
     {
+        Cache::forget('soil_analyses_all');
+        Cache::forget("soil_analysis_{$soilAnalysis->id}");
         return $soilAnalysis->delete();
     }
 }

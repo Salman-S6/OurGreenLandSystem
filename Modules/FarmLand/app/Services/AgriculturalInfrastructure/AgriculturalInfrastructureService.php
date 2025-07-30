@@ -2,6 +2,7 @@
 
 namespace Modules\FarmLand\Services\AgriculturalInfrastructure;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -10,14 +11,6 @@ use Modules\FarmLand\Models\AgriculturalInfrastructure;
 class AgriculturalInfrastructureService implements BaseCrudServiceInterface
 {
     /**
-     * Summary of __construct.
-     *
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Get all Agricultural Infrastructures.
      *
      * @param array $filters
@@ -25,8 +18,10 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-        $data = AgriculturalInfrastructure::with('lands')->paginate(15);
-        return $data;
+        $cacheKey = "agricultural_infrastructures_all";
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            return AgriculturalInfrastructure::with('lands')->paginate(15);
+        });
     }
 
     /**
@@ -37,8 +32,10 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
      */
     public function get($infrastructure): Model
     {
-        $infrastructure->load('lands');
-        return $infrastructure;
+        $cacheKey = "infrastructure_{$infrastructure->id}";
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($infrastructure) {
+            return $infrastructure->load('lands');
+        });
     }
 
     /**
@@ -51,10 +48,13 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
     {
         $infrastructure = AgriculturalInfrastructure::create($data);
 
-        if (!empty($data['land_is'])) {
-            $infrastructure->lands()->attach($data['land_is']);
+        if (!empty($data['land_ids'])) {
+            $infrastructure->lands()->attach($data['land_ids']);
         }
         $infrastructure->load('lands');
+        Cache::forget("agricultural_infrastructures_all");
+        Cache::forget("infrastructure_{$infrastructure->id}");
+
         return $infrastructure;
     }
 
@@ -70,10 +70,12 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
         $infrastructure->update($data);
 
         if ($data->has('land_ids')) {
-            $infrastructure->lands()->sync($data['land_is'] ?? []);
+            $infrastructure->lands()->sync($data['land_ids'] ?? []);
         }
-
         $infrastructure->load('lands');
+        Cache::forget("agricultural_infrastructures_all");
+        Cache::forget("infrastructure_{$infrastructure->id}");
+
         return $infrastructure;
     }
 
@@ -85,6 +87,8 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
      */
     public function destroy($infrastructure): bool
     {
+        Cache::forget("agricultural_infrastructures_all");
+        Cache::forget("infrastructure_{$infrastructure->id}");
         return $infrastructure->delete();
     }
 }

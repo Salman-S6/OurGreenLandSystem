@@ -2,20 +2,14 @@
 
 namespace Modules\FarmLand\Services\IdealAnalysisValue;
 
-use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\FarmLand\Models\IdealAnalysisValue;
 
 class IdealAnalysisValueService implements BaseCrudServiceInterface
 {
-    /**
-     * Summary of __construct.
-     */
-    public function __construct()
-    {
-    }
-
     /**
      * Get all Ideal Analysis Values.
      *
@@ -24,8 +18,10 @@ class IdealAnalysisValueService implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-        $data = IdealAnalysisValue::with('crop')->paginate(15);
-        return $data;
+        $cacheKey = "ideal_analyses_all";
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            return IdealAnalysisValue::with('crop')->paginate(15);
+        });
     }
 
     /**
@@ -36,8 +32,10 @@ class IdealAnalysisValueService implements BaseCrudServiceInterface
      */
     public function get($idealAnalysisValue): Model
     {
-        $data = $idealAnalysisValue->load('crop');
-        return $data;
+        $cacheKey = "ideal_analysis_{$idealAnalysisValue->id}";
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($idealAnalysisValue) {
+            return $idealAnalysisValue->load('crop');
+        });
     }
 
     /**
@@ -50,6 +48,8 @@ class IdealAnalysisValueService implements BaseCrudServiceInterface
     {
         $idealAnalysisValue = IdealAnalysisValue::create($data);
         $idealAnalysisValue->load('crop');
+        Cache::forget("ideal_analyses_all");
+        Cache::forget("ideal_analysis_{$idealAnalysisValue->id}");
 
         return $idealAnalysisValue;
     }
@@ -65,6 +65,8 @@ class IdealAnalysisValueService implements BaseCrudServiceInterface
     {
         $idealAnalysisValue->update($data);
         $idealAnalysisValue->load('crop');
+        Cache::forget("ideal_analyses_all");
+        Cache::forget("ideal_analysis_{$idealAnalysisValue->id}");
 
         return $idealAnalysisValue;
     }
@@ -77,6 +79,8 @@ class IdealAnalysisValueService implements BaseCrudServiceInterface
      */
     public function destroy($idealAnalysisValue): bool
     {
+        Cache::forget("ideal_analyses_all");
+        Cache::forget("ideal_analysis_{$idealAnalysisValue->id}");
         return $idealAnalysisValue->delete();
     }
 }

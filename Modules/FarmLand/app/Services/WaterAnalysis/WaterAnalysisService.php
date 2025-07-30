@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Services\WaterAnalysis;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Modules\FarmLand\Models\WaterAnalysis;
 use App\Interfaces\BaseCrudServiceInterface;
@@ -23,8 +24,10 @@ class WaterAnalysisService implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-        $data = WaterAnalysis::with(['land', 'performer'])->paginate(perPage: 15);
-        return $data;
+        $cacheKey = "water_analyses_all";
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            return WaterAnalysis::with(['land', 'performer'])->paginate(15);
+        });
     }
 
     /**
@@ -34,8 +37,10 @@ class WaterAnalysisService implements BaseCrudServiceInterface
      */
     public function get($waterAnalysis): Model
     {
-        $data = $waterAnalysis->load(['land', 'performer']);
-        return $data;
+        $cacheKey = "water_analysis_{$waterAnalysis->id}";
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($waterAnalysis) {
+            return $waterAnalysis->load(['land', 'performer']);
+        });
     }
 
     /**
@@ -66,6 +71,8 @@ class WaterAnalysisService implements BaseCrudServiceInterface
         $waterAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
         $waterAnalysis['suggested_recommendations'] = $suggestedRecommendations;
         $data = $waterAnalysis->load(['land', 'performer']);
+        Cache::forget("water_analyses_all");
+        Cache::forget("water_analysis_{$waterAnalysis->id}");
 
         return $data;
     }
@@ -100,6 +107,8 @@ class WaterAnalysisService implements BaseCrudServiceInterface
         $data['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
         $data['suggested_recommendations'] = $suggestedRecommendations;
         $data->load(['land', 'performer']);
+        Cache::forget("water_analyses_all");
+        Cache::forget("water_analysis_{$waterAnalysis->id}");
 
         return $data;
     }
@@ -112,6 +121,8 @@ class WaterAnalysisService implements BaseCrudServiceInterface
      */
     public function destroy($waterAnalysis): bool
     {
+        Cache::forget("water_analyses_all");
+        Cache::forget("water_analysis_{$waterAnalysis->id}");
         return $waterAnalysis->delete();
     }
 }
