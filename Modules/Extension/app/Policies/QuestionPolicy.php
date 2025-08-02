@@ -20,7 +20,7 @@ class QuestionPolicy
     
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,7 +28,7 @@ class QuestionPolicy
      */
     public function view(User $user, Question $question): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -36,6 +36,9 @@ class QuestionPolicy
      */
     public function create(User $user): bool
     {
+        if ($user->hasPermissionTo("api.extension.questions.create"))
+            return true;
+
         return false;
     }
 
@@ -44,6 +47,10 @@ class QuestionPolicy
      */
     public function update(User $user, Question $question): bool
     {
+        if ($user->hasPermissionTo("api.extension.questions.update") &&
+            $question->farmer_id === $user->id)
+            return true;
+
         return false;
     }
 
@@ -52,6 +59,10 @@ class QuestionPolicy
      */
     public function delete(User $user, Question $question): bool
     {
+        if ($user->hasPermissionTo("api.extension.questions.delete") &&
+            $question->farmer_id === $user->id)
+            return true;
+
         return false;
     }
 }

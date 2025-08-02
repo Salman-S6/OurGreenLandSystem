@@ -9,7 +9,7 @@ use Modules\CropManagement\Models\Crop;
 use Modules\CropManagement\Models\CropPlan;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CropPlan>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\CropManagement\Models\CropPlan>
  */
 class CropPlanFactory extends Factory
 {
@@ -34,9 +34,9 @@ class CropPlanFactory extends Factory
             'planned_by' => User::factory(),
             'land_id' => Land::factory(),
             'planned_planting_date' => $plannedPlanting,
-            'actual_planting_date' => $this->faker->optional(0.8)->dateTimeBetween($plannedPlanting, '+1 week'),
-            'planned_harvest_date' => $this->faker->dateTimeBetween('+3 months', '+6 months'),
-            'actual_harvest_date' => $this->faker->optional(0.3)->dateTimeBetween('+3 months', '+7 months'),
+            'actual_planting_date' => $plannedPlanting,
+            'planned_harvest_date' => $plannedPlanting,
+            'actual_harvest_date' => $plannedPlanting,
             'seed_type' => $this->faker->words(2, true),
             'seed_quantity' => $this->faker->randomFloat(2, 5, 100), // e.g., in kg
             'seed_expiry_date' => $this->faker->optional()->dateTimeBetween('now', '+1 year'),

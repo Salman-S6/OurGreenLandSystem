@@ -16,26 +16,13 @@ class AnswerPolicy
     public function __construct() {}
 
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Answer $answer): bool
-    {
-        return false;
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
+        if ($user->hasPermissionTo("api.extension.answers.create")) 
+            return true;
+
         return false;
     }
 
@@ -44,6 +31,10 @@ class AnswerPolicy
      */
     public function update(User $user, Answer $answer): bool
     {
+        if ($user->hasPermissionTo("api.extension.answers.update") &&
+            $user->id === $answer->expert_id) 
+            return true;
+
         return false;
     }
 
@@ -52,6 +43,10 @@ class AnswerPolicy
      */
     public function delete(User $user, Answer $answer): bool
     {
+        if ($user->hasPermissionTo("api.extension.answers.update") &&
+            $user->id === $answer->expert_id) 
+            return true;
+
         return false;
     }
 
