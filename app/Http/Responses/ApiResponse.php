@@ -30,4 +30,12 @@ class ApiResponse {
             "errors" => []
         ], 401);
     }
+
+    public static function created(array $data = [], string $message = "Created Successfully.") {
+        return response()->json([
+            "status" => true,
+            "message" => $message,
+            "data" => $data
+        ], 201);
+    }
 }

@@ -27,9 +27,7 @@ class AuthorizationController extends Controller
         try {
             Gate::authorize("roles-permissions-crud");
 
-            $roles = Cache::rememberForever("roles-permissions", function () {
-                return Role::with("permissions")->get();
-            });
+            $roles = Role::with("permissions")->get();
 
             return ApiResponse::success([
                 "roles" => $roles
@@ -48,9 +46,7 @@ class AuthorizationController extends Controller
         try {
             Gate::authorize("roles-permissions-crud");
 
-            $role = Cache::rememberForever("role_{$role->id}", function () use ($role) {
-                return $role->load("permissions");
-            }); 
+            $role->load("permissions");
 
             return ApiResponse::success([
                 "role" => $role,
@@ -71,9 +67,6 @@ class AuthorizationController extends Controller
         try {
             $role->givePermissionTo($request->permissions);
             $role->load("permissions");
-
-            Cache::set("role_{$role->id}", $role, 3600);
-            Cache::forget("roles-permissions");
 
             return ApiResponse::success([
                 "role"=> $role,
@@ -123,7 +116,7 @@ class AuthorizationController extends Controller
     public function removeRolesFromUser(RemoveRolesFromUser $request, User $user)
     {
         try {
-            $user->removeRole($request->roles);
+            $user->removeRole($request->role);
             $user->load("roles", "permissions");
 
             return ApiResponse::success([
@@ -141,16 +134,15 @@ class AuthorizationController extends Controller
     {
         try {
             $role->revokePermissionTo($request->permissions);
-            $role->load("roles", "permissions");
-
-            Cache::set("role_{$role->id}", $role, 3600);
-            Cache::forget("roles-permissions");
+            $role->load("permissions");
 
             return ApiResponse::success([
                 "role"=> $role,
             ]);
         } catch (Exception $e) {
-            return ApiResponse::error(code: 500);
+            return ApiResponse::error(code: 500, errors: [
+                "error" => $e->getMessage(),
+            ]);
         }
     }
 
