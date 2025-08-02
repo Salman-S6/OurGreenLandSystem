@@ -1,10 +1,11 @@
 
 <?php
 
+use App\Enums\AttachableModels;
+use App\Http\Controllers\Api\V1\AttachmentController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\AuthorizationController;
 use App\Http\Controllers\Api\V1\UserController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,8 @@ use Illuminate\Support\Facades\Route;
  */
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:sanctum')
+    ->name('auth.user');
 
 /**
  * 
@@ -31,7 +33,8 @@ Route::post("/logout", [AuthenticationController::class, "logout"])
     ->name("logout");
 
 Route::post('/email/resend', [AuthenticationController::class, 'resendVerificationEmail'])
-    ->middleware('auth:sanctum');
+    ->middleware('auth:sanctum')
+    ->name("verification.resend-email");
 
 Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verify'])
     ->middleware(['auth:sanctum', 'signed'])
@@ -58,7 +61,7 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
         Route::post('/permissions', [AuthorizationController::class,'assginPermissionsToRole'])
             ->name('roles.permissions.assgin');
     
-        Route::delete('/permissions', [AuthorizationController::class,'removePermissionsToRole'])
+        Route::delete('/permissions', [AuthorizationController::class,'removePermissionsFromRole'])
             ->name('roles.permissions.remove');
     
     });
@@ -68,7 +71,7 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
         Route::post('/roles', [AuthorizationController::class,'assginRolesToUser'])
             ->name('users.roles.assgin');
     
-        Route::post('/roles', [AuthorizationController::class,'removeRolesFromUser'])
+        Route::delete('/roles', [AuthorizationController::class,'removeRolesFromUser'])
             ->name('users.roles.remove');
     
         Route::post('/permissions', [AuthorizationController::class,'assginPermissionsToUser'])
@@ -76,8 +79,8 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
     
         Route::delete('/permissions', [AuthorizationController::class,'removePermissionsFromUser'])
             ->name('users.permissions.remove');
-    
     });
+
     /**
      *  
      * 
@@ -86,5 +89,23 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
      * UserController routes.
      * -----------------------------------------------------------------
     */
+
     Route::apiResource('users', UserController::class);
+    /**
+     *  
+     * 
+     * 
+     * ----------------------------------------------------------------
+     * AttachmentController routes.
+     * -----------------------------------------------------------------
+    */
+    Route::prefix("{attachable}/{attachable_id}/")->group(function() {
+        Route::get("attachments", [AttachmentController::class, "index"])->name("attachments.index");
+        Route::post("attachments", [AttachmentController::class, "store"])
+            ->middleware("throttle:uploads")
+            ->name("attachments.store");
+    })->whereIn("attachable", AttachableModels::slugs());
+
+    Route::delete("attachments/{attachment}", [AttachmentController::class,"destroy"])
+        ->name("attachments.destroy");
 });
