@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Resources\Database\Factories\SupplierFactory;
 
 class Supplier extends Model
 {
     use HasFactory;
+
+    public static function newFactory(): Factory
+    {
+        return SupplierFactory::new();
+    }
 
     /**
      * The attributes that are mass assignable.

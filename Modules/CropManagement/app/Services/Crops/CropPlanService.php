@@ -3,6 +3,8 @@
 namespace Modules\CropManagement\Services\Crops;
 
 use App\Enums\UserRoles;
+use App\Helpers\NotifyHelper;
+use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -128,6 +130,17 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             $cropPlan->planned_by = Auth::id();
             $cropPlan->save();
 
+            $userNotify = User::role([UserRoles::SuperAdmin, UserRoles::ProgramManager])->get();
+            $cropNameAr = $cropPlan->crop->getTranslation('name', 'ar');
+            $cropNameEn = $cropPlan->crop->getTranslation('name', 'en');
+            $notificationData = [
+                'title' => 'New Crop Plan Created',
+                'message' => "A new crop plan #{$cropPlan->id} for ({$cropNameEn}) / ({$cropNameAr}) has been created for land #{$cropPlan->land->id}. Planned planting date: {$cropPlan->planned_planting_date}.",
+                'type' => 'success',
+            ];
+
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
             Cache::forget('crop_plans_all');
             Cache::forget('crop_plans_program_manager');
             Cache::forget('crop_plans_farmer_' . $cropPlan->land->farmer_id);
@@ -224,9 +237,33 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             if (isset($data['actual_harvest_date'])) {
                 $model->actual_harvest_date = $data['actual_harvest_date'];
                 $model->status = 'completed';
+
+                if ($model->isDirty('actual_harvest_date') && $model->actual_harvest_date) {
+                    $userNotify = User::role([UserRoles::ProgramManager])->get();
+                    $cropNameAr = $model->crop->getTranslation('name', 'ar');
+                    $cropNameEn = $model->crop->getTranslation('name', 'en');
+                    $notificationData = [
+                        'title' => 'Confirmation of Crop Plan Completion',
+                        'message' => "The actual harvest date has been entered for the crop plan #{$model->id} ({$cropNameEn}) / ({$cropNameAr}) on land number {$model->land->id}.",
+                        'type' => 'success',
+                    ];
+                    NotifyHelper::send($userNotify, $notificationData, ['mail']);
+                }
             } elseif (isset($data['actual_planting_date'])) {
                 $model->actual_planting_date = $data['actual_planting_date'];
                 $model->status = 'in-progress';
+
+                if ($model->isDirty('actual_planting_date') && $model->actual_planting_date) {
+                    $usersToNotify = User::role([UserRoles::ProgramManager])->get();
+                    $cropNameAr = $model->crop->getTranslation('name', 'ar');
+                    $cropNameEn = $model->crop->getTranslation('name', 'en');
+                    $notificationData = [
+                        'title' => 'Confirmation of Crop Plan Execution Start',
+                        'message' => "The actual planting date has been entered for the crop plan #{$model->id} ({$cropNameEn}) / ({$cropNameAr}) on land number {$model->land->id}.",
+                        'type' => 'info',
+                    ];
+                    NotifyHelper::send($usersToNotify, $notificationData, ['mail']);
+                }
             } else {
                 $model->status = 'active';
             }
@@ -295,7 +332,7 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
             Cache::forget('crop_plans_user_' . $model->planned_by);
 
             return true;
-        }, notFoundMessage: "Failed to delete crop plan");
+        }, "Failed to delete crop plan");
     }
 
     /**
@@ -335,6 +372,19 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
                 }
             });
             event(new CropPlanUpdated($cropPlan));
+            $userNotify = User::role([UserRoles::ProgramManager, UserRoles::SuperAdmin])->get();
+
+            $notificationData = [
+                'title' => 'Crop Plan Cancelled',
+                'message' => "The crop plan #{$cropPlan->id} for ({$cropPlan->crop->getTranslation('name', 'en')}) / ({$cropPlan->crop->getTranslation('name', 'ar')}) on land #{$cropPlan->land->id} has been cancelled.",
+                'type' => 'warning',
+                'icon' => 'fas fa-ban',
+                'subject' => 'Crop Plan Cancelled Notification',
+                'action_text' => 'View Plan',
+                'footer' => 'Please review the cancellation details.',
+            ];
+
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
             Cache::forget('crop_plans_all');
             Cache::forget('crop_plans_program_manager');
             Cache::forget('crop_plans_farmer_' . $cropPlan->land->farmer_id);

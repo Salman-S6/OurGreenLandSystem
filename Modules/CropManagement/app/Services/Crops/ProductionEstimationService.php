@@ -3,7 +3,9 @@
 namespace Modules\CropManagement\Services\Crops;
 
 use App\Enums\UserRoles;
+use App\Helpers\NotifyHelper;
 use App\Interfaces\BaseCrudServiceInterface;
+use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -69,7 +71,7 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
     public  function  get(Model $model): Model
     {
         $this->authorize('view', $model);
-        return $model;
+        return $model->load(['cropPlan']);
     }
 
     /**
@@ -94,6 +96,17 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             $estimation->setTranslations('estimation_method', $data['estimation_method']);
             $estimation->reported_by = Auth::id();
             $estimation->save();
+
+            $cropNameEn = $estimation->cropPlan->crop->getTranslation('name', 'en');
+            $cropNameAr = $estimation->cropPlan->crop->getTranslation('name', 'ar');
+            $userNotify = $this->getCropPlanNotificationUsers($estimation->cropPlan);
+            $notificationData = [
+                'title' => 'New Production Estimation Added',
+                'message' => "New estimation for crop ({$cropNameEn}) / ({$cropNameAr}) under plan #{$estimation->crop_plan_id}.",
+                'type' => 'info',
+            ];
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
             Cache::forget('production_estimations_all');
             Cache::forget('production_estimations_program_manager');
             Cache::forget('production_estimations_user_' . $estimation->reported_by);
@@ -119,6 +132,7 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             } elseif ($plan->status === 'completed') {
                 $model->actual_quantity = $data['actual_quantity'] ?? $model->actual_quantity;
                 $model->crop_quality = $data['crop_quality'] ?? $model->crop_quality;
+
                 if (isset($data['notes'])) {
                     $model->setTranslations('notes', $data['notes']);
                 }
@@ -129,6 +143,17 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             }
 
             $model->save();
+
+            $cropNameEn = $model->cropPlan->crop->getTranslation('name', 'en');
+            $cropNameAr = $model->cropPlan->crop->getTranslation('name', 'ar');
+            $userNotify = $this->getCropPlanNotificationUsers($model->cropPlan);
+            $notificationData = [
+                'title' => 'Production Estimation Updated',
+                'message' => "Estimation updated for crop ({$cropNameEn}) / ({$cropNameAr}) under plan #{$model->crop_plan_id}.",
+                'type' => 'warning',
+            ];
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
             Cache::forget('production_estimations_all');
             Cache::forget('production_estimations_program_manager');
             Cache::forget('production_estimations_user_' . $model->reported_by);
@@ -148,5 +173,27 @@ class ProductionEstimationService extends BaseCrudService implements ProductionE
             Cache::forget('production_estimations_user_' . $model->reported_by);
             return $model->forceDelete();
         }, 'Failed to delete production estimation');
+    }
+
+
+
+    /**
+     * Summary of getCropPlanNotificationUsers
+     * @param \Modules\CropManagement\Models\CropPlan $plan
+     * @return \Illuminate\Support\Collection
+     */
+    private function getCropPlanNotificationUsers(CropPlan $plan): \Illuminate\Support\Collection
+    {
+        $users = User::role([UserRoles::ProgramManager, UserRoles::SuperAdmin])->get();
+
+        if ($plan->land->farmer && !$users->contains('id', $plan->land->farmer->id)) {
+            $users->push($plan->land->farmer);
+        }
+
+        if ($plan->land->owner && !$users->contains('id', $plan->land->owner->id)) {
+            $users->push($plan->land->owner);
+        }
+
+        return $users;
     }
 }

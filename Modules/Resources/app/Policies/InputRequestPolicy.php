@@ -2,18 +2,39 @@
 
 namespace Modules\Resources\Policies;
 
-use App\Models\InputRequest;
+use App\Enums\UserRoles;
+
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Modules\Resources\Models\InputRequest;
 
 class InputRequestPolicy
 {
+    /**
+     * Summary of before
+     * @param \App\Models\User $user
+     * 
+     */
+    public function before(User $user)
+    {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
+            return true;
+        }
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        if ($user->hasRole(UserRoles::Farmer)) {
+            return true;
+        } else if ($user->hasRole(UserRoles::ProgramManager)) {
+            return true;
+        } else if ($user->hasRole(UserRoles::Supplier)) {
+            return true;
+        }else {
+            return false;
+        }
     }
 
     /**
@@ -21,7 +42,15 @@ class InputRequestPolicy
      */
     public function view(User $user, InputRequest $inputRequest): bool
     {
-        return false;
+        if ($user->hasRole(UserRoles::Farmer) && $user->id === $inputRequest->requested_by) {
+            return true;
+        } else if ($user->hasRole(UserRoles::ProgramManager)) {
+            return true;
+        } else if ($user->hasRole(UserRoles::Supplier) && $user->id === $inputRequest->selected_supplier_id) {
+            return true;
+        }else {
+            return false;
+        }
     }
 
     /**
@@ -29,7 +58,11 @@ class InputRequestPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        if ($user->hasRole(UserRoles::Farmer)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -37,7 +70,13 @@ class InputRequestPolicy
      */
     public function update(User $user, InputRequest $inputRequest): bool
     {
-        return false;
+        if ($user->hasRole(UserRoles::Farmer) && $inputRequest->requested_by === $user->id) {
+            return true;
+        } elseif ($user->hasRole(UserRoles::Supplier) && $user->id === $inputRequest->selected_supplier_id) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -45,7 +84,8 @@ class InputRequestPolicy
      */
     public function delete(User $user, InputRequest $inputRequest): bool
     {
-        return false;
+        return (
+            $user->hasRole(UserRoles::Farmer) && $inputRequest->requested_by === $user->id
+        );
     }
-
 }

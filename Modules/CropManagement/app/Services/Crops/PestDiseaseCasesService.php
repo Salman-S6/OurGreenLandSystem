@@ -3,7 +3,9 @@
 namespace Modules\CropManagement\Services\Crops;
 
 use App\Enums\UserRoles;
+use App\Helpers\NotifyHelper;
 use App\Interfaces\BaseCrudServiceInterface;
+use App\Models\User;
 use App\Services\BaseCrudService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
@@ -94,7 +96,6 @@ class PestDiseaseCasesService extends BaseCrudService implements PestDiseaseCase
 
         return $this->handle(function () use ($data) {
             $this->authorize('create', PestDiseaseCase::class);
-
             $cropGrowthStage = CropGrowthStage::find($data['crop_growth_id']);
             $plan = $cropGrowthStage->cropPlan;
 
@@ -113,6 +114,19 @@ class PestDiseaseCasesService extends BaseCrudService implements PestDiseaseCase
             $diseaseCase->discovery_date = $data['discovery_date'];
             $diseaseCase->setTranslations('location_details', $data['location_details']);
             $diseaseCase->save();
+
+            $crop = $plan->crop;
+            $cropNameAr = $crop->getTranslation('name', 'ar');
+            $cropNameEn = $crop->getTranslation('name', 'en');
+            $userNotify = $this->getCropPlanNotificationUsers($plan);
+            $notificationData = [
+                'title' => 'New Pest/Disease Case Reported',
+                'message' => "A new {$diseaseCase->case_type} case has been reported for crop ({$cropNameEn}) / ({$cropNameAr}) in plan #{$plan->id}.",
+                'type' => 'warning',
+            ];
+
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
             Cache::forget('pest_cases_all');
             Cache::forget('pest_cases_manager');
             Cache::forget('pest_cases_user_' . Auth::id());
@@ -165,6 +179,19 @@ class PestDiseaseCasesService extends BaseCrudService implements PestDiseaseCase
             }
 
             $pestDiseaseCase->save();
+
+            $crop = $plan->crop;
+            $cropNameAr = $crop->getTranslation('name', 'ar');
+            $cropNameEn = $crop->getTranslation('name', 'en');
+            $userNotify = $this->getCropPlanNotificationUsers($plan);
+            $notificationData = [
+                'title' => 'Pest/Disease Case Updated',
+                'message' => "A {$pestDiseaseCase->case_type} case was updated for crop ({$cropNameEn}) / ({$cropNameAr}) in plan #{$plan->id}.",
+                'type' => 'info',
+            ];
+
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
             Cache::forget('pest_cases_all');
             Cache::forget('pest_cases_manager');
             Cache::forget('pest_cases_user_' . Auth::id());
@@ -187,5 +214,27 @@ class PestDiseaseCasesService extends BaseCrudService implements PestDiseaseCase
         Cache::forget('pest_cases_manager');
         Cache::forget('pest_cases_user_' . Auth::id());
         return $this->handle(fn() => $pestDiseaseCase->forceDelete());
+    }
+
+
+
+    /**
+     * Summary of getCropPlanNotificationUsers
+     * @param \Modules\CropManagement\Models\CropPlan $plan
+     * @return \Illuminate\Support\Collection
+     */
+    private function getCropPlanNotificationUsers(CropPlan $plan): \Illuminate\Support\Collection
+    {
+        $users = User::role([UserRoles::ProgramManager, UserRoles::SuperAdmin])->get();
+
+        if ($plan->land->farmer && !$users->contains('id', $plan->land->farmer->id)) {
+            $users->push($plan->land->farmer);
+        }
+
+        if ($plan->land->owner && !$users->contains('id', $plan->land->owner->id)) {
+            $users->push($plan->land->owner);
+        }
+
+        return $users;
     }
 }
