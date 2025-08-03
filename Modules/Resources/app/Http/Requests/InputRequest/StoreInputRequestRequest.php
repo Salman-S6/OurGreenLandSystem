@@ -15,9 +15,9 @@ class StoreInputRequestRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // $user = $this->user();
-        // return $user && $user->hasRole(UserRoles::Farmer);
-        return true;
+        $user = $this->user();
+        return $user && $user->hasRole(UserRoles::Farmer);
+       
     }
 
     /**
