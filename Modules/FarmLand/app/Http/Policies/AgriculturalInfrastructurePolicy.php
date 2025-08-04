@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Http\Policies;
 
 use App\Models\User;
+use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
@@ -16,7 +17,7 @@ class infrastructurePolicy
      */
     public function before(User $user): ?bool
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
         return null;
@@ -30,7 +31,7 @@ class infrastructurePolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer']))
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]))
             return true;
 
         return false;
@@ -45,11 +46,11 @@ class infrastructurePolicy
      */
     public function view(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        if ($user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer'])) {
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert])) {
             return true;
         }
 
-        if ($user->hasAnyRole(['Farmer'])) {
+        if ($user->hasRole(UserRoles::Farmer)) {
             return $infrastructure->lands()
                 ->where(function ($query) use ($user) {
                     $query->where('user_id', $user->id)
@@ -68,7 +69,7 @@ class infrastructurePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['AgriculturalEngineer', 'Farmer']);
+        return $user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::Farmer]);
     }
 
     /**
@@ -80,9 +81,9 @@ class infrastructurePolicy
      */
     public function update(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        if ($user->hasRole('AgriculturalEngineer'))
+        if ($user->hasRole(UserRoles::AgriculturalAlert))
             return true;
-        if ($user->hasAnyRole(['Farmer'])) {
+        if ($user->hasRole(UserRoles::Farmer)) {
             return $infrastructure->lands()
                 ->where(function ($query) use ($user) {
                     $query->where('user_id', $user->id)

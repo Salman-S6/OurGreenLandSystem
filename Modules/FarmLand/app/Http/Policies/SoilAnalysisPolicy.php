@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Http\Policies;
 
 use App\Models\User;
+use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\SoilAnalysis;
 
@@ -16,7 +17,7 @@ class SoilAnalysisPolicy
      */
     public function before(User $user): ?bool
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
         return null;
@@ -30,7 +31,7 @@ class SoilAnalysisPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer', 'DataAnalyst']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -42,15 +43,19 @@ class SoilAnalysisPolicy
      */
     public function view(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        if ($user->hasAnyRole(['ProgramManager', 'DataAnalyst'])) {
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::DataAnalyst])) {
             return true;
         }
 
-        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $soilAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
             return true;
         }
 
-        if ($user->hasRole('Farmer') && $soilAnalysis->land->farmer_id === $user->id) {
+        if ($user->id === $soilAnalysis->land->farmer_id) {
+            return true;
+        }
+
+        if ($user->id === $soilAnalysis->land->user_id) {
             return true;
         }
 
@@ -65,7 +70,7 @@ class SoilAnalysisPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']);
+        return $user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]);
     }
 
     /**
@@ -77,7 +82,7 @@ class SoilAnalysisPolicy
      */
     public function update(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $soilAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
             return true;
         }
 
@@ -93,6 +98,6 @@ class SoilAnalysisPolicy
      */
     public function delete(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        return $user->hasRole('AgriculturalEngineer') && $soilAnalysis->performed_by === $user->id;
+        return $user->hasRole(UserRoles::AgriculturalAlert) && $soilAnalysis->performed_by === $user->id;
     }
 }

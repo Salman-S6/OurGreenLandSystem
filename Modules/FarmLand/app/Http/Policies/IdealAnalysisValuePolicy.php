@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Http\Policies;
 
 use App\Models\User;
+use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\IdealAnalysisValue;
 
@@ -16,7 +17,7 @@ class IdealAnalysisValuePolicy
      */
     public function before(User $user): ?bool
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
         return null;
@@ -30,7 +31,7 @@ class IdealAnalysisValuePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer', 'DataAnalyst']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -42,7 +43,7 @@ class IdealAnalysisValuePolicy
      */
     public function view(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer', 'DataAnalyst']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -53,7 +54,7 @@ class IdealAnalysisValuePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
     }
 
     /**
@@ -65,7 +66,7 @@ class IdealAnalysisValuePolicy
      */
     public function update(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
     }
 
     /**
@@ -77,6 +78,6 @@ class IdealAnalysisValuePolicy
      */
     public function delete(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
     }
 }

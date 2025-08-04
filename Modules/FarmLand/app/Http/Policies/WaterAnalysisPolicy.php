@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Http\Policies;
 
 use App\Models\User;
+use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\WaterAnalysis;
 
@@ -16,7 +17,7 @@ class WaterAnalysisPolicy
      */
     public function before(User $user): ?bool
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
         return null;
@@ -30,7 +31,7 @@ class WaterAnalysisPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ProgramManager', 'AgriculturalEngineer', 'DataAnalyst']);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -42,15 +43,19 @@ class WaterAnalysisPolicy
      */
     public function view(User $user, WaterAnalysis $waterAnalysis): bool
     {
-        if ($user->hasAnyRole(['ProgramManager', 'DataAnalyst'])) {
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::DataAnalyst])) {
             return true;
         }
 
-        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $waterAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $waterAnalysis->performed_by === $user->id) {
             return true;
         }
 
-        if ($user->hasRole('Farmer') && $waterAnalysis->land->farmer_id === $user->id) {
+        if ($user->id === $waterAnalysis->land->farmer_id) {
+            return true;
+        }
+
+        if ($user->id === $waterAnalysis->land->user_id) {
             return true;
         }
 
@@ -65,7 +70,7 @@ class WaterAnalysisPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']);
+        return $user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]);
     }
 
     /**
@@ -77,7 +82,7 @@ class WaterAnalysisPolicy
      */
     public function update(User $user, WaterAnalysis $waterAnalysis): bool
     {
-        if ($user->hasAnyRole(['AgriculturalEngineer', 'SoilWaterSpecialist']) && $waterAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $waterAnalysis->performed_by === $user->id) {
             return true;
         }
 
@@ -93,6 +98,6 @@ class WaterAnalysisPolicy
      */
     public function delete(User $user, WaterAnalysis $waterAnalysis): bool
     {
-        return $user->hasRole('AgriculturalEngineer') && $waterAnalysis->performed_by === $user->id;
+        return $user->hasRole(UserRoles::AgriculturalAlert) && $waterAnalysis->performed_by === $user->id;
     }
 }
