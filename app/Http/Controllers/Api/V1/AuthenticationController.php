@@ -12,11 +12,14 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthenticationController extends Controller
 {
-    public function login(Request $request) 
+    public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "email" => "required|email",
@@ -38,7 +41,7 @@ class AuthenticationController extends Controller
         ]);
     }
 
-    public function register(Request $request) 
+    public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",
@@ -52,20 +55,20 @@ class AuthenticationController extends Controller
         try {
             $user = User::create($validator->validated());
             $token = $user->createToken("api-token")->plainTextToken;
-            
+
             MailJob::dispatch(MailTypes::VerificationMail, $user);
 
             return ApiResponse::success([
                 "user" => $user,
                 "token" => $token
             ], "user created successfully.", 201);
-
         } catch (Exception $e) {
             return ApiResponse::error("failed to create user.", 500);
         }
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
         return ApiResponse::success();
     }
@@ -74,34 +77,88 @@ class AuthenticationController extends Controller
     {
         try {
             $user = $request->user();
-    
+
             if ($user->hasVerifiedEmail()) {
                 return ApiResponse::success(message: "Already verified");
             }
-    
+
             $request->fulfill();
-    
+
             return ApiResponse::success(message: 'Email verified successfully');
         } catch (Exception $e) {
             return ApiResponse::error("failed to verify user email.", 500);
         }
     }
 
-    public function resendVerificationEmail(Request $request) 
+    public function resendVerificationEmail(Request $request)
     {
         try {
             $user = $request->user();
-    
+
             if ($user->hasVerifiedEmail()) {
                 return ApiResponse::success(message: "Already verified");
             }
-    
+
             MailJob::dispatch(MailTypes::VerificationMail, $user);
-    
+
             return ApiResponse::success(message: 'New Email has been sent.');
         } catch (Exception $e) {
             return ApiResponse::error("failed to verify user email.", 500);
         }
     }
 
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponse::error("Wrong data provided", 400, ["errors" => $validator->errors()]);
+        }
+
+        try {
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            return $status === Password::RESET_LINK_SENT
+                ? ApiResponse::success(message: __($status))
+                : ApiResponse::error(__($status), 400);
+        } catch (Exception $e) {
+            return ApiResponse::error("Failed to send reset link", 500);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token'    => 'required|string',
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        if ($validator->fails()) {
+            return ApiResponse::error("Wrong data provided", 400, ["errors" => $validator->errors()]);
+        }
+
+        try {
+            $status = Password::reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function (User $user, string $password) {
+                    $user->forceFill([
+                        'password' => Hash::make($password)
+                    ])->setRememberToken(Str::random(60));
+
+                    $user->save();
+                }
+            );
+
+            return $status === Password::PASSWORD_RESET
+                ? ApiResponse::success(message: __($status))
+                : ApiResponse::error(__($status), 400);
+        } catch (Exception $e) {
+            return ApiResponse::error("Failed to reset password", 500);
+        }
+    }
 }

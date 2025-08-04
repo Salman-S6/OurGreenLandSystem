@@ -18,8 +18,8 @@ Route::get('/user', function (Request $request) {
     ->name('auth.user');
 
 /**
- * 
- * 
+ *
+ *
  * --------------------------------------------------------------
  * AuthenticationController routes
  * ---------------------------------------------------------------
@@ -32,6 +32,13 @@ Route::post("/logout", [AuthenticationController::class, "logout"])
     ->middleware("auth:sanctum")
     ->name("logout");
 
+Route::post('/forgot-password', [AuthenticationController::class, 'sendResetLinkEmail'])
+   ->name("password.forgot");
+   
+Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])
+   ->name("password.request");
+
+
 Route::post('/email/resend', [AuthenticationController::class, 'resendVerificationEmail'])
     ->middleware('auth:sanctum')
     ->name("verification.resend-email");
@@ -42,49 +49,49 @@ Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verif
 
 
 Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
-    
+
     /**
-     * 
-     * 
+     *
+     *
      * ----------------------------------------------------------------
      * AuthorizationController routes.
      * ----------------------------------------------------------------
      */
     Route::get('/roles/permissions', [AuthorizationController::class, 'all'])
         ->name('roles.permissions.all');
-    
+
     Route::prefix('/roles/{role}')->group(function () {
-    
+
         Route::get('/permissions', [AuthorizationController::class, 'index'])
             ->name('roles.permissions.index');
-    
+
         Route::post('/permissions', [AuthorizationController::class,'assginPermissionsToRole'])
             ->name('roles.permissions.assgin');
-    
+
         Route::delete('/permissions', [AuthorizationController::class,'removePermissionsFromRole'])
             ->name('roles.permissions.remove');
-    
+
     });
-    
+
     Route::prefix('/users/{user}')->group(function () {
-    
+
         Route::post('/roles', [AuthorizationController::class,'assginRolesToUser'])
             ->name('users.roles.assgin');
-    
+
         Route::delete('/roles', [AuthorizationController::class,'removeRolesFromUser'])
             ->name('users.roles.remove');
-    
+
         Route::post('/permissions', [AuthorizationController::class,'assginPermissionsToUser'])
             ->name('users.permissions.assgin');
-    
+
         Route::delete('/permissions', [AuthorizationController::class,'removePermissionsFromUser'])
             ->name('users.permissions.remove');
     });
 
     /**
-     *  
-     * 
-     * 
+     *
+     *
+     *
      * ----------------------------------------------------------------
      * UserController routes.
      * -----------------------------------------------------------------
@@ -92,9 +99,9 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
 
     Route::apiResource('users', UserController::class);
     /**
-     *  
-     * 
-     * 
+     *
+     *
+     *
      * ----------------------------------------------------------------
      * AttachmentController routes.
      * -----------------------------------------------------------------
