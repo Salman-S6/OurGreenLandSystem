@@ -2,13 +2,14 @@
 
 namespace Modules\Resources\Services;
 
+use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Modules\Resources\Enums\SupplierType;
 use Modules\Resources\Models\Supplier;
 
-class SupplierService
+class SupplierService implements BaseCrudServiceInterface
 {
 
     /**
@@ -38,7 +39,6 @@ class SupplierService
     public function store(array $data): Supplier
     {
      try {
-        // 1. تحقق من أن الترجمة المرسلة تطابق واحدة من الأنواع المعروفة
         $supplierTypeEnum = SupplierType::fromTranslations($data['supplier_type']);
 
         if (! $supplierTypeEnum) {
@@ -47,15 +47,12 @@ class SupplierService
             ]);
         }
 
-        // 2. إنشاء السجل الجديد
         $supplier = new Supplier();
         $supplier->user_id = $data['user_id'];
         $supplier->phone_number = $data['phone_number'];
         $supplier->license_number = $data['license_number'];
 
-        // 3. استخدام setTranslations لتخزين الترجمة في عمود supplier_type
-        $supplier->setTranslations('supplier_type', $data['supplier_type']); // ✅ تخزين كـ JSON
-
+        $supplier->setTranslations('supplier_type', $data['supplier_type']); 
         $supplier->save();
 
         return $supplier;

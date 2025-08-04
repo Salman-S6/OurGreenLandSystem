@@ -1,8 +1,9 @@
 <?php
 
-namespace Modules\Resources\Http\Controllers;
+namespace  Modules\Resources\Http\Controllers\Api\V1;
 
 use App\Http\Responses\ApiResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use Modules\Resources\Services\SupplierRatingService;
 
 class SupplierRatingController extends Controller
 {
+        use AuthorizesRequests;
     protected SupplierRatingService $service;
 
     public function __construct(SupplierRatingService $service)
@@ -35,10 +37,10 @@ class SupplierRatingController extends Controller
     /**
      * Display a specific SupplierRating rating.
      */
-    public function show(SupplierRating $supplierRating): JsonResponse
+    public function show(SupplierRating $rating): JsonResponse
     {
                 $this->authorize('viewAny', SupplierRating::class);
-        $rating = $this->service->get($supplierRating);
+        $rating = $this->service->get($rating);
 
         return ApiResponse::success(['data' => $rating]);
     }
@@ -48,7 +50,7 @@ class SupplierRatingController extends Controller
      */
     public function store(StoreSupplierRatingRequest $request): JsonResponse
     {
-                $this->authorize('create', SupplierRating::class);
+         $this->authorize('create', SupplierRating::class);
         $data = $request->validated();
 
 
@@ -62,13 +64,13 @@ class SupplierRatingController extends Controller
     /**
      * Update the specified supplier rating.
      */
-    public function update(UpdateSupplierRatingRequest $request, SupplierRating $supplierRating): JsonResponse
+    public function update(UpdateSupplierRatingRequest $request, SupplierRating $rating): JsonResponse
     {
 
-         $this->authorize('update', $supplierRating);
+         $this->authorize('update', $rating);
         $data = $request->validated();
 
-        $rating = $this->service->update($data, $supplierRating);
+        $rating = $this->service->update($data, $rating);
 
         return ApiResponse::success(['data' => $rating]);
     }
@@ -76,11 +78,13 @@ class SupplierRatingController extends Controller
     /**        
      * Remove the specified supplier rating.
      */
-    public function destroy(SupplierRating $supplierRating): JsonResponse
-    {
-        $this->authorize('delete', $supplierRating);
-        $this->service->destroy($supplierRating);
-
-        return ApiResponse::success([null],"Supplier rating deleted successfully",204);
+  
+public function destroy(SupplierRating $rating)
+{
+             $this->authorize('delete', $rating);
+        $this->service->destroy($rating);
+        return ApiResponse::success(["Supplier rating deleted successfully"],200);
+    
     }
+
 }

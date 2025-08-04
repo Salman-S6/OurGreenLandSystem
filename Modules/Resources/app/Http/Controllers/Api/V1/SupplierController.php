@@ -76,6 +76,6 @@ class SupplierController extends Controller
     {
          $this->authorize('delete', $supplier);
         $this->service->destroy($supplier);
-        return ApiResponse::success([null],"Supplier deleted successfully",200);
+        return ApiResponse::success(["Supplier deleted successfully"],200);
     }
 }

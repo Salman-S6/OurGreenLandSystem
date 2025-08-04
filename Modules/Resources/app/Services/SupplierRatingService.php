@@ -9,12 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupplierRatingService implements BaseCrudServiceInterface
 {
-    protected SupplierRating $model;
 
-    public function __construct(SupplierRating $model)
-    {
-        $this->model = $model;
-    }
 
     /**
      * Get all supplier ratings with optional filters and relations.
@@ -24,13 +19,7 @@ class SupplierRatingService implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): iterable
     {
-        $query = $this->model->query();
-
-        if (isset($filters['supplier_id'])) {
-            $query->where('supplier_id', $filters['supplier_id']);
-        }
-
-        return $query->with(['supplier', 'reviewer'])->latest()->get();
+    return SupplierRating::all();
     }
 
     /**
@@ -39,8 +28,9 @@ class SupplierRatingService implements BaseCrudServiceInterface
      * @param Model $model
      * @return Model
      */
-    public function get(Model $model): Model
+    public function get(Model $model): SupplierRating
     {
+                /** @var SupplierRating $model */
         return $model->load(['supplier', 'reviewer']);
     }
 
@@ -52,7 +42,7 @@ class SupplierRatingService implements BaseCrudServiceInterface
      */
     public function store(array $data): Model
     {
-        return $this->model->create($data);
+         return SupplierRating::create($data);
     }
 
     /**
@@ -62,20 +52,24 @@ class SupplierRatingService implements BaseCrudServiceInterface
      * @param Model $model
      * @return Model
      */
-    public function update(array $data, Model $model): Model
+    public function update(array $data, Model $model): SupplierRating
     {
-        $model->update($data);
-        return $model;
+        /** @var SupplierRating $rating */
+        $rating = $model;
+        $rating->update($data);
+
+    return $rating->fresh(['supplier', 'reviewer']) ?? $rating;
     }
 
     /**
      * Delete a supplier rating.
      *
-     * @param Model $model
+     * @param Model $rating
      * @return bool
      */
-    public function destroy(Model $model): bool
+    public function destroy(Model $rating) :bool
     {
-        return $model->delete();
+    /** @var SupplierRating $rating */
+    return (bool) $rating->delete();
     }
 }
