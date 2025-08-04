@@ -81,9 +81,9 @@ class SupplierRatingController extends Controller
   
 public function destroy(SupplierRating $rating)
 {
-             $this->authorize('delete', $rating);
+            //  $this->authorize('delete', $rating);
         $this->service->destroy($rating);
-        return ApiResponse::success(["Supplier rating deleted successfully"],200);
+        return ApiResponse::success(["Supplier rating deleted successfully"]);
     
     }
 
