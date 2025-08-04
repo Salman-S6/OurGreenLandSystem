@@ -2,6 +2,7 @@
 
 namespace Modules\FarmLand\Services\SoilAnalysis;
 
+use App\Helpers\NotifyHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
@@ -74,6 +75,17 @@ class SoilAnalysisService implements BaseCrudServiceInterface
         Cache::forget('soil_analyses_all');
         Cache::forget("soil_analysis_{$soilAnalysis->id}");
 
+        $usersNotified = [$soilAnalysis->performer, $soilAnalysis->land->user, $soilAnalysis->land->farmer];
+
+        $notificationTitle = "New Soil Analysis / تحليل تربة جديد";
+        $notificationMessage = "A new soil analysis (ID: {$soilAnalysis->id}) has been created for land #{$soilAnalysis->land->id}.";
+
+        NotifyHelper::send($usersNotified, [
+            'title' => $notificationTitle,
+            'message' => $notificationMessage,
+            'type' => 'success'
+        ], ['mail']);
+
         return $soilAnalysis;
     }
 
@@ -107,6 +119,17 @@ class SoilAnalysisService implements BaseCrudServiceInterface
         $soilAnalysis->load(['land', 'performer']);
         Cache::forget('soil_analyses_all');
         Cache::forget("soil_analysis_{$soilAnalysis->id}");
+
+        $usersNotified = [$soilAnalysis->performer, $soilAnalysis->land->user, $soilAnalysis->land->farmer];
+
+        $notificationTitle = "Soil Analysis has been updated / تم تحديث تحليل التربة";
+        $notificationMessage = "A soil analysis (ID: {$soilAnalysis->id}) has been updated for land #{$soilAnalysis->land->id}.";
+
+        NotifyHelper::send($usersNotified, [
+            'title' => $notificationTitle,
+            'message' => $notificationMessage,
+            'type' => 'success'
+        ], ['mail']);
 
         return $soilAnalysis;
     }

@@ -2,6 +2,7 @@
 
 namespace Modules\FarmLand\Services\WaterAnalysis;
 
+use App\Helpers\NotifyHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
@@ -70,11 +71,22 @@ class WaterAnalysisService implements BaseCrudServiceInterface
         $waterAnalysis['comparison_result'] = $comparisonResult['details'] ?? [];
         $waterAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
         $waterAnalysis['suggested_recommendations'] = $suggestedRecommendations;
-        $data = $waterAnalysis->load(['land', 'performer']);
+        $waterAnalysis->load(['land', 'performer']);
         Cache::forget("water_analyses_all");
         Cache::forget("water_analysis_{$waterAnalysis->id}");
 
-        return $data;
+        $usersNotified = [$waterAnalysis->performer, $waterAnalysis->land->user, $waterAnalysis->land->farmer];
+
+        $notificationTitle = "New Water Analysis / تحليل مياه جديد";
+        $notificationMessage = "A new water analysis (ID: {$waterAnalysis->id}) has been created for land #{$waterAnalysis->land->id}.";
+
+        NotifyHelper::send($usersNotified, [
+            'title' => $notificationTitle,
+            'message' => $notificationMessage,
+            'type' => 'success'
+        ], ['mail']);
+
+        return $waterAnalysis;
     }
 
     /**
@@ -87,11 +99,10 @@ class WaterAnalysisService implements BaseCrudServiceInterface
     public function update($data, $waterAnalysis): Model
     {
         $data['performed_by'] = Auth::id();
-
         $waterAnalysis->update($data);
-        $data = $waterAnalysis;
-        $comparisonResult = $this->comparisonService->compare($data);
 
+        // $data = $waterAnalysis;
+        $comparisonResult = $this->comparisonService->compare($waterAnalysis);
         $suggestedRecommendations = [];
         if (!empty($comparisonResult['recommendations_to_store'])) {
             $recommendations_en = array_column($comparisonResult['recommendations_to_store'], 'en');
@@ -103,14 +114,25 @@ class WaterAnalysisService implements BaseCrudServiceInterface
             ];
         }
 
-        $data['comparison_result'] = $comparisonResult['details'] ?? [];
-        $data['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
-        $data['suggested_recommendations'] = $suggestedRecommendations;
-        $data->load(['land', 'performer']);
+        $waterAnalysis['comparison_result'] = $comparisonResult['details'] ?? [];
+        $waterAnalysis['suggested_crops'] = $comparisonResult['suggested_crops'] ?? [];
+        $waterAnalysis['suggested_recommendations'] = $suggestedRecommendations;
+        $waterAnalysis->load(['land', 'performer']);
         Cache::forget("water_analyses_all");
         Cache::forget("water_analysis_{$waterAnalysis->id}");
 
-        return $data;
+        $usersNotified = [$waterAnalysis->performer, $waterAnalysis->land->user, $waterAnalysis->land->farmer];
+
+        $notificationTitle = "Water Analysis has been updated / تم تحديث تحليل المياه";
+        $notificationMessage = "A water analysis (ID: {$waterAnalysis->id}) has been updated for land #{$waterAnalysis->land->id}.";
+
+        NotifyHelper::send($usersNotified, [
+            'title' => $notificationTitle,
+            'message' => $notificationMessage,
+            'type' => 'success'
+        ], ['mail']);
+
+        return $waterAnalysis;
     }
 
     /**
