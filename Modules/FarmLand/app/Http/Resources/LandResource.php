@@ -23,8 +23,8 @@ class LandResource extends JsonResource
             'damage_level'      => $this->damage_level,
             'gps_coordinates'   => $this->gps_coordinates,
             'boundary_coords'   => $this->boundary_coordinates,
-            'rehabilitation_date' => $this->rehabilitation_date,
             'created_at'        => $this->created_at?->toDateString(),
+            'rehabilitation_date' => $this->rehabilitation_date,
         ];
     }
 }

@@ -73,7 +73,7 @@ class LandController extends Controller
      */ 
     public function show(Land $land)
     {
-        $this->authorize('view', $land);
+        // $this->authorize('view', $land);
 
         $land = Cache::remember("land_show_{$land->id}", now()->addMinutes(10), function () use ($land) {
             return $this->landService->get($land);

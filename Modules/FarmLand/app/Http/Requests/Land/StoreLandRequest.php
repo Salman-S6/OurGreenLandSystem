@@ -39,7 +39,7 @@ class StoreLandRequest extends FormRequest
             'boundary_coordinates.*' => ['required', 'array'],
             'boundary_coordinates.*.lat' => ['required', 'numeric'],
             'boundary_coordinates.*.lng' => ['required', 'numeric'],
-            'rehabilitation_date' => 'required|date|before_or_equal:today',
+            'rehabilitation_date' => 'required|date',
         ];
     } 
 
