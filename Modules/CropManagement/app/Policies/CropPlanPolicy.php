@@ -40,17 +40,17 @@ class CropPlanPolicy
      */
     public function view(User $user, CropPlan $cropPlan): bool
     {
-        
+
         if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
             return $user->id === $cropPlan->planned_by;
         }
 
-     
+
         if ($user->hasRole(UserRoles::ProgramManager)) {
             return true;
         }
 
-        
+
         if ($user->hasRole(UserRoles::Farmer)) {
             return $cropPlan->land && $cropPlan->land->farmer_id === $user->id;
         }
@@ -65,7 +65,8 @@ class CropPlanPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalEngineer);
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
+            $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**
@@ -76,9 +77,17 @@ class CropPlanPolicy
      */
     public function update(User $user, CropPlan $cropPlan): bool
     {
-        
-        return $user->hasRole(UserRoles::AgriculturalEngineer)
-            && $user->id === $cropPlan->planned_by;
+        if ($user->hasRole(UserRoles::ProgramManager) ) {
+            return true;
+        }
+
+        if (
+            $user->hasRole(UserRoles::AgriculturalEngineer)
+            && $user->id === $cropPlan->planned_by
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -89,8 +98,16 @@ class CropPlanPolicy
      */
     public function delete(User $user, CropPlan $cropPlan): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalEngineer)
-            && $user->id === $cropPlan->planned_by;
+        if ($user->hasRole(UserRoles::ProgramManager)) {
+            return true;
+        }
+
+        if (
+            $user->hasRole(UserRoles::AgriculturalEngineer)
+            && $user->id === $cropPlan->planned_by
+        ) {
+            return true;
+        }
+        return false;
     }
 }
-

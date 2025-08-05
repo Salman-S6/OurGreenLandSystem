@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\PestDiseaseCaseFactory;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class PestDiseaseCase extends Model
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes, LogsActivity;
 
     /**
      * Summary of newFactory
@@ -37,6 +39,28 @@ class PestDiseaseCase extends Model
         'discovery_date',
         'location_details',
     ];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('pest-disease-case')
+            ->logOnly([
+                'crop_growth_id',
+                'case_type',
+                'case_name',
+                'severity',
+                'description',
+                'discovery_date',
+                'location_details',
+                'reported_by',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * Summary of translatable
      * @var array
@@ -47,7 +71,7 @@ class PestDiseaseCase extends Model
      * Summary of guarded
      * @var array
      */
-    protected $guarded=['reported_by'];
+    protected $guarded = ['reported_by'];
     /**
      * The attributes that should be cast.
      *
@@ -62,7 +86,7 @@ class PestDiseaseCase extends Model
      */
     public function cropGrowthStage(): BelongsTo
     {
-        return $this->belongsTo(CropGrowthStage::class,'crop_growth_id');
+        return $this->belongsTo(CropGrowthStage::class, 'crop_growth_id');
     }
 
     /**

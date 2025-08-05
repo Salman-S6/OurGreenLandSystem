@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 use Modules\CropManagement\Database\Factories\ProductionEstimationFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ProductionEstimation extends Model
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes, LogsActivity;
 
     /**
      * Summary of newFactory
@@ -41,6 +43,27 @@ class ProductionEstimation extends Model
      * @var array
      */
     protected $guarded = ['reported_by'];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('production-estimation')
+            ->logOnly([
+                'crop_plan_id',
+                'expected_quantity',
+                'estimation_method',
+                'actual_quantity',
+                'crop_quality',
+                'notes',
+                'reported_by'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * Summary of translatable
      * @var array

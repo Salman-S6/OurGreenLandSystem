@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 
 class InputRequest extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
 
     /**
@@ -42,6 +44,30 @@ class InputRequest extends Model
      * @var array
      */
     protected $guarded = ['requested_by', 'approved_by'];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('input-request')
+            ->logOnly([
+                'input_type',
+                'description',
+                'quantity',
+                'status',
+                'approval_date',
+                'delivery_date',
+                'notes',
+                'selected_supplier_id',
+                'requested_by',
+                'approved_by',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * The attributes that should be cast.
      *

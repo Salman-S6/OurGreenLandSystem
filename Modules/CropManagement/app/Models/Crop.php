@@ -13,10 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\CropManagement\Database\Factories\CropFactory;
 use Modules\Farmland\Models\IdealAnalysisValue;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Crop extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
     /**
      * Summary of newFactory
      * @return CropFactory
@@ -35,11 +37,12 @@ class Crop extends Model
         "description",
     ];
 
-     /**
-      * Summary of translatable
-      * @var array
-      */
-     public $translatable = ['name', 'description'];
+
+    /**
+     * Summary of translatable
+     * @var array
+     */
+    public $translatable = ['name', 'description'];
 
     /**
      * Summary of guarded
@@ -47,6 +50,18 @@ class Crop extends Model
      */
     protected $guarded = ['farmer_id'];
 
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('crop')
+            ->logOnly(['name', 'description', 'farmer_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * Summary of cropPlans
      * @return HasMany<CropPlan, Crop>
@@ -92,5 +107,4 @@ class Crop extends Model
     {
         return Carbon::parse($value)->format('Y-m-d H:i');
     }
-
 }

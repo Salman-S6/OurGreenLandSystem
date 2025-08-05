@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
 use Modules\Extension\Models\AgriculturalAlert;
 use Modules\FarmLand\Models\Land;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
     /**
      * Summary of newFactory
@@ -49,6 +51,30 @@ class CropPlan extends Model
      * @var array
      */
     protected  $guarded = ['planned_by'];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('crop-plan')
+            ->logOnly([
+                'crop_id',
+                'land_id',
+                'planned_by',
+                'status',
+                'planned_planting_date',
+                'actual_planting_date',
+                'planned_harvest_date',
+                'actual_harvest_date',
+                'seed_quantity',
+                'area_size',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * Summary of translatable
      * @var array
@@ -106,7 +132,7 @@ class CropPlan extends Model
         return $this->hasMany(ProductionEstimation::class);
     }
 
-    
+
 
     /**
      * Get the agricultural alerts for the crop plan.

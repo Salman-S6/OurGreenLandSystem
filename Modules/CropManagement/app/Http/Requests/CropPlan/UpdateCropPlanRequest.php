@@ -25,6 +25,9 @@ class UpdateCropPlanRequest extends FormRequest
         if ($user->hasRole(UserRoles::AgriculturalEngineer) && $cropPlan->planned_by === $user->id) {
             return true;
         }
+        if($user->hasRole(UserRoles::ProgramManager)){
+            return true;
+        }
 
         return false;
     }

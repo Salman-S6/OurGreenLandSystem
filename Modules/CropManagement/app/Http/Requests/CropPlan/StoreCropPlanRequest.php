@@ -18,7 +18,8 @@ class StoreCropPlanRequest extends FormRequest
     {
         $user = $this->user();
         return $user->hasRole(UserRoles::AgriculturalEngineer) ||
-            $user->hasRole(UserRoles::SuperAdmin);
+            $user->hasRole(UserRoles::SuperAdmin)||
+            $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**
