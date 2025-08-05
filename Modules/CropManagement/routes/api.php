@@ -6,7 +6,7 @@ use Modules\CropManagement\Http\Controllers\Api\V1\CropPlanController;
 use Modules\CropManagement\Http\Controllers\Api\V1\PestDiseaseCaseController;
 use Modules\CropManagement\Http\Controllers\Api\V1\ProductionEstimationController;
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum',"throttle:api"])->group(function () {
 
 
     Route::prefix('crops')->group(function () {
