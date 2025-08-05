@@ -22,7 +22,7 @@ class UpdateCropPlanRequest extends FormRequest
         if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
-        if ($user->hasRole(UserRoles::AgriculturalAlert) && $cropPlan->planned_by === $user->id) {
+        if ($user->hasRole(UserRoles::AgriculturalEngineer) && $cropPlan->planned_by === $user->id) {
             return true;
         }
 
@@ -42,8 +42,8 @@ class UpdateCropPlanRequest extends FormRequest
             'planned_harvest_date' => ['nullable', 'date', 'after_or_equal:planned_planting_date'],
 
             'seed_type' => ['nullable', 'array'],
-            'seed_type.en' => ['nullable', 'string', 'min:2'],
-            'seed_type.ar' => ['nullable', 'string', 'min:2'],
+            'seed_type.en' => ['nullable', 'string', 'min:2', 'max:255'],
+            'seed_type.ar' => ['nullable', 'string', 'min:2', 'max:255'],
 
             'seed_quantity' => ['nullable', 'numeric', 'min:0.01'],
             'seed_expiry_date' => ['nullable', 'date', 'after:' . now()->addYears(2)->toDateString()],
@@ -72,6 +72,8 @@ class UpdateCropPlanRequest extends FormRequest
             'seed_expiry_date.after' => 'Seed expiry date must be at least 2 years from today.',
             'area_size.numeric' => 'Area size must be numeric.',
             'actual_harvest_date.after_or_equal' => 'Harvest date must be after or equal to actual planting date.',
+            'seed_type.en.max'      => 'The seed type (English) must not exceed 255 characters.',
+            'seed_type.ar.max'      => 'The seed type (Arabic) must not exceed 255 characters.',
         ];
     }
 

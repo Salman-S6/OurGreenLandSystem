@@ -26,7 +26,7 @@ class CropPolicy
     public function viewAny(User $user): bool
     {
         return $user->hasRole(UserRoles::ProgramManager) ||
-            $user->hasRole(UserRoles::AgriculturalAlert) ||
+            $user->hasRole(UserRoles::AgriculturalEngineer) ||
             $user->hasRole(UserRoles::Farmer) ||
             $user->hasRole(UserRoles::SoilWaterSpecialist) ||
             $user->hasRole(UserRoles::Supplier) ||
@@ -40,7 +40,7 @@ class CropPolicy
     public function view(User $user, Crop $crop): bool
     {
          return $user->hasRole(UserRoles::ProgramManager) ||
-            $user->hasRole(UserRoles::AgriculturalAlert) ||
+            $user->hasRole(UserRoles::AgriculturalEngineer) ||
             $user->hasRole(UserRoles::Farmer) ||
             $user->hasRole(UserRoles::SoilWaterSpecialist) ||
             $user->hasRole(UserRoles::Supplier) ||

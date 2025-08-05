@@ -66,7 +66,7 @@ class CropPlanService extends BaseCrudService implements CropPlanInterface
                 $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
 
 
-                if ($user->hasRole(UserRoles::AgriculturalAlert)) {
+                if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
                     $query->where('planned_by', $user->id);
                 } elseif ($user->hasRole(UserRoles::Farmer)) {
                     $query->whereHas('land', fn($q) => $q->where('farmer_id', $user->id));

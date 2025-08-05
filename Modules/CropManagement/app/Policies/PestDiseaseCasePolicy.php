@@ -25,7 +25,7 @@ class PestDiseaseCasePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert) ||
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
             $user->hasRole(UserRoles::ProgramManager) ||
             $user->hasRole(UserRoles::Farmer);
     }
@@ -39,7 +39,7 @@ class PestDiseaseCasePolicy
         if ($user->hasRole(UserRoles::ProgramManager)) {
             return true;
         }
-         if ($user->hasRole(UserRoles::AgriculturalAlert)) {
+         if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
          return $pestDiseaseCase->reported_by === $user->id;
       }
        if ($user->hasRole(UserRoles::Farmer)) {
@@ -53,7 +53,7 @@ class PestDiseaseCasePolicy
      */
     public function create(User $user): bool
     {
-         return $user->hasRole(UserRoles::AgriculturalAlert);
+         return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -61,7 +61,7 @@ class PestDiseaseCasePolicy
      */
     public function update(User $user, PestDiseaseCase $pestDiseaseCase): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert)&&
+        return $user->hasRole(UserRoles::AgriculturalEngineer)&&
         $pestDiseaseCase->reported_by===$user->id;
     }
 
@@ -69,7 +69,7 @@ class PestDiseaseCasePolicy
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, PestDiseaseCase $pestDiseaseCase): bool
-    { return $user->hasRole(UserRoles::AgriculturalAlert)&&
+    { return $user->hasRole(UserRoles::AgriculturalEngineer)&&
         $pestDiseaseCase->reported_by===$user->id;
     }
 }

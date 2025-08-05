@@ -27,7 +27,7 @@ class CropPlanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert)
+        return $user->hasRole(UserRoles::AgriculturalEngineer)
             || $user->hasRole(UserRoles::ProgramManager)
             || $user->hasRole(UserRoles::Farmer);
     }
@@ -41,7 +41,7 @@ class CropPlanPolicy
     public function view(User $user, CropPlan $cropPlan): bool
     {
         
-        if ($user->hasRole(UserRoles::AgriculturalAlert)) {
+        if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
             return $user->id === $cropPlan->planned_by;
         }
 
@@ -65,7 +65,7 @@ class CropPlanPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert);
+        return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -77,7 +77,7 @@ class CropPlanPolicy
     public function update(User $user, CropPlan $cropPlan): bool
     {
         
-        return $user->hasRole(UserRoles::AgriculturalAlert)
+        return $user->hasRole(UserRoles::AgriculturalEngineer)
             && $user->id === $cropPlan->planned_by;
     }
 
@@ -89,7 +89,7 @@ class CropPlanPolicy
      */
     public function delete(User $user, CropPlan $cropPlan): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert)
+        return $user->hasRole(UserRoles::AgriculturalEngineer)
             && $user->id === $cropPlan->planned_by;
     }
 }

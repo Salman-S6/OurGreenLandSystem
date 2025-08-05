@@ -30,8 +30,8 @@ class StoreInputRequestRequest extends FormRequest
         return [
             'input_type' => 'required|in:seeds,fertilizers,equipment',
             'description' => 'required|array',
-            'description.en' => 'required|string',
-            'description.ar' => 'required|string',
+            'description.en' => 'required|string|max:255',
+            'description.ar' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0.01',
             'selected_supplier_id' => 'required|exists:suppliers,id',
         ];
@@ -53,6 +53,8 @@ class StoreInputRequestRequest extends FormRequest
             'description.en.string' => 'The English description must be a string.',
             'description.ar.required' => 'The Arabic description is required.',
             'description.ar.string' => 'The Arabic description must be a string.',
+            'description.en.max'      => 'The description (English) must not exceed 255 characters.',
+            'description.ar.max'      => 'The description (Arabic) must not exceed 255 characters.',
             'quantity.required' => 'The quantity is required.',
             'quantity.numeric' => 'The quantity must be a number.',
             'quantity.min' => 'The quantity must be greater than zero.',

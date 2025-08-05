@@ -78,7 +78,7 @@ class CropService extends BaseCrudService implements CropInterface
             $crop->farmer_id = Auth::id();
             $crop->save();
             Cache::forget('allCrops');
-            $userNotify = User::role([UserRoles::SuperAdmin, UserRoles::AgriculturalAlert, UserRoles::Farmer, UserRoles::ProgramManager])->get();
+            $userNotify = User::role([UserRoles::SuperAdmin, UserRoles::AgriculturalEngineer, UserRoles::Farmer, UserRoles::ProgramManager])->get();
             $cropNameAr = $crop->getTranslation('name', 'ar');
             $cropNameEn = $crop->getTranslation('name', 'en');
             $notificationData = [
@@ -170,7 +170,7 @@ class CropService extends BaseCrudService implements CropInterface
 
                 $userNotify = User::role([
                     UserRoles::SuperAdmin,
-                    UserRoles::AgriculturalAlert,
+                    UserRoles::AgriculturalEngineer,
                     UserRoles::Farmer,
                     UserRoles::ProgramManager
                 ])->get();

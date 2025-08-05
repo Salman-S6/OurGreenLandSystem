@@ -19,7 +19,7 @@ class StorePestDiseaseCaseRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user->hasRole(UserRoles::AgriculturalAlert) ||
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
             $user->hasRole(UserRoles::SuperAdmin);
     }
 
@@ -32,13 +32,13 @@ class StorePestDiseaseCaseRequest extends FormRequest
             'crop_growth_id' => ['required', 'exists:crop_growth_stages,id'],
             'case_type' => ['required', 'in:pest,disease'],
             'case_name' => ['required', 'array'],
-            'case_name.*' => ['required', 'string'],
+            'case_name.*' => ['required', 'string', 'min:5', 'max:255'],
             'severity' => ['required', 'in:high,medium,low'],
             'description' => ['required', 'array'],
-            'description.*' => ['required', 'string'],
+            'description.*' => ['required', 'string', 'min:5', 'max:255'],
             'discovery_date' => ['required', 'date'],
             'location_details' => ['required', 'array'],
-            'location_details.*' => ['required', 'string'],
+            'location_details.*' => ['required', 'string', 'min:5', 'max:255'],
         ];
     }
 
@@ -56,18 +56,24 @@ class StorePestDiseaseCaseRequest extends FormRequest
             'case_name.array' => 'Case name must be an array for translations.',
             'case_name.*.required' => 'All translations of case name are required.',
             'case_name.*.string' => 'All translations of case name must be strings.',
+            'case_name.*.min' => 'Each translation of the case name must be at least 5 characters.',
+            'case_name.*.max' => 'Each translation of the case name must not exceed 255 characters.',
             'severity.required' => 'Severity is required.',
             'severity.in' => 'Severity must be one of: high, medium, low.',
             'description.required' => 'Description is required.',
             'description.array' => 'Description must be an array for translations.',
             'description.*.required' => 'All translations of description are required.',
             'description.*.string' => 'All translations of description must be strings.',
+            'description.*.min' => 'Each translation of the description must be at least 5 characters.',
+            'description.*.max' => 'Each translation of the description must not exceed 255 characters.',
             'discovery_date.required' => 'Discovery date is required.',
             'discovery_date.date' => 'Discovery date must be a valid date.',
             'location_details.required' => 'Location details are required.',
             'location_details.array' => 'Location details must be an array for translations.',
             'location_details.*.required' => 'All translations of location details are required.',
             'location_details.*.string' => 'All translations of location details must be strings.',
+            'location_details.*.min' => 'Each translation of the location details must be at least 5 characters.',
+            'location_details.*.max' => 'Each translation of the location details must not exceed 255 characters.',
         ];
     }
 

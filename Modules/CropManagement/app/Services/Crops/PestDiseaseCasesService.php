@@ -55,7 +55,7 @@ class PestDiseaseCasesService extends BaseCrudService implements PestDiseaseCase
                     ])
                     ->orderByDesc('id');
 
-                if ($user->hasRole(UserRoles::AgriculturalAlert)) {
+                if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
                     $query->where('reported_by', $user->id);
                 } elseif ($user->hasRole(UserRoles::Farmer)) {
                     $query->whereHas('cropPlan.land', fn($q) => $q->where('farmer_id', $user->id));

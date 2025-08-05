@@ -19,7 +19,7 @@ class UpdatePestDiseaseCaseRequest extends FormRequest
     {
         $user = $this->user();
         $pestDiseaseCase = $this->route('pestDiseaseCase');
-        return $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return $user->hasRole(UserRoles::AgriculturalEngineer) &&
             $pestDiseaseCase->reported_by === $user->id;
     }
 
@@ -31,10 +31,10 @@ class UpdatePestDiseaseCaseRequest extends FormRequest
         return [
             'case_type' => ['sometimes', 'in:pest,disease'],
             'case_name' => ['sometimes', 'array'],
-            'case_name.*' => ['required_with:case_name', 'string'],
+            'case_name.*' => ['required_with:case_name', 'string', 'min:3', 'max:255'],
             'severity' => ['sometimes', 'in:high,medium,low'],
             'description' => ['sometimes', 'array'],
-            'description.*' => ['required_with:description', 'string'],
+            'description.*' => ['required_with:description', 'string', 'min:5', 'max:255'],
             'discovery_date' => ['sometimes', 'date'],
             'location_details' => ['sometimes', 'array'],
             'location_details.*' => ['required_with:location_details', 'string'],
@@ -51,11 +51,15 @@ class UpdatePestDiseaseCaseRequest extends FormRequest
             'case_name.array' => 'The case name must be an array of translations.',
             'case_name.*.required_with' => 'Each case name translation is required when case name is present.',
             'case_name.*.string' => 'Each case name translation must be a string.',
+            'case_name.*.min' => 'Each translation of the case name must be at least 3 characters.',
+            'case_name.*.max' => 'Each translation of the case name must not exceed 255 characters.',
             'severity.in' => 'The severity must be high, medium, or low.',
             'description.array' => 'The description must be an array of translations.',
             'description.*.required_with' => 'Each description translation is required when description is present.',
             'description.*.string' => 'Each description translation must be a string.',
             'discovery_date.date' => 'The discovery date must be a valid date.',
+            'description.*.min' => 'Each translation of the description must be at least 5 characters.',
+            'description.*.max' => 'Each translation of the description must not exceed 255 characters.',
             'location_details.array' => 'The location details must be an array of translations.',
             'location_details.*.required_with' => 'Each location detail translation is required when location details are present.',
             'location_details.*.string' => 'Each location detail translation must be a string.',

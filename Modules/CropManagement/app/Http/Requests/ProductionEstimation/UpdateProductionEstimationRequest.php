@@ -18,7 +18,7 @@ class UpdateProductionEstimationRequest extends FormRequest
     {
         $productionEstimation = $this->route('productionEstimation');
         return (
-            ($this->user()->hasRole(UserRoles::AgriculturalAlert) &&
+            ($this->user()->hasRole(UserRoles::AgriculturalEngineer) &&
                 $this->user()->id === $productionEstimation->reported_by)
             || $this->user()->hasRole(UserRoles::SuperAdmin)
         );
@@ -33,12 +33,12 @@ class UpdateProductionEstimationRequest extends FormRequest
         return [
             'expected_quantity' => ['sometimes', 'required', 'numeric', 'min:0'],
             'estimation_method' => ['sometimes', 'required', 'array'],
-            'estimation_method.*' => ['string', 'min:2'],
+            'estimation_method.*' => ['string', 'min:2','max:255'],
 
             'actual_quantity' => ['sometimes', 'required', 'numeric', 'min:0'],
             'crop_quality' => ['sometimes', 'required', 'in:excellent,average,poor'],
             'notes' => ['sometimes', 'required', 'array'],
-            'notes.*' => ['string', 'min:2'],
+            'notes.*' => ['string', 'min:2','max:255'],
         ];
     }
 
@@ -57,6 +57,7 @@ class UpdateProductionEstimationRequest extends FormRequest
             'estimation_method.array'    => 'The estimation method must be an array.',
             'estimation_method.*.string' => 'Each estimation method value must be a string.',
             'estimation_method.*.min'    => 'Each estimation method value must be at least 2 characters.',
+            'estimation_method.*.max' => 'Each translation of the estimation method must not exceed 255 characters.',
 
             'actual_quantity.required' => 'The actual quantity is required.',
             'actual_quantity.numeric'  => 'The actual quantity must be a number.',
@@ -69,6 +70,7 @@ class UpdateProductionEstimationRequest extends FormRequest
             'notes.array'    => 'The notes must be an array.',
             'notes.*.string' => 'Each note must be a string.',
             'notes.*.min'    => 'Each note must be at least 2 characters.',
+            'notes.*.max' => 'Each note must not exceed 255 characters.',
         ];
     }
 
