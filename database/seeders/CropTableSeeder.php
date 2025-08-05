@@ -14,7 +14,7 @@ class CropTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('crop_plans')->delete();
+        DB::table('crops')->delete();
         Crop::factory(5)->create();
     }
 }

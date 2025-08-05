@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Modules\Resources\Models\Supplier;
 
 class SupplierTableSeeder extends Seeder
@@ -13,6 +14,7 @@ class SupplierTableSeeder extends Seeder
      */
     public function run(): void
     {
-     Supplier::factory(10)->create();
+        DB::table('suppliers')->delete();
+          Supplier::factory(10)->create();
     }
 }
