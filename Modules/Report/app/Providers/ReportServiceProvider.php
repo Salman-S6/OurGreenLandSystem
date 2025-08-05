@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Extension\Providers;
+namespace Modules\Report\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -8,14 +8,13 @@ use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class ExtensionServiceProvider extends ServiceProvider
+class ReportServiceProvider extends ServiceProvider
 {
     use PathNamespace;
 
-    
-    protected string $name = 'Extension';
+    protected string $name = 'Report';
 
-    protected string $nameLower = 'extension';
+    protected string $nameLower = 'report';
 
     /**
      * Boot the application events.
@@ -37,7 +36,6 @@ class ExtensionServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(\Modules\Extension\Providers\AuthServiceProvider::class);
     }
 
     /**

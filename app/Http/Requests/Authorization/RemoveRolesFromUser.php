@@ -25,8 +25,7 @@ class RemoveRolesFromUser extends FormRequest
     public function rules(): array
     {
         return [
-            "roles" => "required|array|min:1|max:100",
-            "roles.*" => "required|int|exists:roles,id"
+            "role" => "required|int|exists:roles,id"
         ];
     }
 }

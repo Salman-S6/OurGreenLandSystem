@@ -2,5 +2,6 @@
     "CropManagement": true,
     "FarmLand": true,
     "Extension": false,
-    "Resources": true
+    "Resources": false,
+    "Report": true
 }

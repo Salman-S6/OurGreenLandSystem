@@ -26,7 +26,7 @@ class RemovePermissionsFromUser extends FormRequest
     {
         return [
             "permissions" => "required|array|min:1|max:100",
-            "permissions.*" => "required|int|exists:permissions,id"
+            "permissions.*" => "required|string|exists:permissions,name"
         ];
     }
 }
