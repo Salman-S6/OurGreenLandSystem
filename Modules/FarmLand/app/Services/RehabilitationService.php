@@ -58,6 +58,7 @@ class RehabilitationService implements BaseCrudServiceInterface
                 $rehabilitation->lands()->syncWithoutDetaching($landsPivotData);
                 $this->updateLandsRehabilitationDates($landsPivotData);
             }
+            
 
             Cache::forget($this->cacheKeyAll);
             Cache::forget("rehabilitation_{$rehabilitation->id}");
@@ -177,10 +178,25 @@ protected function updateLandsRehabilitationDates(array $landsPivotData): void
         }
     }
 
-    // تحديث دفعة واحدة باستخدام Query Builder
-    foreach ($landsToUpdate as $landId => $rehabDate) {
-        Land::where('id', $landId)->update(['rehabilitation_date' => $rehabDate]);
+if (!empty($landsToUpdate)) {
+    $cases = [];
+    $ids = [];
+
+    foreach ($landsToUpdate as $id => $date) {
+        $ids[] = $id;
+        $cases[] = "WHEN id = $id THEN '$date'";
     }
+
+    $caseStatement = implode(' ', $cases);
+    $idsList = implode(',', $ids);
+
+    DB::statement("
+        UPDATE lands
+        SET rehabilitation_date = CASE $caseStatement END
+        WHERE id IN ($idsList)
+    ");
+}
+        Cache::put("land_{$land->id}", $land->fresh(), now()->addHour());
 }
 
 }

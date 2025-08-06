@@ -4,6 +4,8 @@ namespace Modules\FarmLand\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\FarmLand\Models\Land;
+use Modules\FarmLand\Observers\LandObserver;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +29,7 @@ class FarmLandServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+            Land::observe(LandObserver::class);
     }
 
     /**

@@ -58,8 +58,7 @@ class LandController extends Controller
         $this->authorize('create', Land::class);
 
         $land = $this->landService->store($request->validated());
-
-        // Clear cache
+        
         Cache::forget('lands_all');
         Cache::forget('lands_prioritized');
 

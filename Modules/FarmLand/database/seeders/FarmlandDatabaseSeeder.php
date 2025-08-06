@@ -11,6 +11,5 @@ class FarmLandDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
- $this->call(\Modules\FarmLand\Database\Seeders\RehabilitationTestSeeder::class);
     }
 }
