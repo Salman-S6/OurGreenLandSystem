@@ -98,7 +98,6 @@ class WaterAnalysisService implements BaseCrudServiceInterface
      */
     public function update($data, $waterAnalysis): Model
     {
-        $data['performed_by'] = Auth::id();
         $waterAnalysis->update($data);
 
         // $data = $waterAnalysis;

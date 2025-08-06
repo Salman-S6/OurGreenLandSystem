@@ -98,7 +98,6 @@ class SoilAnalysisService implements BaseCrudServiceInterface
      */
     public function update($data, $soilAnalysis): Model
     {
-        $data['performed_by'] = Auth::id();
         $soilAnalysis->update($data);
 
         $comparisonResult = $this->comparisonService->compare($soilAnalysis);
