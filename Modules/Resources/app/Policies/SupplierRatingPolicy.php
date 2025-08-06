@@ -2,9 +2,10 @@
 
 namespace Modules\Resources\app\Policies;
 
-use App\Models\SupplierRating;
+ 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Modules\Resources\Models\SupplierRating;
 
 class SupplierRatingPolicy
 {
@@ -13,7 +14,7 @@ class SupplierRatingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -21,7 +22,7 @@ class SupplierRatingPolicy
      */
     public function view(User $user, SupplierRating $supplierRating): bool
     {
-        return false;
+         return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -29,7 +30,7 @@ class SupplierRatingPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -37,7 +38,7 @@ class SupplierRatingPolicy
      */
     public function update(User $user, SupplierRating $supplierRating): bool
     {
-        return false;
+         return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -45,7 +46,7 @@ class SupplierRatingPolicy
      */
     public function delete(User $user, SupplierRating $supplierRating): bool
     {
-        return false;
+         return $user->hasRole(['admin', 'program_manager']);
     }
 
 }

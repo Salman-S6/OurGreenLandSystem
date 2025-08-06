@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Http\Requests\Supplier;
+namespace Modules\Resources\Http\Requests\Supplier;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,7 +13,7 @@ class UpdateSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class UpdateSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+        'user_id' => ['sometimes', 'exists:users,id'],
+        'phone_number' => ['sometimes'],
+        'license_number' => ['sometimes', 'unique:suppliers,license_number'],
+        'supplier_type' => ['required', 'array'],
+        'supplier_type.en' => ['required', 'string'],
+        'supplier_type.ar' => ['required', 'string'],
         ];
     }
 
