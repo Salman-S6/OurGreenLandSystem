@@ -1,8 +1,5 @@
 
 <?php
-
-use App\Enums\AttachableModels;
-use App\Http\Controllers\Api\V1\AttachmentController;
 use App\Enums\AttachableModels;
 use App\Http\Controllers\Api\V1\AttachmentController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
@@ -16,8 +13,6 @@ use Illuminate\Support\Facades\Route;
  */
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum')
-    ->name('auth.user');
 })->middleware('auth:sanctum')
     ->name('auth.user');
 
@@ -46,8 +41,7 @@ Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'
 Route::post('/email/resend', [AuthenticationController::class, 'resendVerificationEmail'])
     ->middleware('auth:sanctum')
     ->name("verification.resend-email");
-    ->middleware('auth:sanctum')
-    ->name("verification.resend-email");
+
 
 Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verify'])
     ->middleware(['auth:sanctum', 'signed'])
