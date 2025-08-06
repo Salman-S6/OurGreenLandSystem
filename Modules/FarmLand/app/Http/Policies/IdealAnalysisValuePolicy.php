@@ -31,7 +31,7 @@ class IdealAnalysisValuePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -43,7 +43,7 @@ class IdealAnalysisValuePolicy
      */
     public function view(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -54,7 +54,7 @@ class IdealAnalysisValuePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer]);
     }
 
     /**
@@ -66,7 +66,7 @@ class IdealAnalysisValuePolicy
      */
     public function update(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer]);
     }
 
     /**
@@ -78,6 +78,6 @@ class IdealAnalysisValuePolicy
      */
     public function delete(User $user, IdealAnalysisValue $idealAnalysisValue): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer]);
     }
 }

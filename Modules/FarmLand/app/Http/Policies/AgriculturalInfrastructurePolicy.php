@@ -31,7 +31,7 @@ class infrastructurePolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert]))
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer]))
             return true;
 
         return false;
@@ -46,7 +46,7 @@ class infrastructurePolicy
      */
     public function view(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert])) {
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer])) {
             return true;
         }
 
@@ -69,7 +69,7 @@ class infrastructurePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::Farmer]);
+        return $user->hasAnyRole([UserRoles::AgriculturalEngineer, UserRoles::Farmer]);
     }
 
     /**
@@ -81,7 +81,7 @@ class infrastructurePolicy
      */
     public function update(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        if ($user->hasRole(UserRoles::AgriculturalAlert))
+        if ($user->hasRole(UserRoles::AgriculturalEngineer))
             return true;
         if ($user->hasRole(UserRoles::Farmer)) {
             return $infrastructure->lands()

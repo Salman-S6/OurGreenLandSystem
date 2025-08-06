@@ -31,7 +31,7 @@ class SoilAnalysisPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalAlert, UserRoles::DataAnalyst]);
+        return $user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer, UserRoles::DataAnalyst]);
     }
 
     /**
@@ -47,7 +47,7 @@ class SoilAnalysisPolicy
             return true;
         }
 
-        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalEngineer, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
             return true;
         }
 
@@ -70,7 +70,7 @@ class SoilAnalysisPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]);
+        return $user->hasAnyRole([UserRoles::AgriculturalEngineer, UserRoles::SoilWaterSpecialist]);
     }
 
     /**
@@ -82,7 +82,7 @@ class SoilAnalysisPolicy
      */
     public function update(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        if ($user->hasAnyRole([UserRoles::AgriculturalAlert, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
+        if ($user->hasAnyRole([UserRoles::AgriculturalEngineer, UserRoles::SoilWaterSpecialist]) && $soilAnalysis->performed_by === $user->id) {
             return true;
         }
 
@@ -98,6 +98,6 @@ class SoilAnalysisPolicy
      */
     public function delete(User $user, SoilAnalysis $soilAnalysis): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert) && $soilAnalysis->performed_by === $user->id;
+        return $user->hasRole(UserRoles::AgriculturalEngineer) && $soilAnalysis->performed_by === $user->id;
     }
 }
