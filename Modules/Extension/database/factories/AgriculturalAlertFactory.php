@@ -2,7 +2,9 @@
 
 namespace Modules\Extension\Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\CropManagement\Models\CropPlan;
 use Modules\Extension\Models\AgriculturalAlert;
 
 class AgriculturalAlertFactory extends Factory
@@ -18,13 +20,13 @@ class AgriculturalAlertFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(4),
-            'message' => $this->faker->paragraph,
-            'crop_plan_id' => CropPlan::inRandomOrder()->first('id')->id,
+            'title' => $this->translations(['en'], [$this->faker->sentence(4)]),
+            'message' => $this->translations(['en'], [$this->faker->paragraph]),
+            'crop_plan_id' => CropPlan::factory(),
             'alert_level' => $this->faker->randomElement(['info', 'warning']),
             'alert_type' => $this->faker->randomElement(['weather', 'general', 'fertilization', 'pest', 'irrigation']),
             'send_time' => $this->faker->dateTimeThisMonth(),
-            'created_by' => User::inRandomOrder()->first('id')->id,
+            'created_by' => User::factory(),
         ];
     }
 }

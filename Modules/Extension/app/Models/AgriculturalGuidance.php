@@ -2,12 +2,17 @@
 
 namespace Modules\Extension\Models;
 
+use App\Models\Attachment;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Extension\Database\Factories\AgriculturalGuidanceFactory;
+use Modules\Extension\Policies\AgriculturalGuidancePolicy;
 use Spatie\Translatable\HasTranslations;
+
 
 class AgriculturalGuidance extends Model
 {
@@ -51,6 +56,11 @@ class AgriculturalGuidance extends Model
     public function addedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by_id');
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
 }

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -58,9 +59,15 @@ return Application::configure(basePath: dirname(__DIR__))
             );
         });
 
-
-           $exceptions->render(function (CrudException $e) {
+        $exceptions->render(function (CrudException $e) {
             return ApiResponse::error($e->getMessage(), $e->getCode());
+        });
+
+        $exceptions->render(function (MethodNotAllowedHttpException $e) {
+            return ApiResponse::error(
+                $e->getMessage(),
+                405
+            );
         });
 
     })->create();
