@@ -3,10 +3,12 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
+use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Modules\FarmLand\Enums\WaterAnalysesSuitability;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\FarmLand\Database\Factories\WaterAnalysisFactory;
 
@@ -77,5 +79,15 @@ class WaterAnalysis extends Model
     public function performer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'performed_by');
+    }
+
+    /**
+     * Summary of attachments.
+     *
+     * @return MorphMany<Attachment, WaterAnalysis>
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }

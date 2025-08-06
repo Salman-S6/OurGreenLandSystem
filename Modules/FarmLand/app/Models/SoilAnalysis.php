@@ -3,9 +3,11 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
+use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\FarmLand\Database\Factories\SoilAnalysisFactory;
@@ -16,7 +18,7 @@ class SoilAnalysis extends Model
 
     /**
      * Summary of newFactory.
-     * 
+     *
      * @return SoilAnalysisFactory
      */
     protected static function newFactory(): SoilAnalysisFactory
@@ -77,5 +79,15 @@ class SoilAnalysis extends Model
     public function performer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'performed_by');
+    }
+
+    /**
+     * Summary of attachments.
+     *
+     * @return MorphMany<Attachment, SoilAnalysis>
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }
