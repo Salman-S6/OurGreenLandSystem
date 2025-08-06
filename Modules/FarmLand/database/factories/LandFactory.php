@@ -24,10 +24,10 @@ class LandFactory extends Factory
         $centerLng = $this->faker->longitude();
 
         return [
-            'user_id' => User::inRandomOrder()->first('id')->id,
-            'farmer_id' => User::inRandomOrder()->first('id')->id,
+            'user_id' => User::factory(),
+            'farmer_id' => User::factory(),
             'area' => $this->faker->randomFloat(2, 1, 500),
-            'soil_type_id' => Soil::inRandomOrder()->first('id')->id,
+            'soil_type_id' => Soil::factory(),
             'damage_level' => $this->faker->randomElement(['low', 'medium', 'high']),
             'gps_coordinates' => [
                 'latitude' => $centerLat,

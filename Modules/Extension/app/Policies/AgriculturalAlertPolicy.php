@@ -2,6 +2,7 @@
 
 namespace Modules\Extension\Policies;
 
+use App\Enums\UserRoles;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Modules\Extension\Models\AgriculturalAlert;
@@ -19,8 +20,9 @@ class AgriculturalAlertPolicy
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
-    {
-        return false;
+    {   
+        // all users could view alerts
+        return true;
     }
 
     /**
@@ -28,7 +30,8 @@ class AgriculturalAlertPolicy
      */
     public function view(User $user, AgriculturalAlert $agriculturalAlert): bool
     {
-        return false;
+        // all users could view alerts
+        return true;
     }
 
     /**
@@ -36,6 +39,13 @@ class AgriculturalAlertPolicy
      */
     public function create(User $user): bool
     {
+        if ($user->hasRole([
+            UserRoles::ProgramManager,
+            UserRoles::AgriculturalEngineer,
+            UserRoles::DataAnalyst,
+            UserRoles::SoilWaterSpecialist]))
+            return true;
+
         return false;
     }
 
@@ -44,6 +54,16 @@ class AgriculturalAlertPolicy
      */
     public function update(User $user, AgriculturalAlert $agriculturalAlert): bool
     {
+        if ($user->hasRole(UserRoles::ProgramManager))
+            return true;
+
+        if ($user->hasRole([
+            UserRoles::AgriculturalEngineer,
+            UserRoles::DataAnalyst,
+            UserRoles::SoilWaterSpecialist]) &&
+            $user->id === $agriculturalAlert->created_by)
+            return true;
+
         return false;
     }
 
@@ -52,6 +72,16 @@ class AgriculturalAlertPolicy
      */
     public function delete(User $user, AgriculturalAlert $agriculturalAlert): bool
     {
+        if ($user->hasRole(UserRoles::ProgramManager))
+            return true;
+        
+        if ($user->hasRole([
+            UserRoles::AgriculturalEngineer,
+            UserRoles::DataAnalyst,
+            UserRoles::SoilWaterSpecialist]) &&
+            $user->id === $agriculturalAlert->created_by)
+            return true;
+
         return false;
     }
 }

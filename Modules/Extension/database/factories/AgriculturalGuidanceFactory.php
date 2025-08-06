@@ -2,6 +2,7 @@
 
 namespace Modules\Extension\Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Extension\Models\AgriculturalGuidance;
 
@@ -18,11 +19,14 @@ class AgriculturalGuidanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(5),
-            'summary' => $this->faker->paragraph(3),
-            'category' => $this->faker->randomElement(['soil management', 'pest control', 'irrigation', 'crop rotation']),
-            'language' => $this->faker->randomElement(['arabic', 'english']),
-            'added_by_id' => User::inRandomOrder()->first('id')->id,
+            'title' => $this->translations(['en'], [$this->faker->sentence()]),
+            'summary' => $this->translations(['en'], [$this->faker->paragraph(3)]),
+            'category' => $this->translations(
+                'en', 
+                $this->faker->randomElement([
+                    'soil management', 'pest control', 'irrigation', 'crop rotation'
+                ])),
+            'added_by_id' => User::factory(),
             'tags' => $this->faker->words(3),
         ];
     }

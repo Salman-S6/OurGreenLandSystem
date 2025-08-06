@@ -12,6 +12,7 @@ class ExtensionServiceProvider extends ServiceProvider
 {
     use PathNamespace;
 
+    
     protected string $name = 'Extension';
 
     protected string $nameLower = 'extension';
@@ -36,6 +37,7 @@ class ExtensionServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(\Modules\Extension\Providers\AuthServiceProvider::class);
     }
 
     /**

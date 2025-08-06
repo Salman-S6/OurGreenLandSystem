@@ -4,6 +4,7 @@ namespace App\Http\Requests\Authorization;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class RemovePermissionsFromRole extends FormRequest
 {
@@ -13,7 +14,7 @@ class RemovePermissionsFromRole extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Gate::allows("roles-permissions-crud");
     }
 
     /**
@@ -25,7 +26,7 @@ class RemovePermissionsFromRole extends FormRequest
     {
         return [
             "permissions" => "required|array|min:1|max:100",
-            "permissions.*" => "required|int|exists:permissions,id"
+            "permissions.*" => "required|string|exists:permissions,name"
         ];
     }
 }

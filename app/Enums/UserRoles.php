@@ -6,7 +6,7 @@ enum UserRoles: string
 {
     case SuperAdmin = 'SuperAdmin';
     case ProgramManager = 'ProgramManager';
-    case AgriculturalAlert = 'AgriculturalEngineer';
+    case AgriculturalEngineer = 'AgriculturalEngineer';
     case Farmer = 'Farmer';
     case SoilWaterSpecialist = 'SoilWaterSpecialist';
     case Supplier = 'Supplier';
