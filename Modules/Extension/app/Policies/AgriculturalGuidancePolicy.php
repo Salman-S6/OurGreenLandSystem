@@ -10,17 +10,13 @@ class AgriculturalGuidancePolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct() {}
 
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,7 +24,7 @@ class AgriculturalGuidancePolicy
      */
     public function view(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -36,6 +32,9 @@ class AgriculturalGuidancePolicy
      */
     public function create(User $user): bool
     {
+        if ($user->hasPermissionTo("api.agricultural-guidances.store"))
+            return true;
+
         return false;
     }
 
@@ -44,6 +43,10 @@ class AgriculturalGuidancePolicy
      */
     public function update(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
+        if ($user->hasPermissionTo("api.agricultural-guidances.update") && 
+            $user->id === $agriculturalGuidance->added_by_id)
+            return true;
+        
         return false;
     }
 
@@ -52,6 +55,10 @@ class AgriculturalGuidancePolicy
      */
     public function delete(User $user, AgriculturalGuidance $agriculturalGuidance): bool
     {
+        if ($user->hasPermissionTo("api.agricultural-guidances.update") && 
+            $user->id === $agriculturalGuidance->added_by_id)
+            return true;
+        
         return false;
     }
 }

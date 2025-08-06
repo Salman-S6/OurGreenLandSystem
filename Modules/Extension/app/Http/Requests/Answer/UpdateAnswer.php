@@ -2,16 +2,22 @@
 
 namespace Modules\Extension\Http\Requests\Answer;
 
+use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Modules\Extension\Models\Answer;
 
 class UpdateAnswer extends FormRequest
 {
+    use RequestTrait;
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'answer_text' => 'required|array|min:1',
+        ];
     }
 
     /**
@@ -19,6 +25,8 @@ class UpdateAnswer extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $answer = $this->route()->parameter('answer');        
+        return Gate::allows('update', [Answer::class, $answer]);
     }
+
 }
