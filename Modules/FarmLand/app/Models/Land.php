@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
+use Modules\FarmLand\Models\Rehabilitation;
+use Illuminate\Database\Eloquent\Builder;
 
 // use Modules\FarmLand\Database\Factories\PostFactory;
 class Land extends Model
@@ -25,7 +27,7 @@ class Land extends Model
     }
 
     protected $fillable = [
-        "user_id",
+        "owner_id",
         "farmer_id",
         "area",
         "soil_type_id",
@@ -80,5 +82,16 @@ class Land extends Model
         return $this->belongsToMany(AgriculturalInfrastructure::class, 'infrastructure_land', 'land_id', 'infrastructure_id');
     }
 
+    /**
+     * Scope to order lands by enum damage level (custom priority)
+     */
+    public function scopePrioritized(Builder $query): Builder
+    {
+        return $query->orderByRaw("
+            FIELD(damage_level, 'high', 'medium', 'low')
+        ");
+    }
+
+    
 
 }
