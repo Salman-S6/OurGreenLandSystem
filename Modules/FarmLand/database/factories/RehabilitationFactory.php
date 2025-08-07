@@ -21,7 +21,6 @@ class RehabilitationFactory extends Factory
 
     public function definition(): array
     {
-<<<<<<< HEAD
        return [
             'event' => [
                 'ar' => $this->faker->sentence(3, true),
@@ -35,12 +34,6 @@ class RehabilitationFactory extends Factory
                 'ar' => $this->faker->optional()->sentence(4),
                 'en' => $this->faker->optional()->sentence(4),
             ],
-=======
-        return [
-            'event' => $this->faker->sentence(3),
-            'description' => $this->faker->paragraph(),
-            'notes' => $this->faker->optional()->paragraph(),
->>>>>>> 7a19428555186070e79d62cbbca2662bfc8e70cd
         ];
     }
 

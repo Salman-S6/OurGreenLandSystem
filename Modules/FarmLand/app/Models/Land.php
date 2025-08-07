@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 use Modules\FarmLand\Models\Rehabilitation;
 use Illuminate\Database\Eloquent\Builder;
-use Modules\CropManagement\Models\CropPlan;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
