@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use Modules\CropManagement\Database\Factories\BestAgriculturalPracticeFactory;
+use Spatie\Translatable\HasTranslations;
 
 class BestAgriculturalPractice extends Model
 {
