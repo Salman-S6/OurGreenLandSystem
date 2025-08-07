@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\FarmLand\Enums\AgriculturalInfrastructuresType;
 use Modules\FarmLand\Enums\AgriculturalInfrastructuresStatus;
 use Modules\FarmLand\Database\Factories\AgriculturalInfrastructureFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 
 class AgriculturalInfrastructure extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
     /**
      * Summary of newFactory.
@@ -42,6 +45,20 @@ class AgriculturalInfrastructure extends Model
      * @var array
      */
     public array $translatable = ['description'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('AgriculturalInfrastructure')
+            ->logOnly([
+                'type',
+                'status',
+                'description',
+                'installation_date'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that should be cast.

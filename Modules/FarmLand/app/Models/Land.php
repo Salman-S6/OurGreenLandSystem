@@ -14,12 +14,14 @@ use Spatie\Translatable\HasTranslations;
 use Modules\FarmLand\Models\Rehabilitation;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\CropManagement\Models\CropPlan;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 // use Modules\FarmLand\Database\Factories\PostFactory;
 class Land extends Model
 {
     /** @use HasFactory<\Database\Factories\LandFactory> */
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,LogsActivity;
 
 
     protected static function newFactory(): LandFactory
@@ -38,11 +40,26 @@ class Land extends Model
         "rehabilitation_date",
         "region"
     ];
+    
 
     protected $casts = [
         'gps_coordinates' => 'json',
         'boundary_coordinates' => 'json',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('Land')
+            ->logOnly([
+                'region',
+                'damage_level',
+                'farmer_id',
+                'owner_id'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function user(): BelongsTo
     {
