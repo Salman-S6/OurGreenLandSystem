@@ -41,7 +41,7 @@ class Land extends Model
         "rehabilitation_date",
         "region"
     ];
-    
+
 
     protected $casts = [
         'gps_coordinates' => 'json',
@@ -112,6 +112,6 @@ class Land extends Model
         ");
     }
 
-    
+
 
 }

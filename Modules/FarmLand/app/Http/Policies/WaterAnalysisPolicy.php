@@ -55,7 +55,7 @@ class WaterAnalysisPolicy
             return true;
         }
 
-        if ($user->id === $waterAnalysis->land->user_id) {
+        if ($user->id === $waterAnalysis->land->owner_id) {
             return true;
         }
 

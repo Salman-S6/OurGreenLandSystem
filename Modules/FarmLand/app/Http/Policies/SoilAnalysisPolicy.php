@@ -55,7 +55,7 @@ class SoilAnalysisPolicy
             return true;
         }
 
-        if ($user->id === $soilAnalysis->land->user_id) {
+        if ($user->id === $soilAnalysis->land->owner_id) {
             return true;
         }
 

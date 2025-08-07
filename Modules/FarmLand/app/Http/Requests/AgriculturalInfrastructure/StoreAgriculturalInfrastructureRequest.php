@@ -39,6 +39,9 @@ class StoreAgriculturalInfrastructureRequest extends FormRequest
             'status' => ['required', Rule::enum(AgriculturalInfrastructuresStatus::class)],
 
             'description' => 'nullable|array',
+            'description.en' => 'nullable|string|max:500',
+            'description.ar' => 'nullable|string|max:500',
+
             'installation_date' => 'nullable|date|before_or_equal:today',
 
             'land_ids' => ['required', 'array'],

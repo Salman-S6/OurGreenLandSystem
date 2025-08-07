@@ -52,7 +52,7 @@ class AgriculturalInfrastructurePolicy
 
         return $infrastructure->lands()
             ->where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
+                $query->where('owner_id', $user->id)
                     ->orWhere('farmer_id', $user->id);
             })->exists();
     }
@@ -82,7 +82,7 @@ class AgriculturalInfrastructurePolicy
 
         return $infrastructure->lands()
             ->where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
+                $query->where('owner_id', $user->id)
                     ->orWhere('farmer_id', $user->id);
             })->exists();
     }

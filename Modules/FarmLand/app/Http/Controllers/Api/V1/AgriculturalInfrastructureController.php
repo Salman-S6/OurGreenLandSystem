@@ -54,7 +54,7 @@ class AgriculturalInfrastructureController extends Controller
     public function store(StoreAgriculturalInfrastructureRequest $request): JsonResponse
     {
         try {
-            $this->authorize('create', AgriculturalInfrastructure::class);
+            // $this->authorize('create', AgriculturalInfrastructure::class);
             $data = $this->infrastructureService->store($request->validated());
 
             return ApiResponse::success(
