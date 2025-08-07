@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('crop_plan_id')->constrained('crop_plans')->cascadeOnDelete();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
-            $table->enum('case_type', ['pest', 'disease']);
-            $table->string('case_name', 50);
+            $table->json('case_type');
+            $table->json('case_name', 50);
             $table->enum('severity', ['high', 'medium', 'low']);
-            $table->text('description');
+            $table->json('description');
             $table->date('discovery_date');
-            $table->text('location_details');
+            $table->json('location_details');
             $table->timestamps();
         });
     }

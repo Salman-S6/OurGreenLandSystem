@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('crop_quality', ['excellent', 'average', 'poor'])->nullable();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
             $table->text('notes')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
