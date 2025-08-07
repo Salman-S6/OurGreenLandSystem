@@ -16,15 +16,8 @@ return new class extends Migration
             $table->foreignId('crop_plan_id')->constrained()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->enum('name', [
-                'seeding',
-                'germination',
-                'vegetative-growth',
-                'flowering',
-                'fruiting',
-                'harvesting',
-            ]);
-            $table->text('notes')->nullable();
+            $table->json('name');
+            $table->json('notes')->nullable(); 
             $table->foreignId('recorded_by')->constrained('users')->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();

@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\CropGrowthStageFactory;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Support\Facades\Validator;
 
 class CropGrowthStage extends Model
 {
-    use HasFactory, HasTranslations,SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     /**
      * Summary of newFactory
@@ -27,7 +28,7 @@ class CropGrowthStage extends Model
     /**
      * The attributes that are mass assignable.
      */
-      protected $fillable = [
+    protected $fillable = [
         'crop_plan_id',
         'start_date',
         'end_date',
@@ -53,6 +54,26 @@ class CropGrowthStage extends Model
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $cropPlan = CropPlan::findOrFail($model->crop_plan_id);
+
+            if ($cropPlan->status !== 'in-progress') {
+                $validator = Validator::make([], []);  
+                throw new \Illuminate\Validation\ValidationException(
+                    $validator,
+                    \Illuminate\Http\Response::HTTP_BAD_REQUEST,
+                    ['crop_plan_id' => 'Cannot add growth stage to a crop plan that is not in-progress.']
+                );
+            }
+        });
+    }
+    /**
      * Get the crop plan for the growth stage.
      */
     public function cropPlan(): BelongsTo
@@ -77,6 +98,7 @@ class CropGrowthStage extends Model
         return $this->hasMany(BestAgriculturalPractice::class, "growth_stage_id");
     }
 
+
     /**
      * Get the pest and disease cases for the crop plan.
      */
@@ -85,5 +107,6 @@ class CropGrowthStage extends Model
         return $this->hasMany(PestDiseaseCase::class,'crop_growth_id');
     }
     
+
 
 }

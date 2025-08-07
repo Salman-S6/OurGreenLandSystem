@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\CrudException;
+
 use Illuminate\Auth\Access\AuthorizationException;
+
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 abstract class BaseCrudService  implements BaseCrudServiceInterface
@@ -40,9 +42,10 @@ abstract class BaseCrudService  implements BaseCrudServiceInterface
         } catch (ModelNotFoundException $e) {
             $modelName = class_basename($this->model);
             throw new CrudException($notFoundMessage ?? "{$modelName} not found", 404);
-        } catch (HttpResponseException $e) {
+
+        }catch (HttpResponseException $e) {
             throw $e;
-        
+
         } catch (\Throwable $e) {
             throw new CrudException('Unexpected error: ' . $e->getMessage(), 500);
         }
@@ -56,6 +59,7 @@ abstract class BaseCrudService  implements BaseCrudServiceInterface
      */
     public function getAll(array $filters = []): iterable
     {
+     
         return $this->handle(function () use ($filters) {
             $query = $this->model->newQuery();
 
@@ -75,7 +79,8 @@ abstract class BaseCrudService  implements BaseCrudServiceInterface
      */
     public function get(Model $model): Model
     {
-        return $this->handle(fn() => $model);
+        return $model;
+        
     }
 
     /**

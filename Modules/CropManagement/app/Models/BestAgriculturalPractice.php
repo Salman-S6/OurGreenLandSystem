@@ -30,7 +30,7 @@ class BestAgriculturalPractice extends Model
         'application_date',
         'notes',
     ];
-    public array $translatable = ['notes', 'practice_type','material'];
+    public array $translatable = ['notes','material'];
 
     /**
      * The attributes that should be cast.
@@ -38,6 +38,8 @@ class BestAgriculturalPractice extends Model
      * @var array<string, string>
      */
     protected $casts = [
+         'material' => 'array',
+        'notes' => 'array',
         'quantity' => 'decimal:2',
         'application_date' => 'date',
     ];
