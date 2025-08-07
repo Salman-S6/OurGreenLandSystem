@@ -7,13 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Resources\Database\Factories\SupplierFactory;
 use Modules\Resources\Enums\SupplierType;
 use Spatie\Translatable\HasTranslations;
 
 class Supplier extends Model
 {
-   use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations;
 
+    protected static function newFactory()
+    {
+        return SupplierFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -27,9 +32,9 @@ class Supplier extends Model
     ];
 
     public array $translatable = ['supplier_type'];
-protected $casts = [
-    'supplier_type' => SupplierType::class,
-];
+    protected $casts = [
+        'supplier_type' => SupplierType::class,
+    ];
     /**
      * Get the user that owns the supplier profile.
      */
