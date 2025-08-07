@@ -3,6 +3,7 @@
 namespace Modules\FarmLand\Models;
 
 use App\Models\User;
+use Modules\CropManagement\Models\CropPlan;
 use Modules\FarmLand\Database\Factories\LandFactory;
 use Modules\FarmLand\Models\Soil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,7 @@ class Land extends Model
         "user_id",
         "farmer_id",
         "area",
+        "region",
         "soil_type_id",
         "damage_level",
         "gps_coordinates",
@@ -70,10 +72,10 @@ class Land extends Model
         return $this->belongsToMany(Rehabilitation::class, 'rehabilitation_land', 'land_id', 'rehabilitation_id');
     }
 
-    // public function cropPlans(): HasMany
-    // {
-    //     return $this->hasMany(CropPlan::class, 'land_id');
-    // }
+    public function cropPlans(): HasMany
+    {
+        return $this->hasMany(CropPlan::class, 'land_id');
+    }
 
     public function agriculturalInfrastructures(): BelongsToMany
     {
