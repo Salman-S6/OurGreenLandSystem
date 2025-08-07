@@ -9,15 +9,42 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\BestAgriculturalPracticeFactory;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class BestAgriculturalPractice extends Model
 {
-    use HasFactory, HasTranslations,SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes, LogsActivity;
 
     protected static function newFactory(): BestAgriculturalPracticeFactory
     {
         return BestAgriculturalPracticeFactory::new();
     }
+
+
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('best-agricultural-practice')
+            ->logOnly([
+                'growth_stage_id',
+                'expert_id',
+                'practice_type',
+                'material',
+                'quantity',
+                'application_date',
+                'notes',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+
     /**
      * The attributes that are mass assignable.
      */
@@ -30,7 +57,7 @@ class BestAgriculturalPractice extends Model
         'application_date',
         'notes',
     ];
-    public array $translatable = ['notes','material'];
+    public array $translatable = ['notes', 'material'];
 
     /**
      * The attributes that should be cast.
@@ -38,7 +65,7 @@ class BestAgriculturalPractice extends Model
      * @var array<string, string>
      */
     protected $casts = [
-         'material' => 'array',
+        'material' => 'array',
         'notes' => 'array',
         'quantity' => 'decimal:2',
         'application_date' => 'date',
@@ -58,7 +85,6 @@ class BestAgriculturalPractice extends Model
      */
     public function expert(): BelongsTo
     {
-        return $this->belongsTo(User::class,'expert_id');
+        return $this->belongsTo(User::class, 'expert_id');
     }
-
 }

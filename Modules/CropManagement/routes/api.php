@@ -1,16 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\CropManagement\Http\Controllers\Api\V1\BestAgriculturalPracticeController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropGrowthStageController;
 use Modules\CropManagement\Http\Controllers\Api\V1\CropPlanController;
 
 use Modules\CropManagement\Http\Controllers\Api\V1\PestDiseaseCaseController;
+use Modules\CropManagement\Http\Controllers\Api\V1\PestDiseaseRecommendationController;
 use Modules\CropManagement\Http\Controllers\Api\V1\ProductionEstimationController;
 
-Route:: prefix('crop-managements')->middleware(['auth:sanctum', "throttle:api"])->group(function () {
+Route::prefix('crop-managements')->middleware(['auth:sanctum', "throttle:api"])->group(function () {
 
-    
+
     /**
      *
      *
@@ -93,9 +95,42 @@ Route:: prefix('crop-managements')->middleware(['auth:sanctum', "throttle:api"])
         Route::get('/get-all', [PestDiseaseCaseController::class, 'index'])->name('case.all');
 
         Route::get('/get/{pestDiseaseCase}', [PestDiseaseCaseController::class, 'show'])->name('case.get');
-        
+
         Route::delete('/{pestDiseaseCase}', [PestDiseaseCaseController::class, 'destroy'])->name('case.delete');
     });
 
-     
+    /**
+     *
+     *
+     * ----------------------------------------------------------------
+     * CropGrowthStageController routes.
+     * ----------------------------------------------------------------
+     */
+
+    Route::resource('cropGrowthStage', CropGrowthStageController::class)->names('crop_management.cropGrowthStage');
+    Route::delete('{cropGrowthStage}', [CropGrowthStageController::class, 'forceDestroy']);
+
+    /**
+     *
+     *
+     * ----------------------------------------------------------------
+     * BestAgriculturalPracticeController routes.
+     * ----------------------------------------------------------------
+     */
+    
+    Route::resource('bestAgriculturalPractice', BestAgriculturalPracticeController::class)->names('crop_management.bestAgriculturalPractice');
+    Route::delete('{bestAgriculturalPractice}', [BestAgriculturalPracticeController::class, 'forceDestroy']);
+
+
+    /**
+     *
+     *
+     * ----------------------------------------------------------------
+     * PestDiseaseRecommendationController routes.
+     * ----------------------------------------------------------------
+     */
+
+
+    Route::resource('pestDiseaseRecommendation', PestDiseaseRecommendationController::class)->names('crop_management.pestDiseaseRecommendation');
+    Route::delete('{pestDiseaseRecommendation}', [PestDiseaseRecommendationController::class, 'forceDestroy']);
 });

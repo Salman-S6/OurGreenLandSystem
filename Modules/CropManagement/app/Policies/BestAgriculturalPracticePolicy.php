@@ -26,7 +26,7 @@ class BestAgriculturalPracticePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert);
+        return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -34,7 +34,7 @@ class BestAgriculturalPracticePolicy
      */
     public function view(User $user, BestAgriculturalPractice $bestAgriculturalPractices): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) &&
             $user->id == $bestAgriculturalPractices->expert_id;
     }
 
@@ -43,7 +43,7 @@ class BestAgriculturalPracticePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert);
+        return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -51,7 +51,7 @@ class BestAgriculturalPracticePolicy
      */
     public function update(User $user, BestAgriculturalPractice $bestAgriculturalPractices): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) && $bestAgriculturalPractices->expert_id === $user->id;
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) && $bestAgriculturalPractices->expert_id === $user->id;
     }
 
     /**
@@ -59,7 +59,7 @@ class BestAgriculturalPracticePolicy
      */
     public function delete(User $user, BestAgriculturalPractice $bestAgriculturalPractices): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) && $bestAgriculturalPractices->expert_id === $user->id;
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) && $bestAgriculturalPractices->expert_id === $user->id;
     }
 
     /**
@@ -67,7 +67,7 @@ class BestAgriculturalPracticePolicy
      */
     public function forceDelete(User $user,  BestAgriculturalPractice $bestAgriculturalPractices): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) &&
             $bestAgriculturalPractices->expert_id === $user->id;
     }
 }

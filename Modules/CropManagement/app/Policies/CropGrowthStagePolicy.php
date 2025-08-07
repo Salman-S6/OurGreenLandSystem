@@ -25,7 +25,7 @@ class CropGrowthStagePolicy
      */
     public function viewAny(User $user): bool
     {
-          return $user->hasRole(UserRoles::AgriculturalAlert);
+          return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -34,7 +34,7 @@ class CropGrowthStagePolicy
     public function view(User $user, CropGrowthStage $cropGrowthStage): bool
     {
 
-        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) &&
                 $user->id == $cropGrowthStage->recorded_by;
     }
 
@@ -43,7 +43,7 @@ class CropGrowthStagePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert);
+        return $user->hasRole(UserRoles::AgriculturalEngineer);
     }
 
     /**
@@ -51,7 +51,7 @@ class CropGrowthStagePolicy
      */
     public function update(User $user, CropGrowthStage $cropGrowthStage): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) &&
         $cropGrowthStage->recorded_by === $user->id;
     }
 
@@ -60,7 +60,7 @@ class CropGrowthStagePolicy
      */
     public function delete(User $user, CropGrowthStage $cropGrowthStage): bool
     {
-        return  $user->hasRole(UserRoles::AgriculturalAlert) && $cropGrowthStage->recorded_by === $user->id;
+        return  $user->hasRole(UserRoles::AgriculturalEngineer) && $cropGrowthStage->recorded_by === $user->id;
     }
 
      /**
@@ -68,7 +68,7 @@ class CropGrowthStagePolicy
      */
     public function forceDelete(User $user, CropGrowthStage $cropGrowthStage): bool
     {
-        return $user->hasRole(UserRoles::AgriculturalAlert) &&
+        return $user->hasRole(UserRoles::AgriculturalEngineer) &&
                $cropGrowthStage->recorded_by === $user->id;
     }
 

@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\CropGrowthStageFactory;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class CropGrowthStage extends Model
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes, LogsActivity;
 
     /**
      * Summary of newFactory
@@ -23,6 +25,28 @@ class CropGrowthStage extends Model
     protected static function newFactory(): CropGrowthStageFactory
     {
         return CropGrowthStageFactory::new();
+    }
+
+
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('crop-growth-stage')
+            ->logOnly([
+                'crop_plan_id',
+                'start_date',
+                'end_date',
+                'name',
+                'notes',
+                'recorded_by'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     /**
@@ -41,7 +65,7 @@ class CropGrowthStage extends Model
      * Summary of translatable
      * @var array
      */
-    public array $translatable = [ 'notes'];
+    public array $translatable = ['notes'];
 
     /**
      * The attributes that should be cast.
@@ -64,7 +88,7 @@ class CropGrowthStage extends Model
             $cropPlan = CropPlan::findOrFail($model->crop_plan_id);
 
             if ($cropPlan->status !== 'in-progress') {
-                $validator = Validator::make([], []);  
+                $validator = Validator::make([], []);
                 throw new \Illuminate\Validation\ValidationException(
                     $validator,
                     \Illuminate\Http\Response::HTTP_BAD_REQUEST,
@@ -104,9 +128,6 @@ class CropGrowthStage extends Model
      */
     public function pestDiseaseCases(): HasMany
     {
-        return $this->hasMany(PestDiseaseCase::class,'crop_growth_id');
+        return $this->hasMany(PestDiseaseCase::class, 'crop_growth_id');
     }
-    
-
-
 }
