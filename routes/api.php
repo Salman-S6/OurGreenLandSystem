@@ -49,7 +49,6 @@ Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verif
 
 
 Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
-
     /**
      *
      *

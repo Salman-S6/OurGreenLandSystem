@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Http\Requests\InputDeliveryStatus;
+namespace Modules\Resources\Http\Requests\InputDeliveryStatus;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;

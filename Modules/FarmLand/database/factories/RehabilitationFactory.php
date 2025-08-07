@@ -26,22 +26,19 @@ class RehabilitationFactory extends Factory
      */
     public function definition(): array
     {
-        $rehabilitationEvents = [
-            'Soil Tillage and Aeration',
-            'Organic Matter Addition',
-            'Cover Cropping Implementation',
-            'Afforestation and Tree Planting',
-            'Irrigation System Repair and Optimization',
-            'Integrated Pest Management Application',
-        ];
-
-        return [
-            'land_id' => ModelsLand::inRandomOrder()->first('id')->id,
-            'event' => $this->faker->randomElement($rehabilitationEvents),
-            'description' => $this->faker->paragraph,
-            'performed_by' => User::inRandomOrder()->first('id')->id,
-            'performed_at' => $this->faker->date(),
-            'notes' => $this->faker->optional()->sentence,
+       return [
+            'event' => [
+                'ar' => $this->faker->sentence(3, true),
+                'en' => $this->faker->sentence(3, true),
+            ],
+            'description' => [
+                'ar' => $this->faker->paragraph(1),
+                'en' => $this->faker->paragraph(1),
+            ],
+            'notes' => [
+                'ar' => $this->faker->optional()->sentence(4),
+                'en' => $this->faker->optional()->sentence(4),
+            ],
         ];
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Modules\CropManagement\Policies;
 
-
+use App\Enums\UserRoles;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Modules\CropManagement\Models\CropPlan;
 
 class CropPlanPolicy
@@ -12,53 +11,103 @@ class CropPlanPolicy
     /**
      * Summary of before
      * @param \App\Models\User $user
-     *
+     * 
      */
     public function before(User $user)
     {
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
             return true;
         }
     }
+
     /**
-     * Determine whether the user can view any models.
+     * Summary of viewAny
+     * @param \App\Models\User $user
+     * @return bool
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalEngineer)
+            || $user->hasRole(UserRoles::ProgramManager)
+            || $user->hasRole(UserRoles::Farmer);
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Summary of view
+     * @param \App\Models\User $user
+     * @param \Modules\CropManagement\Models\CropPlan $cropPlan
+     * @return bool
      */
     public function view(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer');
+
+        if ($user->hasRole(UserRoles::AgriculturalEngineer)) {
+            return $user->id === $cropPlan->planned_by;
+        }
+
+
+        if ($user->hasRole(UserRoles::ProgramManager)) {
+            return true;
+        }
+
+
+        if ($user->hasRole(UserRoles::Farmer)) {
+            return $cropPlan->land && $cropPlan->land->farmer_id === $user->id;
+        }
+
+        return false;
     }
 
     /**
-     * Determine whether the user can create models.
+     * Summary of create
+     * @param \App\Models\User $user
+     * @return bool
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('AgriculturalEngineer');
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
+            $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Summary of update
+     * @param \App\Models\User $user
+     * @param \Modules\CropManagement\Models\CropPlan $cropPlan
+     * @return bool
      */
     public function update(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
+        if ($user->hasRole(UserRoles::ProgramManager) ) {
+            return true;
+        }
+
+        if (
+            $user->hasRole(UserRoles::AgriculturalEngineer)
+            && $user->id === $cropPlan->planned_by
+        ) {
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Summary of delete
+     * @param \App\Models\User $user
+     * @param \Modules\CropManagement\Models\CropPlan $cropPlan
+     * @return bool
      */
     public function delete(User $user, CropPlan $cropPlan): bool
     {
-        return  $user->hasRole('AgriculturalEngineer') && $cropPlan->planned_by===$user->id;
+        if ($user->hasRole(UserRoles::ProgramManager)) {
+            return true;
+        }
+
+        if (
+            $user->hasRole(UserRoles::AgriculturalEngineer)
+            && $user->id === $cropPlan->planned_by
+        ) {
+            return true;
+        }
+        return false;
     }
-
-
 }

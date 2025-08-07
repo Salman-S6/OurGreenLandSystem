@@ -2,8 +2,17 @@
 
 namespace Modules\CropManagement\Providers;
 
+use App\Interfaces\BaseCrudServiceInterface;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\CropManagement\Interfaces\Crops\CropInterface;
+use Modules\CropManagement\Interfaces\Crops\CropPlanInterface;
+use Modules\CropManagement\Interfaces\Crops\PestDiseaseCasesInterface;
+use Modules\CropManagement\Interfaces\Crops\ProductionEstimationInterface;
+use Modules\CropManagement\Services\Crops\CropPlanService;
+use Modules\CropManagement\Services\Crops\CropService;
+use Modules\CropManagement\Services\Crops\PestDiseaseCasesService;
+use Modules\CropManagement\Services\Crops\ProductionEstimationService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -36,6 +45,10 @@ class CropManagementServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(CropInterface::class,CropService::class);
+        $this->app->bind(CropPlanInterface::class,CropPlanService::class);
+        $this->app->bind(ProductionEstimationInterface::class,ProductionEstimationService::class);
+        $this->app->bind(PestDiseaseCasesInterface::class,PestDiseaseCasesService::class);
     }
 
     /**

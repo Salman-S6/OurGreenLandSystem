@@ -1,19 +1,13 @@
 <?php
 namespace Modules\CropManagement\Interfaces\Crops;
 
+use App\Interfaces\BaseCrudServiceInterface;
 
-interface ProductionEstimationInterface {
+/**
+ * Summary of ProductionEstimationInterface
+ */
+interface ProductionEstimationInterface  extends BaseCrudServiceInterface{
 
-     public function  index();
-
-    public function store($request);
-
-
-    public function update($productionEstimation,$request);
-
-
-    public function getProductionEstimation($productionEstimation);
-
-
-    public  function  destroy($productionEstimation);
+    
+  
 }

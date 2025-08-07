@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('input_request_id')->constrained('input_requests')->cascadeOnDelete();
             $table->foreignId('action_by')->constrained('users')->cascadeOnDelete();
-            $table->enum('action_type', ['approved', 'rejected']);
-            $table->text('rejection_reason')->nullable();
-            $table->text('notes')->nullable();
+            $table->enum('action_type', ['pending', 'approved', 'rejected', 'in-progress', 'delivered', 'received']);
+            $table->json('rejection_reason')->nullable();
+            $table->json('notes')->nullable();
             $table->timestamp('action_date');
             $table->timestamps();
         });

@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('pest_disease_cases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('crop_plan_id')->constrained('crop_plans')->cascadeOnDelete();
+            $table->foreignId('crop_growth_id')->constrained('crop_growth_stages')->cascadeOnDelete();
             $table->foreignId('reported_by')->constrained('users')->cascadeOnDelete();
             $table->enum('case_type', ['pest', 'disease']);
-            $table->string('case_name', 50);
+            $table->json('case_name');
             $table->enum('severity', ['high', 'medium', 'low']);
-            $table->text('description');
+            $table->json('description');
             $table->date('discovery_date');
-            $table->text('location_details');
+            $table->json('location_details');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

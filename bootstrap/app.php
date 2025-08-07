@@ -7,16 +7,19 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -44,6 +47,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 403
             );
         });
+        $exceptions->render(function (AccessDeniedHttpException $e, $request) {
+            return ApiResponse::error(
+                "Unauthorized Action",
+                403
+            );
+        });
 
         $exceptions->render(function (AuthenticationException $e) {
             return ApiResponse::error(
@@ -59,15 +68,16 @@ return Application::configure(basePath: dirname(__DIR__))
             );
         });
 
-        $exceptions->render(function (CrudException $e) {
-            return ApiResponse::error($e->getMessage(), $e->getCode());
-        });
-
-        $exceptions->render(function (MethodNotAllowedHttpException $e) {
+        $exceptions->render(function (ValidationException $e) {
             return ApiResponse::error(
-                $e->getMessage(),
-                405
+                'Validation failed.',
+                422,
+                $e->errors()
             );
         });
 
+
+        $exceptions->render(function (CrudException $e) {
+            return ApiResponse::error($e->getMessage(), $e->getCode());
+        });
     })->create();

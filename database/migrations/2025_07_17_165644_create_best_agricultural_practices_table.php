@@ -20,6 +20,7 @@ return new class extends Migration
              $table->decimal('quantity', 10, 2);
              $table->date('application_date');
              $table->text('notes')->nullable();
+             $table->softDeletes();
              $table->timestamps();
         });
     }

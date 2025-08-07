@@ -4,7 +4,7 @@ namespace Modules\CropManagement\Models;
 
 
 use App\Models\User;
-// use  Modules\FarmLand\Models\Land;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,13 +12,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Modules\CropManagement\Database\Factories\CropPlanFactory;
 use Modules\Extension\Models\AgriculturalAlert;
-use Modules\Farmland\Models\Land;
+use Modules\FarmLand\Models\Land;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Translatable\HasTranslations;
 
 class CropPlan extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
+    /**
+     * Summary of newFactory
+     * @return CropPlanFactory
+     */
     protected static function newFactory(): CropPlanFactory
     {
         return CropPlanFactory::new();
@@ -40,7 +46,39 @@ class CropPlan extends Model
         'status',
     ];
 
-    protected  $guarded=[ 'planned_by'];
+    /**
+     * Summary of guarded
+     * @var array
+     */
+    protected  $guarded = ['planned_by'];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('crop-plan')
+            ->logOnly([
+                'crop_id',
+                'land_id',
+                'planned_by',
+                'status',
+                'planned_planting_date',
+                'actual_planting_date',
+                'planned_harvest_date',
+                'actual_harvest_date',
+                'seed_quantity',
+                'area_size',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+    /**
+     * Summary of translatable
+     * @var array
+     */
     public  $translatable = ['seed_type'];
 
     /**
@@ -56,7 +94,7 @@ class CropPlan extends Model
         'seed_expiry_date' => 'date',
         'seed_quantity' => 'decimal:2',
         'area_size' => 'decimal:2',
-        'seed_type'=>'array'
+        'seed_type' => 'array'
 
 
 
@@ -94,13 +132,7 @@ class CropPlan extends Model
         return $this->hasMany(ProductionEstimation::class);
     }
 
-    /**
-     * Get the pest and disease cases for the crop plan.
-     */
-    public function pestDiseaseCases(): HasMany
-    {
-        return $this->hasMany(PestDiseaseCase::class);
-    }
+
 
     /**
      * Get the agricultural alerts for the crop plan.
@@ -110,8 +142,84 @@ class CropPlan extends Model
         return $this->hasMany(AgriculturalAlert::class);
     }
 
+    /**
+     * Summary of cropGrowthStages
+     * @return HasMany<CropGrowthStage, CropPlan>
+     */
     public function cropGrowthStages(): HasMany
     {
         return $this->hasMany(CropGrowthStage::class, 'crop_plan_id');
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+
+
+    /**
+     * Summary of getPlannedPlantingDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getPlannedPlantingDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d ');
+    }
+
+    /**
+     * Summary of getActualPlantingDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getActualPlantingDateAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
+    }
+
+    /**
+     * Summary of getPlannedHarvestDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getPlannedHarvestDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d ');
+    }
+    /**
+     * Summary of getSeedExpiryDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getSeedExpiryDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d ');
+    }
+
+
+    /**
+     * Summary of getActualHarvestDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getActualHarvestDateAttribute($value)
+    {
+        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
     }
 }

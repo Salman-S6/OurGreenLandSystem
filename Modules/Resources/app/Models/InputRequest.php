@@ -3,14 +3,20 @@
 namespace Modules\Resources\Models;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 
 class InputRequest extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations, LogsActivity;
+
 
     /**
      * The attributes that are mass assignable.
@@ -18,18 +24,50 @@ class InputRequest extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'requested_by',
         'input_type',
         'description',
         'quantity',
         'status',
-        'approved_by',
         'approval_date',
         'delivery_date',
         'notes',
         'selected_supplier_id',
     ];
+    /**
+     * Summary of translatable
+     * @var array
+     */
+    public $translatable = ['notes', 'description'];
 
+    /**
+     * Summary of guarded
+     * @var array
+     */
+    protected $guarded = ['requested_by', 'approved_by'];
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('input-request')
+            ->logOnly([
+                'input_type',
+                'description',
+                'quantity',
+                'status',
+                'approval_date',
+                'delivery_date',
+                'notes',
+                'selected_supplier_id',
+                'requested_by',
+                'approved_by',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * The attributes that should be cast.
      *
@@ -67,5 +105,35 @@ class InputRequest extends Model
     public function deliveryStatus(): HasMany
     {
         return $this->hasMany(InputDeliveryStatus::class, "input_request_id");
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    /**
+     * Summary of getDeliveryDateAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public  function getDeliveryDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d H:i');
     }
 }

@@ -2,6 +2,10 @@
 
 namespace Modules\CropManagement\Services\Crops;
 
+use App\Enums\UserRoles;
+use App\Helpers\NotifyHelper;
+use App\Interfaces\BaseCrudServiceInterface;
+use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -10,142 +14,186 @@ use Illuminate\Support\Facades\Log;
 use Modules\CropManagement\Interfaces\Crops\ProductionEstimationInterface;
 use Modules\CropManagement\Models\CropPlan;
 use Modules\CropManagement\Models\ProductionEstimation;
+use App\Services\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
-class ProductionEstimationService implements ProductionEstimationInterface
+class ProductionEstimationService extends BaseCrudService implements ProductionEstimationInterface
 {
-   use AuthorizesRequests;
+    use AuthorizesRequests;
+
     /**
-     * Summary of index
-     * @return array{data: \Illuminate\Database\Eloquent\Collection<int, ProductionEstimation>, message: string}
+     * Summary of __construct
+     * @param \Modules\CropManagement\Models\ProductionEstimation $model
      */
-    public function  index()
+    public function __construct(ProductionEstimation $model)
+    {
+        parent::__construct($model);
+    }
+
+    /**
+     * Override getAll to include authorization, relations, filters and roles
+     */
+    public function getAll(array $filters = []): iterable
     {
         $user = Auth::user();
-        $this->authorize('viewAny',ProductionEstimation::class);
-        $relations = [
-            'cropPlan',
-            'reporter'
-        ];
-        if ($user->hasRole('SuperAdmin')) {
-            $estimations = ProductionEstimation::with($relations)
-                ->orderBy('id', 'desc')->get();
-        } else {
-            $estimations = ProductionEstimation::with($relations)
-                ->where('reported_by', $user->id)->orderBy('id', 'desc')->get();
-        }
-        $message = "Successfully Get All Product Estimation";
-        return [
-            'message' => $message,
-            'data' => $estimations
-        ];
+        $this->authorize('viewAny', ProductionEstimation::class);
+        $relations = ['cropPlan', 'reporter'];
+        $filterKey = md5(json_encode($filters));
+        $cacheKey = match (true) {
+            $user->hasRole(UserRoles::SuperAdmin) => 'production_estimations_all_' . $filterKey,
+            $user->hasRole(UserRoles::ProgramManager) => 'production_estimations_program_manager_' . $filterKey,
+            default => 'production_estimations_user_' . $user->id . '_' . $filterKey,
+        };
+        return $this->handle(function () use ($user, $relations, $filters, $cacheKey) {
+            return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($user, $relations, $filters) {
+                $query = $this->model->newQuery()->with($relations)->orderBy('id', 'desc');
+
+                if (!($user->hasRole(UserRoles::SuperAdmin) || $user->hasRole(UserRoles::ProgramManager))) {
+                    $query->where('reported_by', $user->id);
+                }
+                foreach ($filters as $field => $value) {
+                    if ($value !== null && $value !== '') {
+                        $query->where($field, $value);
+                    }
+                }
+                return $query->get();
+            });
+        });
+    }
+
+
+    /**
+     * Override get (show) to add authorization
+     */
+
+
+    public  function  get(Model $model): Model
+    {
+        $this->authorize('view', $model);
+        return $model->load(['cropPlan']);
     }
 
     /**
-     * Summary of store
-     * @param mixed $request
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @return array{data: ProductionEstimation, message: string}
+     * Override store to add validations, authorization, events, and caching
      */
-    public function store($request)
+    public function store(array $data): Model
     {
-        try {
-            $validated = $request->validated();
-            $this->authorize('create',ProductionEstimation::class);
-            $plan = CropPlan::findOrFail($validated['crop_plan_id']);
+        return $this->handle(function () use ($data) {
+            $this->authorize('create', ProductionEstimation::class);
+
+            $plan = CropPlan::findOrFail($data['crop_plan_id']);
 
             if ($plan->status !== 'in-progress') {
-                throw new HttpResponseException(
-                    response()->json([
-                        'message' => 'The crop plan is not in-progress.'
-                    ], 403)
-                );
+                throw new HttpResponseException(response()->json([
+                    'message' => 'The crop plan is not in-progress.'
+                ], 403));
             }
-            $estimation = new ProductionEstimation();
-            $estimation->crop_plan_id = $validated['crop_plan_id'];
-            $estimation->expected_quantity = $validated['expected_quantity'];
-            $estimation->setTranslations('estimation_method', $validated['estimation_method']);
+
+            $estimation = $this->model->newInstance();
+            $estimation->crop_plan_id = $data['crop_plan_id'];
+            $estimation->expected_quantity = $data['expected_quantity'];
+            $estimation->setTranslations('estimation_method', $data['estimation_method']);
             $estimation->reported_by = Auth::id();
             $estimation->save();
-            return [
-                'message' => 'Successfully created new production estimation.',
-                'data'    => $estimation->load('cropPlan', 'reporter'),
+
+            $cropNameEn = $estimation->cropPlan->crop->getTranslation('name', 'en');
+            $cropNameAr = $estimation->cropPlan->crop->getTranslation('name', 'ar');
+            $userNotify = $this->getCropPlanNotificationUsers($estimation->cropPlan);
+            $notificationData = [
+                'title' => 'New Production Estimation Added',
+                'message' => "New estimation for crop ({$cropNameEn}) / ({$cropNameAr}) under plan #{$estimation->crop_plan_id}.",
+                'type' => 'info',
             ];
-        } catch (Exception $e) {
-            Log::error('Failed to create production estimation: ' . $e->getMessage());
-            throw $e;
-        }
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $estimation->reported_by);
+            return $estimation->load('cropPlan', 'reporter');
+        }, 'Failed to create production estimation');
     }
 
-
     /**
-     * Summary of update
-     * @param mixed $productionEstimation
-     * @param mixed $request
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @return array{data: mixed, message: string}
+     * Override update to add validation and authorization
      */
-    public function update($productionEstimation, $request)
+    public function update(array $data, Model $model): Model
     {
-        try {
-            $validated = $request->validated();
-            $this->authorize('update',$productionEstimation);
-            $plan = CropPlan::findOrFail($productionEstimation->crop_plan_id);
+        return $this->handle(function () use ($data, $model) {
+            $this->authorize('update', $model);
+
+            $plan = CropPlan::findOrFail($model->crop_plan_id);
 
             if ($plan->status === 'in-progress') {
-                $productionEstimation->expected_quantity = $validated['expected_quantity'];
-                $productionEstimation->setTranslations('estimation_method', $validated['estimation_method']);
-                $message = "Successfully updated estimation (in-progress).";
+                $model->expected_quantity = $data['expected_quantity'] ?? $model->expected_quantity;
+                if (isset($data['estimation_method'])) {
+                    $model->setTranslations('estimation_method', $data['estimation_method']);
+                }
             } elseif ($plan->status === 'completed') {
-                $productionEstimation->actual_quantity = $validated['actual_quantity'];
-                $productionEstimation->crop_quality = $validated['crop_quality'];
-                $productionEstimation->setTranslations('notes', $validated['notes']);
-                $message = "Successfully updated estimation (completed plan).";
+                $model->actual_quantity = $data['actual_quantity'] ?? $model->actual_quantity;
+                $model->crop_quality = $data['crop_quality'] ?? $model->crop_quality;
+
+                if (isset($data['notes'])) {
+                    $model->setTranslations('notes', $data['notes']);
+                }
             } else {
-                throw new HttpResponseException(
-                    response()->json([
-                        'message' => 'The crop plan must be in-progress or completed to update estimation.'
-                    ], 403)
-                );
+                throw new HttpResponseException(response()->json([
+                    'message' => 'The crop plan must be in-progress or completed to update estimation.'
+                ], 403));
             }
 
-            $productionEstimation->save();
+            $model->save();
 
-            return [
-                'message' => $message,
-                'data' => $productionEstimation->load('cropPlan', 'reporter'),
+            $cropNameEn = $model->cropPlan->crop->getTranslation('name', 'en');
+            $cropNameAr = $model->cropPlan->crop->getTranslation('name', 'ar');
+            $userNotify = $this->getCropPlanNotificationUsers($model->cropPlan);
+            $notificationData = [
+                'title' => 'Production Estimation Updated',
+                'message' => "Estimation updated for crop ({$cropNameEn}) / ({$cropNameAr}) under plan #{$model->crop_plan_id}.",
+                'type' => 'warning',
             ];
-        } catch (Exception $e) {
-            Log::error('Failed to update production estimation: ' . $e->getMessage());
-            throw $e;
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $model->reported_by);
+            return $model->load('cropPlan', 'reporter');
+        }, 'Failed to update production estimation');
+    }
+
+    /**
+     * Override destroy with authorization
+     */
+    public function destroy(Model $model): bool
+    {
+        $this->authorize('delete', $model);
+        return $this->handle(function () use ($model) {
+            Cache::forget('production_estimations_all');
+            Cache::forget('production_estimations_program_manager');
+            Cache::forget('production_estimations_user_' . $model->reported_by);
+            return $model->forceDelete();
+        }, 'Failed to delete production estimation');
+    }
+
+
+
+    /**
+     * Summary of getCropPlanNotificationUsers
+     * @param \Modules\CropManagement\Models\CropPlan $plan
+     * @return \Illuminate\Support\Collection
+     */
+    private function getCropPlanNotificationUsers(CropPlan $plan): \Illuminate\Support\Collection
+    {
+        $users = User::role([UserRoles::ProgramManager, UserRoles::SuperAdmin])->get();
+
+        if ($plan->land->farmer && !$users->contains('id', $plan->land->farmer->id)) {
+            $users->push($plan->land->farmer);
         }
-    }
 
-    /**
-     * Summary of getProductionEstimation
-     * @param mixed $productionEstimation
-     * @return array{data: mixed, message: string}
-     */
-    public function getProductionEstimation($productionEstimation)
-    {
-          $this->authorize('view',$productionEstimation);
-        return [
-            'message' => 'Successfully Get Product Estimation ',
-            'data' => $productionEstimation->load('cropPlan', 'reporter')
-        ];
-    }
+        if ($plan->land->owner && !$users->contains('id', $plan->land->owner->id)) {
+            $users->push($plan->land->owner);
+        }
 
-    /**
-     * Summary of destroy
-     * @param mixed $productionEstimation
-     * @return array{message: string}
-     */
-    public  function  destroy($productionEstimation)
-    {
-        $this->authorize('delete',$productionEstimation);
-        $message = "Successfully Delete Product Estimation";
-        $productionEstimation->forceDelete();
-        return [
-            "message" => $message
-        ];
+        return $users;
     }
 }

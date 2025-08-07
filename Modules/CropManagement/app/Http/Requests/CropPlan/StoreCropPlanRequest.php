@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\CropPlan;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,8 +16,10 @@ class StoreCropPlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user =$this->user();
-        return $user->hasRole('AgriculturalEngineer') || $user->hasRole('SuperAdmin');
+        $user = $this->user();
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
+            $user->hasRole(UserRoles::SuperAdmin)||
+            $user->hasRole(UserRoles::ProgramManager);
     }
 
     /**
@@ -33,8 +36,8 @@ class StoreCropPlanRequest extends FormRequest
             'planned_harvest_date' => ['required', 'date', 'after_or_equal:planned_planting_date'],
 
             'seed_type' => ['required', 'array'],
-            'seed_type.en' => ['required', 'string', 'min:2'],
-            'seed_type.ar' => ['required', 'string', 'min:2'],
+            'seed_type.en' => ['required', 'string', 'min:2','max:255'],
+            'seed_type.ar' => ['required', 'string', 'min:2','max:255'],
 
             'seed_quantity' => ['required', 'numeric', 'min:0.01'],
             'seed_expiry_date' => ['required', 'date', 'after:' . now()->addYears(2)->toDateString()],
@@ -69,6 +72,8 @@ class StoreCropPlanRequest extends FormRequest
             'seed_type.ar.required' => 'The seed type (Arabic) is required.',
             'seed_type.ar.string' => 'The seed type (Arabic) must be a string.',
             'seed_type.ar.min' => 'The seed type (Arabic) must be at least :min characters.',
+            'seed_type.en.max'      => 'The seed type (English) must not exceed 255 characters.',
+            'seed_type.ar.max'      => 'The seed type (Arabic) must not exceed 255 characters.',
 
             'seed_quantity.required' => 'The seed quantity is required.',
             'seed_quantity.numeric' => 'The seed quantity must be a number.',

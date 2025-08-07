@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Resources\Database\Factories\SupplierFactory;
 use Modules\Resources\Enums\SupplierType;
 use Spatie\Translatable\HasTranslations;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -15,6 +17,11 @@ use Spatie\Activitylog\LogOptions;
 class Supplier extends Model
 {
    use HasFactory, HasTranslations, LogsActivity; 
+
+    public static function newFactory(): Factory
+    {
+        return SupplierFactory::new();
+    }
 
     /**
      * The attributes that are mass assignable.

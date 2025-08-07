@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\ProductionEstimation;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +17,8 @@ class StoreProductionEstimationRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user->hasRole('AgriculturalEngineer') || $user->hasRole('SuperAdmin');
+        return $user->hasRole(UserRoles::AgriculturalEngineer) ||
+            $user->hasRole(UserRoles::SuperAdmin);
     }
 
     /**
@@ -29,7 +31,7 @@ class StoreProductionEstimationRequest extends FormRequest
             'crop_plan_id' => ['required', 'exists:crop_plans,id'],
             'expected_quantity' => ['required', 'numeric', 'min:0'],
             'estimation_method' => ['required', 'array'],
-            'estimation_method.*' => ['string', 'min:2'],
+            'estimation_method.*' => ['string', 'min:2','max:255'],
         ];
     }
     /**
@@ -44,10 +46,12 @@ class StoreProductionEstimationRequest extends FormRequest
             'expected_quantity.required' => 'The expected quantity is required.',
             'expected_quantity.numeric'  => 'The expected quantity must be a number.',
             'expected_quantity.min'      => 'The expected quantity must be at least 0.',
+
             'estimation_method.required' => 'The estimation method is required.',
             'estimation_method.array'    => 'The estimation method must be an array.',
             'estimation_method.*.string' => 'Each estimation method value must be a string.',
             'estimation_method.*.min'    => 'Each estimation method value must be at least 2 characters.',
+            'estimation_method.*.max' => 'Each translation of the estimation method must not exceed 255 characters.',
         ];
     }
     /**

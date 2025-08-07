@@ -2,160 +2,193 @@
 
 namespace Modules\CropManagement\Services\Crops;
 
-
-
-use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
+use App\Enums\UserRoles;
+use App\Helpers\NotifyHelper;
+use App\Interfaces\BaseCrudServiceInterface;
+use App\Models\User;
+use App\Services\BaseCrudService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Modules\CropManagement\Events\CropPlanDeleted;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Modules\CropManagement\Interfaces\Crops\CropInterface;
 use Modules\CropManagement\Models\Crop;
 
-class CropService implements CropInterface
+class CropService extends BaseCrudService implements CropInterface
 {
-
     use AuthorizesRequests;
+
     /**
-     * Summary of getAll
-     * @return array{data: mixed, message: string}
+     * Summary of __construct
+     * @param \Modules\CropManagement\Models\Crop $crop
      */
-    public function getAll()
+    public function __construct(Crop $crop)
     {
-        $this->authorize('viewAny', Crop::class);
-        $crops = Cache::remember('allCrops', now()->addMinutes(60), function () {
-            return Crop::orderBy('id', 'desc')->get();
-        });
-        $data = [
-            'message' => 'SuccessFully Get All Crops',
-            'data' => $crops,
-        ];
-        return $data;
+        parent::__construct($crop);
     }
 
+    /**
+     * Summary of getAll
+     * @param array $filters
+     * @return array{data: mixed, message: string}
+     */
+    public function getAll(array $filters = []): iterable
+    {
+        $this->authorize('viewAny', Crop::class);
+
+        $crops = Cache::remember('allCrops', now()->addMinutes(60), function () use ($filters) {
+            return parent::getAll($filters);
+        });
+
+        return [
+
+            'data' => $crops
+        ];
+    }
 
     /**
      * Summary of getCrop
      * @param mixed $crop
      * @return array{crop: mixed, message: string}
      */
-    public function getCrop($crop)
+    public function get(Model $crop): Crop
     {
         $this->authorize('view', $crop);
-        $data = [
-            'message' => 'Successfully Get Crop',
-            'crop' => $crop,
-        ];
-        return $data;
-    }
 
+        return $crop;
+    }
 
     /**
      * Summary of store
-     * @param mixed $request
-     * @return array{crop: Crop, message: string}
+     * @param array $data
+     * @return \Modules\CropManagement\Models\Crop
      */
-    public function store($request)
+    public function store(array $data): Crop
     {
-        try {
-            $validated = $request->validated();
-            $this->authorize('create', Crop::class);
+
+        $this->authorize('create', Crop::class);
+        return $this->handle(function () use ($data) {
+            DB::beginTransaction();
             $crop = new Crop();
-            $crop->setTranslations('name', $validated['name']);
-            $crop->setTranslations('description', $validated['description'] ?? []);
+            $crop->setTranslations('name', $data['name']);
+            $crop->setTranslations('description', $data['description'] ?? []);
             $crop->farmer_id = Auth::id();
             $crop->save();
             Cache::forget('allCrops');
-            return [
-                'message' => 'Successfully added new crop',
-                'crop' => $crop
+            $userNotify = User::role([UserRoles::SuperAdmin, UserRoles::AgriculturalEngineer, UserRoles::Farmer, UserRoles::ProgramManager])->get();
+            $cropNameAr = $crop->getTranslation('name', 'ar');
+            $cropNameEn = $crop->getTranslation('name', 'en');
+            $notificationData = [
+                'title' => 'New Crop Created',
+                'message' => "A new crop ({$cropNameEn}) / ({$cropNameAr}) has been added by user #" . Auth::id(),
+                'type' => 'info',
+                'icon' => 'fas fa-seedling',
+                'subject' => 'Crop Creation Notification',
             ];
-        } catch (Exception $e) {
-            Log::error('Failed to add crop: ' . $e->getMessage());
-            throw $e;
-        }
-    }
 
+            NotifyHelper::send($userNotify, $notificationData, ['mail']);
+            DB::commit();
+            return $crop;
+        });
+    }
 
     /**
      * Summary of update
-     * @param mixed $request
-     * @param mixed $crop
-     * @return array{data: mixed, message: string}
+     * @param array $data
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @return \Modules\CropManagement\Models\Crop
      */
-    public function update($request, $crop)
+    public function update(array $data,  $model): Crop
     {
-        try {
-            $validated = $request->validated();
-            $this->authorize('update', $crop);
-            if (isset($validated['name'])) {
-                $crop->setTranslations('name', $validated['name']);
-            }
-            if (isset($validated['description'])) {
-                $crop->setTranslations('description', $validated['description']);
-            }
-            $crop->save();
-            Cache::forget('allCrops');
-            return [
-                'message' => 'Successfully updated crop',
-                'data' => $crop
-            ];
-        } catch (Exception $e) {
-            Log::error("Failed to update crop ID {$crop->id}: " . $e->getMessage());
-            throw $e;
-        }
-    }
+        $this->authorize('update', $model);
 
+        return $this->handle(function () use ($data, $model) {
+            if (isset($data['name'])) {
+                $model->setTranslations('name', $data['name']);
+            }
+            if (isset($data['description'])) {
+                $model->setTranslations('description', $data['description']);
+            }
+
+            $model->save();
+            Cache::forget('allCrops');
+
+            return $model;
+        });
+    }
 
     /**
      * Summary of destroy
-     * @param mixed $crop
-     * @return array{message: string}
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
+     * @return bool
      */
-    public function destroy($crop)
+    public function destroy($model): bool
     {
-        $this->authorize('delete', $crop);
-        $hasUnfinishedPlans = $crop->cropPlans()
+        $this->authorize('delete', $model);
+
+        $hasUnfinishedPlans = $model->cropPlans()
             ->whereNotIn('status', ['completed', 'cancelled'])
             ->exists();
+
         if ($hasUnfinishedPlans) {
-            throw new HttpResponseException(response()->json(
-                [
-                    'message' => 'This crop cannot be deleted because it has active or in-progress plans.',
-                ],
-                422
-            ));
+            throw new HttpResponseException(response()->json([
+                'message' => 'Cannot delete crop with active plans',
+            ], 422));
         }
-        DB::transaction(function () use ($crop) {
-            $cropPlans = $crop->cropPlans()->get();
-            foreach ($cropPlans as $cropPlan) {
-                $cropPlan->load([
+
+        return $this->handle(function () use ($model) {
+            DB::transaction(function () use ($model) {
+                $cropPlans = $model->cropPlans()->with([
                     'cropGrowthStages' => fn($q) => $q->withTrashed(),
                     'cropGrowthStages.bestAgriculturalPractices' => fn($q) => $q->withTrashed(),
                     'productionEstimations' => fn($q) => $q->withTrashed(),
-                    'pestDiseaseCases' => fn($q) => $q->withTrashed(),
-                    'pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
-                ]);
-                event(new CropPlanDeleted($cropPlan));
-                foreach ($cropPlan->cropGrowthStages as $stage) {
-                    $stage->bestAgriculturalPractices()->forceDelete();
-                    $stage->forceDelete();
+                    'cropGrowthStages.pestDiseaseCases' => fn($q) => $q->withTrashed(),
+                    'cropGrowthStages.pestDiseaseCases.recommendations' => fn($q) => $q->withTrashed(),
+                ])->get();
+
+                foreach ($cropPlans as $cropPlan) {
+                    foreach ($cropPlan->cropGrowthStages as $stage) {
+                        $stage->bestAgriculturalPractices()->forceDelete();
+                        foreach ($stage->pestDiseaseCases as $case) {
+                            $case->recommendations()->forceDelete();
+                            $case->forceDelete();
+                        }
+                        $stage->forceDelete();
+                    }
+
+                    $cropPlan->productionEstimations()->forceDelete();
+                    $cropPlan->delete();
                 }
-                $cropPlan->productionEstimations()->forceDelete();
-                foreach ($cropPlan->pestDiseaseCases as $case) {
-                    $case->recommendations()->forceDelete();
-                    $case->forceDelete();
-                }
-                $cropPlan->delete();
-            }
-            $crop->delete();
+
+                $cropNameAr = $model->getTranslation('name', 'ar');
+                $cropNameEn = $model->getTranslation('name', 'en');
+                $model->delete();
+
+                $userNotify = User::role([
+                    UserRoles::SuperAdmin,
+                    UserRoles::AgriculturalEngineer,
+                    UserRoles::Farmer,
+                    UserRoles::ProgramManager
+                ])->get();
+
+                $notificationData = [
+                    'title' => 'Crop Deleted',
+                    'message' => "Crop ({$cropNameEn}) / ({$cropNameAr}) and all its related plans have been deleted.",
+                    'type' => 'error',
+                    'icon' => 'fas fa-trash',
+                    'subject' => 'Crop Deletion Notification',
+                ];
+
+                NotifyHelper::send($userNotify, $notificationData, ['mail']);
+            });
+
+            Cache::forget('allCrops');
+
+            return true;
         });
-        Cache::forget('allCrops');
-        return [
-            'message' => 'Successfully deleted crop and all associated data.',
-        ];
     }
 }

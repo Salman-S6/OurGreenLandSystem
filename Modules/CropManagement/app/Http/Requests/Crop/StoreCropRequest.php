@@ -2,6 +2,7 @@
 
 namespace Modules\CropManagement\Http\Requests\Crop;
 
+use App\Enums\UserRoles;
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +17,8 @@ class StoreCropRequest extends FormRequest
     public function authorize(): bool
     {
         $user =  $this->user();
-        return $user->hasRole('Farmer') || $user->hasRole('SuperAdmin');
+        return $user->hasRole(UserRoles::Farmer) || 
+        $user->hasRole(UserRoles::SuperAdmin);
     }
 
     /**

@@ -4,7 +4,8 @@ namespace Modules\CropManagement\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Http\Request;
+use App\Interfaces\BaseCrudServiceInterface;
+use Illuminate\Support\Facades\Auth;
 use Modules\CropManagement\Http\Requests\Crop\StoreCropRequest;
 use Modules\CropManagement\Http\Requests\Crop\UpdateCropRequest;
 use Modules\CropManagement\Interfaces\Crops\CropInterface;
@@ -12,80 +13,80 @@ use Modules\CropManagement\Models\Crop;
 
 class CropController extends Controller
 {
+    protected CropInterface $crop;
 
-    protected $crop;
-
-
-    /**
-     * Summary of __construct
-     * @param \Modules\CropManagement\Interfaces\Crops\CropInterface $crop
-     */
-    public  function __construct(CropInterface $crop)
+    public function __construct(CropInterface $crop)
     {
         $this->crop = $crop;
     }
+
     /**
-     * Display a listing of the resource.
+     * Get all crops.
      */
     public function index()
     {
-        $data = $this->crop->getAll();
+        $result = $this->crop->getAll();
+
         return ApiResponse::success(
-            [$data['data']],
-            $data['message'],
+            ['crops' => $result['data']],
+             'Crops retrieved successfully.',
             200
         );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new crop.
      */
     public function store(StoreCropRequest $request)
     {
-        $data = $this->crop->store($request);
+      
+        $crop = $this->crop->store($request->validated());
 
         return ApiResponse::success(
-            ['crop' => $data['crop']],
-            $data['message'],
+            ['crop' => $crop],
+            'Crop created successfully.',
             201
         );
     }
 
     /**
-     * Display the specified resource.
+     * Show specific crop.
      */
     public function show(Crop $crop)
     {
-        $data = $this->crop->getCrop($crop);
+        $result = $this->crop->get($crop);
+
         return ApiResponse::success(
-            [$data['crop']],
-            $data['message'],
+            ['crop' => $result],
+            'Crop retrieved successfully.',
             200
         );
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a crop.
      */
     public function update(UpdateCropRequest $request, Crop $crop)
     {
-        $data = $this->crop->update($request, $crop);
+        $updatedCrop = $this->crop->update($request->validated(), $crop);
+
         return ApiResponse::success(
-            [$data['data']],
-            $data['message'],
+            ['crop' => $updatedCrop],
+            'Crop updated successfully.',
             200
         );
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a crop.
      */
     public function destroy(Crop $crop)
     {
-        $data = $this->crop->destroy($crop);
+        $this->crop->destroy($crop);
+
         return ApiResponse::success(
             ['deleted' => true],
-            $data['message'],
+            'Crop and all related data deleted successfully.',
             200
         );
     }
