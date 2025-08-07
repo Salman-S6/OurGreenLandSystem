@@ -15,17 +15,15 @@ class PestDiseaseRecommendationResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'crop_plan_id' => $this->crop_plan_id,
-            'name' => $this->getTranslations('name'),
-            'notes' => $this->getTranslations('notes'),
-            'start_date' => $this->start_date?->toDateString(),
-            'end_date' => $this->end_date?->toDateString(),
-            'recorded_by' => $this->recorded_by,
-            'recorder' => $this->whenLoaded('recorder'),
-            'crop_plan' => $this->whenLoaded('cropPlan'),
-            'created_at' => $this->created_at?->toDateTimeString(),
-            'updated_at' => $this->updated_at?->toDateTimeString(),
+
+             'id' => $this->id,
+            'pest_disease_case_id' => $this->pest_disease_case_id,
+            'recommendation_name' => $this->recommendation_name,
+            'recommended_dose' => $this->recommended_dose,
+            'application_method' => $this->application_method,
+            'safety_notes' => $this->safety_notes,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
