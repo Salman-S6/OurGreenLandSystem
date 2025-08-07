@@ -27,8 +27,8 @@ class SoilAnalysisFactory extends Factory
     public function definition(): array
     {
         return [
-            'land_id' =>  Land::inRandomOrder('id')->first('id')->id,
-            'performed_by' => User::inRandomOrder('id')->first('id')->id,
+            'land_id' =>  Land::inRandomOrder()->first('id')->id,
+            'performed_by' => User::inRandomOrder()->first('id')->id,
             'sample_date' => $this->faker->date(),
             'ph_level' => $this->faker->randomFloat(2, 5.5, 8.5),
             'salinity_level' => $this->faker->randomFloat(2, 0, 8.0),

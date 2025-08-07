@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained("users")->cascadeOnDelete();
-            $table->enum('supplier_type', ['pesticides', 'fertilizers', 'seeds', 'equipment']);
+            $table->json('supplier_type');
             $table->string('phone_number', 50);
             $table->string('license_number', 50);
             $table->timestamps();

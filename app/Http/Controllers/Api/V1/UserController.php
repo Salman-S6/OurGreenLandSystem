@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Responses\ApiResponse;
+use App\Jobs\MailJob;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -23,11 +24,9 @@ class UserController extends Controller
     {
         try {
             Gate::authorize("viewAny", User::class);
-            
+
             // discuss with team, what relations we should eager load.
-            $users = Cache::rememberForever("users", function () {
-                return User::with("roles", "permissions")->get();
-            });
+            $users = User::with("roles", "permissions")->paginate(20);
 
             return ApiResponse::success([
                 "users"=> $users
@@ -50,8 +49,6 @@ class UserController extends Controller
                 $request->validated());
 
             MailJob::dispatch(MailTypes::VerificationMail, $user);
-
-            Cache::forget("users");
 
             return ApiResponse::success([
                 "user" => $user
@@ -94,7 +91,6 @@ class UserController extends Controller
 
             $user->update($request->validated());
             
-            Cache::forget("users");
             Cache::forget("user_{$user->id}");
 
             if ($request->has("email"))
@@ -125,7 +121,6 @@ class UserController extends Controller
     
             $user->delete();
     
-            Cache::forget("users");
             Cache::forget("user_{$user->id}");
     
             return ApiResponse::success([

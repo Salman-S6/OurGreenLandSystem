@@ -2,50 +2,100 @@
 
 namespace Modules\FarmLand\Http\Policies;
 
-use Modules\FarmLand\Models\AgriculturalInfrastructure;
 use App\Models\User;
+use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
+use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
 class AgriculturalInfrastructurePolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Summary of before.
+     *
+     * @param User $user
+     * @return ?bool
+     */
+    public function before(User $user): ?bool
+    {
+        if ($user->hasRole(UserRoles::SuperAdmin)) {
+            return true;
+        }
+        return null;
+    }
+
+    /**
+     * Determine Whether The User Can View Any Models.
+     *
+     * @param User $user
+     * @return bool
      */
     public function viewAny(User $user): bool
     {
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer]))
+            return true;
+
         return false;
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine Whether The User Can View The Model.
+     *
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
+     * @return bool
      */
-    public function view(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function view(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        return false;
+        if ($user->hasAnyRole([UserRoles::ProgramManager, UserRoles::AgriculturalEngineer])) {
+            return true;
+        }
+
+        return $infrastructure->lands()
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhere('farmer_id', $user->id);
+            })->exists();
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine Whether The User Can Create Models.
+     *
+     * @param User $user
+     * @return bool
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole([UserRoles::AgriculturalEngineer, UserRoles::Farmer]);
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine Whether The User Can Update The Model.
+     *
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
+     * @return bool
      */
-    public function update(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function update(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        return false;
+        if ($user->hasRole(UserRoles::AgriculturalEngineer))
+            return true;
+
+        return $infrastructure->lands()
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhere('farmer_id', $user->id);
+            })->exists();
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine Whether The User Can Delete The Model.
+     *
+     * @param User $user
+     * @param AgriculturalInfrastructure $infrastructure
+     * @return bool
      */
-    public function delete(User $user, AgriculturalInfrastructure $agriculturalInfrastructure): bool
+    public function delete(User $user, AgriculturalInfrastructure $infrastructure): bool
     {
-        return false;
+        return $this->update($user, $infrastructure);
     }
-
 }

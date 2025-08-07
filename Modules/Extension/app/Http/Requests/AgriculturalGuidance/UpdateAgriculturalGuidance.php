@@ -2,16 +2,26 @@
 
 namespace Modules\Extension\Http\Requests\AgriculturalGuidance;
 
+use App\Models\User;
+use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Modules\Extension\Models\AgriculturalGuidance;
 
 class UpdateAgriculturalGuidance extends FormRequest
 {
+    use RequestTrait;
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-        return [];
+        return [
+            "title" => "sometimes|array|min:1",
+            "summary" => "sometimes|array|min:1",
+            "category" => "sometimes|array|min:1",
+            "tags" => "sometimes|string"
+        ];
     }
 
     /**
@@ -19,6 +29,9 @@ class UpdateAgriculturalGuidance extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $agriculturalGuidance = $this->route()->parameter("agricultural_guidance");
+        return Gate::allows("update", [AgriculturalGuidance::class, $agriculturalGuidance]);
     }
+
+
 }

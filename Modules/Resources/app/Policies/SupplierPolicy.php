@@ -2,9 +2,10 @@
 
 namespace Modules\Resources\Policies;
 
-use App\Models\Supplier;
+
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Modules\Resources\Models\Supplier;
 
 class SupplierPolicy
 {
@@ -13,7 +14,7 @@ class SupplierPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -21,7 +22,7 @@ class SupplierPolicy
      */
     public function view(User $user, Supplier $supplier): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -29,7 +30,7 @@ class SupplierPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -37,7 +38,7 @@ class SupplierPolicy
      */
     public function update(User $user, Supplier $supplier): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 
     /**
@@ -45,6 +46,6 @@ class SupplierPolicy
      */
     public function delete(User $user, Supplier $supplier): bool
     {
-        return false;
+        return $user->hasRole(['admin', 'program_manager']);
     }
 }

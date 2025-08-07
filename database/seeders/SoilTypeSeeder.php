@@ -8,13 +8,11 @@ use Illuminate\Support\Carbon;
 
 class SoilTypeSeeder extends Seeder
 {
-    
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('soils')->delete();
         $soilTypes = [
             'Sandy Soil',
             'Clay Soil',

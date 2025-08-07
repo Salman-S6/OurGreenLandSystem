@@ -41,7 +41,7 @@ class CropPlanFactory extends Factory
         (clone $plannedPlanting)->modify('+6 months')
     );
 
-   
+
     $actualHarvest = null;
     if ($actualPlanting) {
         $actualHarvest = $this->faker->optional(0.3)->dateTimeBetween(

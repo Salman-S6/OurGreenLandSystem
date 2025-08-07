@@ -2,8 +2,10 @@
 
 namespace Modules\Extension\Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Extension\Models\Answer;
+use Modules\Extension\Models\Question;
 
 class AnswerFactory extends Factory
 {
@@ -18,9 +20,9 @@ class AnswerFactory extends Factory
     public function definition(): array
     {
         return [
-            'expert_id' => User::inRandomOrder()->first('id')->id,
-            'question_id' => Question::inRandomOrder()->first('id')->id,
-            'answer_text' => $this->faker->paragraphs(3, true),
+            'expert_id' => User::factory(),
+            'question_id' => Question::factory(),
+            'answer_text' => $this->translations(['en'] ,[$this->faker->paragraphs(3, true)]),
         ];
     }
 }

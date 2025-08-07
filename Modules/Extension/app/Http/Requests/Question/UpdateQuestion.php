@@ -2,16 +2,23 @@
 
 namespace Modules\Extension\Http\Requests\Question;
 
+use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Modules\Extension\Models\Question;
 
 class UpdateQuestion extends FormRequest
 {
+    use RequestTrait;
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'title' => 'sometimes|array|min:1',
+            'description' => 'sometimes|array|min:1'
+        ];
     }
 
     /**
@@ -19,6 +26,7 @@ class UpdateQuestion extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $question = $this->route()->parameter('question');  
+        return Gate::allows('update', [Question::class, $question]);
     }
 }

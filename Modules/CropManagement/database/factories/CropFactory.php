@@ -23,7 +23,7 @@ class CropFactory extends Factory
         return [
             "name" =>[
                 "name.ar"=>$this->faker->name,
-                "name.en"=>$this->faker->name, 
+                "name.en"=>$this->faker->name,
             ] ,
             "description" =>[
               "description.ar"  => $this->faker->paragraph,

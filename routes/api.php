@@ -1,6 +1,5 @@
 
 <?php
-
 use App\Enums\AttachableModels;
 use App\Http\Controllers\Api\V1\AttachmentController;
 use App\Http\Controllers\Api\V1\AuthenticationController;
@@ -34,7 +33,7 @@ Route::post("/logout", [AuthenticationController::class, "logout"])
 
 Route::post('/forgot-password', [AuthenticationController::class, 'sendResetLinkEmail'])
    ->name("password.forgot");
-   
+
 Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])
    ->name("password.request");
 
@@ -42,6 +41,7 @@ Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'
 Route::post('/email/resend', [AuthenticationController::class, 'resendVerificationEmail'])
     ->middleware('auth:sanctum')
     ->name("verification.resend-email");
+
 
 Route::get('/email/verify/{id}/{hash}', [AuthenticationController::class, 'verify'])
     ->middleware(['auth:sanctum', 'signed'])
@@ -87,6 +87,7 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
             ->name('users.permissions.remove');
     });
 
+
     /**
      *
      *
@@ -95,6 +96,7 @@ Route::middleware(["auth:sanctum", "throttle:api"])->group(function () {
      * UserController routes.
      * -----------------------------------------------------------------
     */
+
 
     Route::apiResource('users', UserController::class);
     /**

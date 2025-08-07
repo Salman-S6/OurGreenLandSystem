@@ -3,6 +3,7 @@
 namespace Modules\CropManagement\Database\Factories;
 
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\CropManagement\Models\BestAgriculturalPractice;
 use Modules\CropManagement\Models\CropGrowthStage;
@@ -28,6 +29,7 @@ class BestAgriculturalPracticeFactory extends Factory
     public function definition(): array
     {
         return [
+            'expert_id' => User::inRandomOrder()->first()->id,
             'growth_stage_id' => CropGrowthStage::factory(),
             'practice_type' => $this->faker->randomElement(['irrigation', 'fertilization', 'pest-control']),
             'material' => $this->faker->words(2, true),

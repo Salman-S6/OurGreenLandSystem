@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('case_name');
             $table->enum('severity', ['high', 'medium', 'low']);
             $table->json('description');
+            $table->json('description');
             $table->date('discovery_date');
             $table->json('location_details');
             $table->softDeletes();

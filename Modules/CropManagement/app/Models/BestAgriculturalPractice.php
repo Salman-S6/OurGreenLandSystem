@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\CropManagement\Database\Factories\BestAgriculturalPracticeFactory;
-use Spatie\LaravelPackageTools\Concerns\Package\HasTranslations;
+use Spatie\Translatable\HasTranslations;
 
 class BestAgriculturalPractice extends Model
 {
