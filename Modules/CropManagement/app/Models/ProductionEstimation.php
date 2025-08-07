@@ -12,7 +12,7 @@ use Modules\CropManagement\Database\Factories\ProductionEstimationFactory;
 
 class ProductionEstimation extends Model
 {
-    use HasFactory, HasTranslations,SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     protected static function newFactory(): ProductionEstimationFactory
     {

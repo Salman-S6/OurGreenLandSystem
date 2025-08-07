@@ -8,7 +8,7 @@ use Modules\CropManagement\Models\CropPlan;
 use Modules\CropManagement\Models\PestDiseaseCase;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PestDiseaseCase>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\CropManagement\Models\PestDiseaseCase>
  */
 class PestDiseaseCaseFactory extends Factory
 {
@@ -29,7 +29,7 @@ class PestDiseaseCaseFactory extends Factory
     {
         return [
             'crop_plan_id' => CropPlan::factory(),
-            'reported_by' => User::factory(),
+            'reported_by' => User::inRandomOrder()->first()->id,
             'case_type' => $this->faker->randomElement(['pest', 'disease']),
             'case_name' => $this->faker->words(2, true),
             'severity' => $this->faker->randomElement(['high', 'medium', 'low']),

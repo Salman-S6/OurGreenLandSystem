@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('crops', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->json('name')->nullable();
+            $table->json('description')->nullable();
             $table->timestamps();
         });
     }

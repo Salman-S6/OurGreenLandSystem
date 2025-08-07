@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\FarmLand\Database\Factories\SoilAnalysisFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class SoilAnalysis extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,LogsActivity;
 
     /**
      * Summary of newFactory.
@@ -41,6 +43,23 @@ class SoilAnalysis extends Model
         'contaminants',
         'recommendations',
     ];
+
+        public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('SoilAnalysis')
+            ->logOnly([
+                'land_id',
+                'performed_by',
+                'sample_date',
+                'ph_level',
+                'salinity_level',
+                'fertility_level',
+                'nutrient_content'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that are translatable.

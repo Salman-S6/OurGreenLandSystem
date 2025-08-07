@@ -21,8 +21,8 @@ class CropFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => $this->faker->name,
-            "description" => $this->faker->paragraph
+            "name" => $this->translations(['en', 'ar'], $this->faker->name),
+            "description" => $this->translations(['en', 'ar'], $this->faker->paragraph)
         ];
     }
 }

@@ -27,7 +27,7 @@ class CropPlanFactory extends Factory
      */
     public function definition(): array
     {
-        $plannedPlanting = $this->faker->dateTimeBetween('-1 month', '+2 months');
+        $plannedPlanting = $this->faker->dateTimeBetween('-3 year', '+3 year');
 
         return [
             'crop_id' => Crop::factory(),

@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRoles;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -40,6 +42,14 @@ class RolesAndPermissionsSeeder extends Seeder
         foreach (UserRoles::cases() as $role) {
             $role = Role::create(["name" => $role->value]);
         }
+
+        $superAdmin = User::create([
+            "name" => "x4",
+            "email" => "x4@gmail.com",
+            "password" => Hash::make("x4123")
+        ]);
+
+        $superAdmin->assignRole(UserRoles::SuperAdmin);
 
     }
 }

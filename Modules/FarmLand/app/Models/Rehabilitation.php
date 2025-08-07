@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Rehabilitation extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,LogsActivity;
 
     protected static function newFactory(): RehabilitationFactory
     {
@@ -39,6 +41,17 @@ class Rehabilitation extends Model
     protected $casts = [
         'performed_at' => 'date',
     ];
+
+        public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('Rehabilitation')
+            ->logOnly([
+                'event'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * Get the land that this rehabilitation activity belongs to.

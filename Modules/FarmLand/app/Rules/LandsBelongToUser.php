@@ -23,7 +23,7 @@ class LandsBelongToUser implements ValidationRule
         $accessibleLandsCount = DB::table('lands')
             ->whereIn('id', $landIds)
             ->where(function ($query) {
-                $query->where('user_id', $this->user->id)
+                $query->where('owner_id', $this->user->id)
                     ->orWhere('farmer_id', $this->user->id);
             })
             ->count();

@@ -9,7 +9,7 @@ use Modules\CropManagement\Models\CropGrowthStage;
 use Modules\CropManagement\Models\CropPlan;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CropGrowthStage>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\CropManagement\Models\CropGrowthStage>
  */
 class CropGrowthStageFactory extends Factory
 {
@@ -30,12 +30,13 @@ class CropGrowthStageFactory extends Factory
         $startDate = $this->faker->dateTimeBetween('-3 months', 'now');
 
         return [
-            'crop_plan_id' => CropPlan::inRandomOrder()->first('id')->id,
+            'crop_plan_id' => CropPlan::factory(),
             'start_date' => $startDate,
-            'end_date' => $this->faker->optional(0.8)->dateTimeBetween($startDate, '+2 weeks'),
+            'end_date' => $startDate,
             'name' => $this->faker->randomElement(['seeding', 'germination', 'vegetative-growth', 'flowering', 'fruiting', 'harvesting']),
             'notes' => $this->faker->optional()->paragraph,
-            'recorded_by' => User::inRandomOrder()->first('id')->id,
+            // 'recorded_by' => User::factory(),
+            'recorded_by' => User::inRandomOrder()->first()->id,
         ];
     }
 }

@@ -50,15 +50,11 @@ class infrastructurePolicy
             return true;
         }
 
-        if ($user->hasRole(UserRoles::Farmer)) {
-            return $infrastructure->lands()
-                ->where(function ($query) use ($user) {
-                    $query->where('user_id', $user->id)
-                        ->orWhere('farmer_id', $user->id);
-                })->exists();
-        }
-
-        return false;
+        return $infrastructure->lands()
+            ->where(function ($query) use ($user) {
+                $query->where('owner_id', $user->id)
+                    ->orWhere('farmer_id', $user->id);
+            })->exists();
     }
 
     /**
@@ -83,15 +79,12 @@ class infrastructurePolicy
     {
         if ($user->hasRole(UserRoles::AgriculturalEngineer))
             return true;
-        if ($user->hasRole(UserRoles::Farmer)) {
-            return $infrastructure->lands()
-                ->where(function ($query) use ($user) {
-                    $query->where('user_id', $user->id)
-                        ->orWhere('farmer_id', $user->id);
-                })->exists();
-        }
 
-        return false;
+        return $infrastructure->lands()
+            ->where(function ($query) use ($user) {
+                $query->where('owner_id', $user->id)
+                    ->orWhere('farmer_id', $user->id);
+            })->exists();
     }
 
     /**
