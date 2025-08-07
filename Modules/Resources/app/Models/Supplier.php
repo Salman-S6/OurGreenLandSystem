@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Resources\Enums\SupplierType;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Supplier extends Model
 {
-   use HasFactory, HasTranslations; 
+   use HasFactory, HasTranslations, LogsActivity; 
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +32,19 @@ class Supplier extends Model
 protected $casts = [
     'supplier_type' => SupplierType::class,
 ];
+
+        /**
+     * Summary of getActivitylogOptions
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('supplier')
+            ->logOnly([ 'user_id','supplier_type', 'phone_number',  'license_number',])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     /**
      * Get the user that owns the supplier profile.
      */
