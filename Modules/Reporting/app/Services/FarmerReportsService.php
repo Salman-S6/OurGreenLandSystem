@@ -13,10 +13,6 @@ class FarmerReportsService
 {
     public function getFarmerLandsSummary(): array
     {
-        //عدد الاراضي المملوكه 
-        // المساحة الإجمالية.
-        // نوع الترب التي لديه
-
         $userId = Auth::id();
         $lands = Land::select('id', 'area', 'soil_type_id')
             ->where('farmer_id', $userId)
@@ -45,11 +41,6 @@ class FarmerReportsService
 
     public function getLatestCropPlans(): \Illuminate\Support\Collection
     {
-        /*
-          جلب آخر خطة زراعية مخصصة لكل أرض. 
-          تحوي جميع معلومات الخطه بالكامل         
-        */
-
         $userId = Auth::id();
         $landIds = Land::where('farmer_id', $userId)->pluck('id');
         $latestPlans = CropPlan::with(['crop', 'land'])
@@ -64,8 +55,6 @@ class FarmerReportsService
 
     public function getRecentGuidance(): \Illuminate\Support\Collection
     {
-        // الإرشادات الحديثة التي تهم المزارع بناءً على نوع المحاصيل التي يزرعها أو أراضيه.
-
         $userId = Auth::id();
         return BestAgriculturalPractice::whereHas('growthStage.cropPlan.land', function ($q) use ($userId) {
             $q->where('lands.farmer_id', $userId);
@@ -82,19 +71,22 @@ class FarmerReportsService
 
     public function getCropPlanStatusStats(): array
     {
-        //إحصائية مرئية (Pie/Bar Chart) توضح عدد الخطط الزراعية حسب حالتها (Active, InProgress, Completed...).
-
-
         $userId = Auth::id();
+
         $statusCounts = CropPlan::whereHas('land', function ($q) use ($userId) {
             $q->where('farmer_id', $userId);
         })
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status');
+
+        $labels = $statusCounts->map(function ($count, $status) {
+            return "{$status} ({$count})";
+        })->values();
+
         return [
-            'labels' => $statusCounts->keys(),
-            'data' => $statusCounts->values(),
+            'labels' => $labels,
+        
         ];
     }
 }
