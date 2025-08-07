@@ -36,7 +36,7 @@ class IdealAnalysisValueController extends Controller
      */
     public function index(): JsonResponse
     {
-        // $this->authorize('viewAny', IdealAnalysisValue::class);
+        $this->authorize('viewAny', IdealAnalysisValue::class);
         $data = $this->idealAnalysisValueService->getAll();
         return ApiResponse::success(
             [$data],
@@ -54,7 +54,7 @@ class IdealAnalysisValueController extends Controller
     public function store(StoreIdealAnalysisValueRequest $request): JsonResponse
     {
         try {
-            // $this->authorize('create', IdealAnalysisValue::class);
+            $this->authorize('create', IdealAnalysisValue::class);
             $data = $this->idealAnalysisValueService->store($request->validated());
 
             return ApiResponse::success(
@@ -75,7 +75,7 @@ class IdealAnalysisValueController extends Controller
      */
     public function show(IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
-        // $this->authorize('view', $idealAnalysisValue);
+        $this->authorize('view', $idealAnalysisValue);
         $data = $this->idealAnalysisValueService->get($idealAnalysisValue);
         return ApiResponse::success(
             [$data],
@@ -94,7 +94,7 @@ class IdealAnalysisValueController extends Controller
     public function update(UpdateIdealAnalysisValueRequest $request, IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
         try {
-            // $this->authorize('update', $idealAnalysisValue);
+            $this->authorize('update', $idealAnalysisValue);
             $data = $this->idealAnalysisValueService->update($request->validated(), $idealAnalysisValue);
             return ApiResponse::success(
                 [$data],
@@ -115,7 +115,7 @@ class IdealAnalysisValueController extends Controller
     public function destroy(IdealAnalysisValue $idealAnalysisValue): JsonResponse
     {
         try {
-            // $this->authorize('delete', $idealAnalysisValue);
+            $this->authorize('delete', $idealAnalysisValue);
             $this->idealAnalysisValueService->destroy($idealAnalysisValue);
             return ApiResponse::success(
                 [],

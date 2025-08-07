@@ -36,7 +36,7 @@ class SoilAnalysisController extends Controller
      */
     public function index(): JsonResponse
     {
-        // $this->authorize('viewAny', SoilAnalysis::class);
+        $this->authorize('viewAny', SoilAnalysis::class);
         $data = $this->soilAnalysisService->getAll();
 
         return ApiResponse::success(
@@ -55,7 +55,7 @@ class SoilAnalysisController extends Controller
     public function store(StoreSoilAnalysisRequest $request): JsonResponse
     {
         try {
-            // $this->authorize('create', SoilAnalysis::class);
+            $this->authorize('create', SoilAnalysis::class);
             $data = $this->soilAnalysisService->store($request->validated());
 
             return ApiResponse::success(
@@ -76,7 +76,7 @@ class SoilAnalysisController extends Controller
      */
     public function show(SoilAnalysis $soilAnalysis): JsonResponse
     {
-        // $this->authorize('view', $soilAnalysis);
+        $this->authorize('view', $soilAnalysis);
         $data = $this->soilAnalysisService->get($soilAnalysis);
         return ApiResponse::success(
             [$data],
@@ -95,7 +95,7 @@ class SoilAnalysisController extends Controller
     public function update(UpdateSoilAnalysisRequest $request, SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
-            // $this->authorize('update', $soilAnalysis);
+            $this->authorize('update', $soilAnalysis);
             $data = $this->soilAnalysisService->update($request->validated(), $soilAnalysis);
 
             return ApiResponse::success(
@@ -117,7 +117,7 @@ class SoilAnalysisController extends Controller
     public function destroy(SoilAnalysis $soilAnalysis): JsonResponse
     {
         try {
-            // $this->authorize('delete', $soilAnalysis);
+            $this->authorize('delete', $soilAnalysis);
             $this->soilAnalysisService->destroy($soilAnalysis);
             return ApiResponse::success(
                 [],
