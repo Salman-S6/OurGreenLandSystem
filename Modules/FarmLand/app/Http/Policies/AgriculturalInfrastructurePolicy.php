@@ -7,7 +7,7 @@ use App\Enums\UserRoles;
 use Illuminate\Auth\Access\Response;
 use Modules\FarmLand\Models\AgriculturalInfrastructure;
 
-class infrastructurePolicy
+class AgriculturalInfrastructurePolicy
 {
     /**
      * Summary of before.
