@@ -43,8 +43,8 @@ class UpdateLandRequest extends FormRequest
         'boundary_coordinates.*'       => ['sometimes', 'array'],
         'boundary_coordinates.*.lat'   => ['sometimes', 'required_with:boundary_coordinates.*.lng', 'numeric'],
         'boundary_coordinates.*.lng'   => ['sometimes', 'required_with:boundary_coordinates.*.lat', 'numeric'],
-
-      
+        
+        'region' => ['sometimes', 'string', 'max:255'],
         'rehabilitation_date' => 'sometimes|date',
         ];
     }

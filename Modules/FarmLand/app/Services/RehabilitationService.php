@@ -58,7 +58,7 @@ class RehabilitationService implements BaseCrudServiceInterface
                 $rehabilitation->lands()->syncWithoutDetaching($landsPivotData);
                 $this->updateLandsRehabilitationDates($landsPivotData);
             }
-            
+
 
             Cache::forget($this->cacheKeyAll);
             Cache::forget("rehabilitation_{$rehabilitation->id}");
@@ -143,60 +143,67 @@ class RehabilitationService implements BaseCrudServiceInterface
         return $pivotData;
     }
 
+
     /**
-     * Update `rehabilitation_date` on each land if the performed_at is newer.
+     * Update `rehabilitation_date` on each land if the performed_at is newer,
+     * optimized by batch updating lands to avoid N+1 query problem.
+     *
+     * @param array $landsPivotData
+     * @return void
      */
-/**
- * Update `rehabilitation_date` on each land if the performed_at is newer,
- * optimized by batch updating lands to avoid N+1 query problem.
- *
- * @param array $landsPivotData
- * @return void
- */
-protected function updateLandsRehabilitationDates(array $landsPivotData): void
-{
-    $landIds = array_keys($landsPivotData);
+    protected function updateLandsRehabilitationDates(array $landsPivotData): void
+    {
+        $landIds = array_keys($landsPivotData);
 
-    // جلب الأراضي المرتبطة دفعة واحدة
-    $lands = Land::whereIn('id', $landIds)->get(['id', 'rehabilitation_date']);
+        $lands = Land::whereIn('id', $landIds)->get(['id', 'rehabilitation_date']);
 
-    $landsToUpdate = [];
+        $landsToUpdate = [];
 
-    foreach ($lands as $land) {
-        $pivot = $landsPivotData[$land->id] ?? null;
+        foreach ($lands as $land) {
+            $pivot = $landsPivotData[$land->id] ?? null;
 
-        if (!$pivot || empty($pivot['performed_at'])) {
-            continue; // تخطى إذا لا يوجد تاريخ أداء
+            if (!$pivot || empty($pivot['performed_at'])) {
+                continue;
+            }
+
+            $performedDate = Carbon::parse($pivot['performed_at']);
+            $currentDate = $land->rehabilitation_date ? Carbon::parse($land->rehabilitation_date) : null;
+
+            if (is_null($currentDate) || $performedDate->gt($currentDate)) {
+                $landsToUpdate[$land->id] = $performedDate->toDateString();
+            }
         }
 
-        $performedDate = Carbon::parse($pivot['performed_at']);
-        $currentDate = $land->rehabilitation_date ? Carbon::parse($land->rehabilitation_date) : null;
+        if (!empty($landsToUpdate)) {
+            $cases = [];
+            $ids = [];
 
-        // فقط حدث إذا التاريخ الجديد أحدث من الحالي أو التاريخ الحالي فارغ
-        if (is_null($currentDate) || $performedDate->gt($currentDate)) {
-            $landsToUpdate[$land->id] = $performedDate->toDateString();
+            foreach ($landsToUpdate as $id => $date) {
+                $ids[] = $id;
+                $cases[] = "WHEN id = $id THEN '$date'";
+            }
+
+            $caseStatement = implode(' ', $cases);
+            $idsList = implode(',', $ids);
+
+            DB::statement("
+            UPDATE lands
+            SET rehabilitation_date = CASE $caseStatement END,
+                updated_at = NOW()
+            WHERE id IN ($idsList)
+        ");
+
+
+            foreach ($ids as $id) {
+                Cache::forget('lands_all');
+                Cache::forget("land_show_{$id}");
+
+
+                $freshLand = Land::find($id);
+                if ($freshLand) {
+                    Cache::put("land_show_{$id}", $freshLand, now()->addMinutes(10));
+                }
+            }
         }
     }
-
-if (!empty($landsToUpdate)) {
-    $cases = [];
-    $ids = [];
-
-    foreach ($landsToUpdate as $id => $date) {
-        $ids[] = $id;
-        $cases[] = "WHEN id = $id THEN '$date'";
-    }
-
-    $caseStatement = implode(' ', $cases);
-    $idsList = implode(',', $ids);
-
-    DB::statement("
-        UPDATE lands
-        SET rehabilitation_date = CASE $caseStatement END
-        WHERE id IN ($idsList)
-    ");
-}
-        Cache::put("land_{$land->id}", $land->fresh(), now()->addHour());
-}
-
 }
