@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Resources\app\Http\Requests\SupplierRating;
+namespace Modules\Resources\Http\Requests\SupplierRating;
 
 use App\Traits\RequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,7 +13,7 @@ class StoreSupplierRatingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true ;
     }
 
     /**
@@ -24,7 +24,9 @@ class StoreSupplierRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'comment' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
