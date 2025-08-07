@@ -43,7 +43,7 @@ class UpdateAgriculturalInfrastructureRequest extends FormRequest
             'description.ar' => 'nullable|string|max:500',
 
             'installation_date' => 'sometimes|nullable|date|after_or_equal:today',
-            'land_ids' => 'sometimes|array',
+            'land_ids' => ['sometimes', 'array'],
             'land_ids.*' => 'sometimes|required|exists:lands,id',
         ];
 

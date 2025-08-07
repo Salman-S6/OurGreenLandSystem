@@ -36,7 +36,7 @@ class AgriculturalInfrastructureController extends Controller
      */
     public function index(): JsonResponse
     {
-        $this->authorize('viewAny', AgriculturalInfrastructure::class);
+        // $this->authorize('viewAny', AgriculturalInfrastructure::class);
         $data = $this->infrastructureService->getAll();
         return ApiResponse::success(
             [$data],
@@ -54,7 +54,7 @@ class AgriculturalInfrastructureController extends Controller
     public function store(StoreAgriculturalInfrastructureRequest $request): JsonResponse
     {
         try {
-            $this->authorize('create', AgriculturalInfrastructure::class);
+            // $this->authorize('create', AgriculturalInfrastructure::class);
             $data = $this->infrastructureService->store($request->validated());
 
             return ApiResponse::success(
@@ -75,7 +75,7 @@ class AgriculturalInfrastructureController extends Controller
      */
     public function show(AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
-        $this->authorize('view', $agriculturalInfrastructure);
+        // $this->authorize('view', $agriculturalInfrastructure);
         $data = $this->infrastructureService->get($agriculturalInfrastructure);
         return ApiResponse::success(
             [$data],
@@ -94,7 +94,7 @@ class AgriculturalInfrastructureController extends Controller
     public function update(UpdateAgriculturalInfrastructureRequest $request, AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
         try {
-            $this->authorize('update', $agriculturalInfrastructure);
+            // $this->authorize('update', $agriculturalInfrastructure);
             $data = $this->infrastructureService->update($request->validated(), $agriculturalInfrastructure);
 
             return ApiResponse::success(
@@ -116,7 +116,7 @@ class AgriculturalInfrastructureController extends Controller
     public function destroy(AgriculturalInfrastructure $agriculturalInfrastructure): JsonResponse
     {
         try {
-            $this->authorize('delete', $agriculturalInfrastructure);
+            // $this->authorize('delete', $agriculturalInfrastructure);
             $this->infrastructureService->destroy($agriculturalInfrastructure);
             return ApiResponse::success(
                 [],

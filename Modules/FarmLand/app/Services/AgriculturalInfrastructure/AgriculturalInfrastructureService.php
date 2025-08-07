@@ -69,7 +69,7 @@ class AgriculturalInfrastructureService implements BaseCrudServiceInterface
     {
         $infrastructure->update($data);
 
-        if ($data->has('land_ids')) {
+        if (isset($data['land_ids'])) {
             $infrastructure->lands()->sync($data['land_ids'] ?? []);
         }
         $infrastructure->load('lands');

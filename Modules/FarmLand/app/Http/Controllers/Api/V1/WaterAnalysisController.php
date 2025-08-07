@@ -36,7 +36,7 @@ class WaterAnalysisController extends Controller
      */
     public function index(): JsonResponse
     {
-        $this->authorize('viewAny', WaterAnalysis::class);
+        // $this->authorize('viewAny', WaterAnalysis::class);
         $data = $this->waterAnalysisService->getAll();
 
         return ApiResponse::success(
@@ -55,7 +55,7 @@ class WaterAnalysisController extends Controller
     public function store(StoreWaterAnalysisRequest $request): JsonResponse
     {
         try {
-            $this->authorize('create', WaterAnalysis::class);
+            // $this->authorize('create', WaterAnalysis::class);
             $data = $this->waterAnalysisService->store($request->validated());
 
             return ApiResponse::success(
@@ -76,7 +76,7 @@ class WaterAnalysisController extends Controller
      */
     public function show(WaterAnalysis $waterAnalysis): JsonResponse
     {
-        $this->authorize('view', $waterAnalysis);
+        // $this->authorize('view', $waterAnalysis);
         $data = $this->waterAnalysisService->get($waterAnalysis);
         return ApiResponse::success(
             [$data],
@@ -95,7 +95,7 @@ class WaterAnalysisController extends Controller
     public function update(UpdateWaterAnalysisRequest $request, WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
-            $this->authorize('update', $waterAnalysis);
+            // $this->authorize('update', $waterAnalysis);
             $data = $this->waterAnalysisService->update($request->validated(), $waterAnalysis);
 
             return ApiResponse::success(
@@ -117,7 +117,7 @@ class WaterAnalysisController extends Controller
     public function destroy(WaterAnalysis $waterAnalysis): JsonResponse
     {
         try {
-            $this->authorize('delete', $waterAnalysis);
+            // $this->authorize('delete', $waterAnalysis);
             $this->waterAnalysisService->destroy($waterAnalysis);
             return ApiResponse::success(
                 [],
