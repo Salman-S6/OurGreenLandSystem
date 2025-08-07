@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\FarmLand\Database\Factories\WaterAnalysisFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class WaterAnalysis extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,LogsActivity;
 
     /**
      * Summary of newFactory.
@@ -41,6 +43,22 @@ class WaterAnalysis extends Model
         'contaminants',
         'recommendations',
     ];
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('WaterAnalysis')
+            ->logOnly([
+                    'land_id',
+                    'performed_by',
+                    'sample_date',
+                    'ph_level',
+                    'salinity_level',
+                    'water_quality',
+                    'suitability',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that are translatable.

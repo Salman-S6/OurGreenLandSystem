@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\FarmLand\Enums\SoilAnalysesFertilityLevel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\FarmLand\Database\Factories\IdealAnalysisValueFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class IdealAnalysisValue extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations,LogsActivity;
 
     /**
      * Summary of newFactory.
@@ -48,6 +50,24 @@ class IdealAnalysisValue extends Model
      * @var array
      */
     public array $translatable = ['notes'];
+
+        public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('IdealAnalysisValue')
+            ->logOnly([
+                "type",
+                "crop_id",
+                "ph_min",
+                "ph_max",
+                "salinity_min",
+                "salinity_max",
+                "fertility_level",
+                "water_quality"
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that should be cast.
