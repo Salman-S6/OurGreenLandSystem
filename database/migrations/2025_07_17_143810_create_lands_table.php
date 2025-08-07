@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('owner_id')->constrained("users")->cascadeOnDelete();
             $table->foreignId("farmer_id")->constrained("users")->cascadeOnDelete();
             $table->decimal("area",10,2)->nullable();
-            $table->string("region", 200);
             $table->foreignId("soil_type_id")->constrained("soils")->cascadeOnDelete();
             $table->enum("damage_level", ["low","medium", "high"])->nullable();
             $table->json('gps_coordinates')->nullable();
