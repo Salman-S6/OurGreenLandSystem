@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use App\Helpers\NotifyHelper;
 use Carbon\Carbon;
+use Illuminate\Console\Scheduling\Schedule;
 use Modules\CropManagement\Models\CropPlan;
 
 class NotifyExpiredSeeds extends Command
@@ -19,11 +20,11 @@ class NotifyExpiredSeeds extends Command
     {
         $today = Carbon::today();
 
-        
+
         $expiredPlans = CropPlan::whereDate('seed_expiry_date', '<', $today)->get();
 
-      
-        $usersToNotify=User::role([UserRoles::SuperAdmin,UserRoles::AgriculturalAlert,UserRoles::ProgramManager])->get();
+
+        $usersToNotify = User::role([UserRoles::SuperAdmin, UserRoles::AgriculturalEngineer, UserRoles::ProgramManager])->get();
 
         foreach ($expiredPlans as $plan) {
             $cropNameAr = $plan->crop->getTranslation('name', 'ar');
@@ -40,5 +41,15 @@ class NotifyExpiredSeeds extends Command
         $this->info('Expired seed notifications sent.');
 
         return 0;
+    }
+
+    /**
+     * Summary of schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * @return void
+     */
+    public function schedule(Schedule $schedule)
+    {
+        $schedule->dailyAt('00:00');
     }
 }
