@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 use Modules\FarmLand\Models\Rehabilitation;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\CropManagement\Models\CropPlan;
 
 // use Modules\FarmLand\Database\Factories\PostFactory;
 class Land extends Model
@@ -35,6 +36,7 @@ class Land extends Model
         "gps_coordinates",
         "boundary_coordinates",
         "rehabilitation_date",
+        "region"
     ];
 
     protected $casts = [
@@ -72,10 +74,10 @@ class Land extends Model
         return $this->belongsToMany(Rehabilitation::class, 'rehabilitation_land', 'land_id', 'rehabilitation_id');
     }
 
-    // public function cropPlans(): HasMany
-    // {
-    //     return $this->hasMany(CropPlan::class, 'land_id');
-    // }
+    public function cropPlans(): HasMany
+    {
+        return $this->hasMany(CropPlan::class, 'land_id');
+    }
 
     public function agriculturalInfrastructures(): BelongsToMany
     {

@@ -24,7 +24,8 @@ class LandFactory extends Factory
         $centerLng = $this->faker->longitude();
 
         return [
-            'user_id' => User::factory(),
+             'region' => $this->faker->city, 
+            'owner_id' => User::factory(),
             'farmer_id' => User::factory(),
             'area' => $this->faker->randomFloat(2, 1, 500),
             'soil_type_id' => Soil::factory(),

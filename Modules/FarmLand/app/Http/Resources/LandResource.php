@@ -25,6 +25,8 @@ class LandResource extends JsonResource
             'boundary_coords'   => $this->boundary_coordinates,
             'created_at'        => $this->created_at?->toDateString(),
             'rehabilitation_date' => $this->rehabilitation_date,
+            'region'             => $this->region,
+    
         ];
     }
 }
