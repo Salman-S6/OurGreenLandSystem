@@ -19,7 +19,7 @@ class QuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'farmer_id' => User::inRandomOrder()->first('id')->id,
+            'farmer_id' => User::factory(),
             'title' => $this->translations(
                 ['en'],
                 [rtrim($this->faker->sentence(rand(5, 10)), '.').'?']

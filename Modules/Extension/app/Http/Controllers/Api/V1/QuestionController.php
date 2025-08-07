@@ -18,21 +18,13 @@ class QuestionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) 
+    public function index() 
     {
         try {
-            $request->validate([
-                "page" => "sometimes|int",
-            ]);
-    
-            $page = $request->has("page") ? $request->page : 1;
-    
-            $questions = Cache::remember("questions_page_{$page}", now()->addMinutes(10), function () {
-                return Question::with("farmer", "answers.expert")
+            $questions = Question::with("farmer", "answers.expert")
                     ->orderBy('created_at', 'desc')
-                    ->paginate(10);
-            });
-    
+                    ->paginate(20);
+
             return ApiResponse::success([
                 "questions" => $questions
             ]);
