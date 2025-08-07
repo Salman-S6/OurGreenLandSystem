@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\CropManagement\Models\CropPlan;
 use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Translatable\HasTranslations;
 // use Modules\Extension\Database\Factories\AgriculturalAlertFactory;
 
 class AgriculturalAlert extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +44,20 @@ class AgriculturalAlert extends Model
     protected $casts = [
         'send_time' => 'datetime',
     ];
+
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return \Spatie\Activitylog\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('agri-alert')
+            ->logOnly(['title','message','alert_level','alert_type'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected static function newFactory(): AgriculturalAlertFactory
     {

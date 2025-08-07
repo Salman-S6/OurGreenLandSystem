@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Extension\Database\Factories\AnswerFactory;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Translatable\HasTranslations;
 
 class Answer extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +32,20 @@ class Answer extends Model
     {
         return AnswerFactory::new();
     }
+
+    /**
+     * Summary of getActivitylogOptions
+     * @return \Spatie\Activitylog\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('answer')
+            ->logOnly(['answer_text'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
 
     /**
      * Get the expert who provided the answer.

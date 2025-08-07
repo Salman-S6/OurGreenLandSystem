@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Extension\Database\Factories\AgriculturalGuidanceFactory;
 use Modules\Extension\Policies\AgriculturalGuidancePolicy;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Translatable\HasTranslations;
 
 
 class AgriculturalGuidance extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory, HasTranslations, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +46,18 @@ class AgriculturalGuidance extends Model
         'tags' => 'array',
     ];
 
+    /**
+     * Summary of getActivitylogOptions
+     * @return \Spatie\Activitylog\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('agri-guidance')
+            ->logOnly(['title','summary','category','tags'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected static function newFactory(): AgriculturalGuidanceFactory
     {
